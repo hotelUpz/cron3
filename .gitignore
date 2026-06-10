@@ -3,3 +3,4 @@ __pycache__/
 .venv
 ssh_key.pub
 ssh_key.txt
+.ssh-autostart.sh
