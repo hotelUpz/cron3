@@ -1,0 +1,70 @@
+# ==============================================================================
+# Path: RUNTIME_FSM/runtime_builder.py
+# Role: Сборка пер-символьных рантайм конфигураций при старте
+# ==============================================================================
+
+import os
+import json
+from pathlib import Path
+from consts import _CFG, DATA_DIR, AVOID_CHECK_RUNTIME_CFG
+from c_log import UnifiedLogger
+from c_utils import Utils
+
+logger = UnifiedLogger("RuntimeBuilder")
+
+RUNTIME_DIR = DATA_DIR / "runtime"
+TEMP_DIR = DATA_DIR / "temp"
+
+def _ensure_dirs():
+    RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
+    TEMP_DIR.mkdir(parents=True, exist_ok=True)
+
+def build_runtime_caches():
+    _ensure_dirs()
+    
+    base_file = TEMP_DIR / "_base.json"
+    base_data = Utils.read_json_file(base_file)
+    if not base_data:
+        logger.error(f"Base template not found or empty at {base_file}")
+        return
+
+    symbols = _CFG.get("symbols", [])
+    for symbol in symbols:
+        sym_lower = symbol.lower()
+        target_file = RUNTIME_DIR / f"{sym_lower}.json"
+        
+        if not target_file.exists():
+            # Create from base template and add is_active / price
+            new_data = json.loads(json.dumps(base_data))  # deep copy
+            
+            for side in ("LONG", "SHORT"):
+                if side in new_data:
+                    if "grid" in new_data[side]:
+                        for grid_id, grid_cfg in new_data[side]["grid"].items():
+                            grid_cfg["is_active"] = False
+                            grid_cfg["price"] = None
+                    else:
+                        logger.error(f"[CRITICAL] Секция 'grid' ОТСУТСТВУЕТ для {side} в _base.json!")
+                    
+                    if "tp_map" in new_data[side]:
+                        for tp_id, tp_cfg in new_data[side]["tp_map"].items():
+                            tp_cfg["is_active"] = False
+                            tp_cfg["price"] = None
+                    else:
+                        logger.error(f"[CRITICAL] Секция 'tp_map' ОТСУТСТВУЕТ для {side} в _base.json!")
+
+            Utils.write_json_file(target_file, new_data)
+            logger.info(f"Created runtime cache for {symbol} at {target_file.name}")
+
+def prompt_runtime_check():
+    if not AVOID_CHECK_RUNTIME_CFG:
+        print("\n" + "="*60)
+        print("ВНИМАНИЕ! Проверьте настройки рантайма в CFG/runtime/")
+        print("Если все верно, нажмите Enter для продолжения...")
+        print("="*60 + "\n")
+        try:
+            input()
+        except KeyboardInterrupt:
+            print("Прервано пользователем.")
+            import sys
+            sys.exit(0)

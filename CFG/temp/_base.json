@@ -1,0 +1,128 @@
+{
+    "LONG": {
+        "enable": true,
+        "invest_size": 100,
+        "leverage": 10,
+        "margin_type": "ISOLATED",
+        "tp_id": null,
+        "open_time": 0,
+        "_comment_margin_type": "Valid values: CROSSED | ISOLATED",
+        "grid": {
+            "0": {
+                "indent": 0,
+                "price": null,
+                "volume": 20,
+                "is_active": false
+            },
+            "1": {
+                "indent": -0.6,
+                "price": null,
+                "volume": 20,
+                "is_active": false
+            },
+            "2": {
+                "indent": -1.2,
+                "price": null,
+                "volume": 20,
+                "is_active": false
+            },
+            "3": {
+                "indent": -5.0,
+                "price": null,
+                "volume": 20,
+                "is_active": false
+            },
+            "4": {
+                "indent": -8.0,
+                "price": null,
+                "volume": 20,
+                "is_active": false
+            }
+        },
+        "tp_map": {
+            "0": {
+                "indent": 0.6,
+                "fallback_indent": 1.0
+            },
+            "1": {
+                "indent": 0.6,
+                "fallback_indent": 1.0
+            },
+            "2": {
+                "indent": 0.6,
+                "fallback_indent": 1.0
+            },
+            "3": {
+                "indent": 0.6,
+                "fallback_indent": 1.0
+            },
+            "4": {
+                "indent": 0.6,
+                "fallback_indent": 1.0
+            }
+        }
+    },
+    "SHORT": {
+        "enable": true,
+        "invest_size": 100,
+        "leverage": 10,
+        "margin_type": "ISOLATED",
+        "tp_id": null,
+        "open_time": 0,
+        "_comment_margin_type": "Valid values: CROSSED | ISOLATED",
+        "grid": {
+            "0": {
+                "indent": 0,
+                "price": null,
+                "volume": 20,
+                "is_active": false
+            },
+            "1": {
+                "indent": -0.6,
+                "price": null,
+                "volume": 20,
+                "is_active": false
+            },
+            "2": {
+                "indent": -1.2,
+                "price": null,
+                "volume": 20,
+                "is_active": false
+            },
+            "3": {
+                "indent": -5.0,
+                "price": null,
+                "volume": 20,
+                "is_active": false
+            },
+            "4": {
+                "indent": -8.0,
+                "price": null,
+                "volume": 20,
+                "is_active": false
+            }
+        },
+        "tp_map": {
+            "0": {
+                "indent": 0.6,
+                "fallback_indent": 1.0
+            },
+            "1": {
+                "indent": 0.6,
+                "fallback_indent": 1.0
+            },
+            "2": {
+                "indent": 0.6,
+                "fallback_indent": 1.0
+            },
+            "3": {
+                "indent": 0.6,
+                "fallback_indent": 1.0
+            },
+            "4": {
+                "indent": 0.6,
+                "fallback_indent": 1.0
+            }
+        }
+    }
+}
