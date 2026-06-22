@@ -44,7 +44,7 @@ class BinanceListenKeyManager:
             headers={"X-MBX-APIKEY": self.api_key},
         )
 
-        logger.info("[BINANCE] listenKey created & activated")
+        logger.info(f"[BINANCE] listenKey created & activated: {self.listen_key[:5]}... (length: {len(self.listen_key)})")
         return self.listen_key
 
     async def _keepalive_loop(self):
@@ -106,25 +106,38 @@ class PositionStream:
 
     async def _create_session(self) -> aiohttp.ClientSession:
         timeout = aiohttp.ClientTimeout(total=None)
-        logger.info("[MASTER WS] direct connection")
-        return aiohttp.ClientSession(timeout=timeout, trust_env=False)
+        logger.info("[MASTER WS] direct connection - creating session with specific headers")
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            "Accept": "application/json",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Connection": "keep-alive"
+        }
+        return aiohttp.ClientSession(timeout=timeout, trust_env=False, headers=headers)
 
     async def _connect(self) -> bool:
         try:
-            logger.info("[MASTER WS] connecting...")
+            logger.info(f"[MASTER WS] connecting to {self.ws_url}...")
             self.websocket = await self.session.ws_connect(
                 self.ws_url,
                 autoping=True,
-                heartbeat=30,  # Отправляем PING каждые 30 секунд. Если нет ответа - дроп и реконнект
-                receive_timeout=60,  # Если ничего не получаем 60 сек - дроп и реконнект
                 max_msg_size=0,
                 timeout=15,
+                headers={
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                    "Origin": "https://fapi.binance.com",
+                    "Host": "fstream.binance.com",
+                    "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits"
+                }
             )
             self.is_connected = True
-            logger.info("[MASTER WS] connected")
+            logger.info(f"[MASTER WS] connected successfully. Status: {self.websocket.closed}")
             return True
+        except aiohttp.WSServerHandshakeError as e:
+            logger.error(f"[MASTER WS] handshake failed: status={e.status}, message={e.message}, headers={e.headers}")
+            return False
         except Exception as e:
-            logger.warning(f"[MASTER WS] connect failed: {e}")
+            logger.error(f"[MASTER WS] connect failed: {type(e).__name__} - {e}", exc_info=True)
             return False
 
     async def _disconnect(self):
@@ -183,19 +196,23 @@ class PositionStream:
     async def _handle_messages(self):
         while not self._external_stop and not self.stop_flag():
             try:
-                # receive() будет прервано aiohttp если сработает heartbeat или receive_timeout
-                msg = await self.websocket.receive()
+                msg = await asyncio.wait_for(
+                    self.websocket.receive(),
+                    timeout=5.0,
+                )
             except asyncio.TimeoutError:
-                logger.warning("[MASTER WS] TimeoutError (heartbeat or receive_timeout missed). Forcing reconnect...")
-                raise RuntimeError("ws_timeout")
+                logger.info("[MASTER WS] 5s timeout - waiting for messages...")
+                continue
 
             if msg.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.ERROR):
                 logger.warning(f"[MASTER WS] socket closed: {msg.type}")
                 raise RuntimeError("ws_closed")
 
             if msg.type != aiohttp.WSMsgType.TEXT:
-                logger.debug(f"[MASTER WS] non-text msg type: {msg.type}")
+                logger.info(f"[MASTER WS] non-text msg type: {msg.type} data: {msg.data}")
                 continue
+
+            logger.info(f"[MASTER WS RAW] {msg.data}")
 
             try:
                 data = json.loads(msg.data)
@@ -248,7 +265,7 @@ class PositionStream:
                 except asyncio.CancelledError:
                     raise
                 except Exception as e:
-                    logger.warning(f"[MASTER WS] cycle failed: {e}")
+                    logger.error(f"[MASTER WS] cycle failed: {type(e).__name__} - {e}", exc_info=True)
 
                 finally:
                     self.ready = False

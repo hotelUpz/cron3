@@ -9,6 +9,11 @@ load_dotenv()
 API_KEY = os.getenv("API_KEY")
 API_SECRET = os.getenv("API_SECRET")
 
+WS_API_KEY = "bfj21Fj0de7mNUEyr0vKgs51OEY06UomexOOmWJWG0KUHUxzkrKkouBncDY8UdcB"
+
+if not API_KEY or not API_SECRET:
+    logger.error("API_KEY or API_SECRET not set in .env")
+
 # Добавляем пути
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -37,7 +42,7 @@ async def async_main():
     # 2. Setup Stream
     stop_flag = False
     stream = PositionStream(
-        api_key=API_KEY,
+        api_key=WS_API_KEY,
         stop_flag=lambda: stop_flag,
         monitor=monitor,
         target_symbols={SYMBOL},

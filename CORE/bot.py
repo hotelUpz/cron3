@@ -136,6 +136,7 @@ class BotCore:
                         if new_avg > 0:
                             state.avg_entry_price = new_avg
                             state.total_volume = new_vol
+                            state.set_in_position(True)
                 logger.info(f"[{symbol}] {side} REST fallback applied! New avg_entry_price: {state.avg_entry_price}")
             except Exception as e:
                 logger.error(f"[{symbol}] {side} REST fallback failed: {e}")
@@ -281,6 +282,21 @@ class BotCore:
 
                     if signal_tasks:
                         await asyncio.gather(*signal_tasks)
+                        
+                    # --- REST Failsafe (Каждые 15 секунд проверяем, не закрыта ли позиция вручную) ---
+                    # Если позиция открыта в кеше, но вебсокет промолчал о ее закрытии (например по TP или руками)
+                    current_time = time.monotonic()
+                    if not hasattr(self, "_last_rest_sync"):
+                        self._last_rest_sync = current_time
+                        
+                    if current_time - self._last_rest_sync > 15.0:
+                        self._last_rest_sync = current_time
+                        any_open = any(s.in_position for s in states.values())
+                        if any_open:
+                            try:
+                                await self.pos_monitor.sync_from_rest(self.client, [symbol])
+                            except Exception as e:
+                                logger.error(f"[{symbol}] Periodic REST sync failed: {e}")
 
                     # В конце итерации по символу проверяем закрытие позиций
                     await self._check_and_reset_finished_positions(symbol, states, runtime_cfg)
