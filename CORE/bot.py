@@ -121,6 +121,27 @@ class BotCore:
 
         await self.runtime_manager.save_cache(symbol)
 
+        # Дожидаемся обновления avg_entry_price от вебсокета после входа
+        state.pre_avg_price = 0.0
+        sync_success = await Utils.wait_for_fsm_sync(state, timeout_sec=3.0, poll_interval=0.01)
+        
+        if not sync_success:
+            logger.warning(f"[{symbol}] {side} WS did not update avg_entry_price in time at start! Forcing REST fallback...")
+            try:
+                positions = await self.client.fetch_positions(symbol)
+                for p in positions:
+                    if p.get("positionSide") == side:
+                        new_avg = float(p.get("entryPrice", 0.0))
+                        new_vol = float(p.get("positionAmt", 0.0))
+                        if new_avg > 0:
+                            state.avg_entry_price = new_avg
+                            state.total_volume = new_vol
+                logger.info(f"[{symbol}] {side} REST fallback applied! New avg_entry_price: {state.avg_entry_price}")
+            except Exception as e:
+                logger.error(f"[{symbol}] {side} REST fallback failed: {e}")
+        else:
+            logger.info(f"[{symbol}] {side} FSM synced at start! New avg_entry_price: {state.avg_entry_price}")
+
         # 2. Математика расчета объема и TP
         await self.tp_manager.place_take_profit(self.client, symbol, side, current_price, self.spec_data, self.fsm_states[symbol][side], volume=volume)
 
