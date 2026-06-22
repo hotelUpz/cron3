@@ -4,8 +4,19 @@
         "invest_size": 100,
         "leverage": 10,
         "margin_type": "ISOLATED",
-        "tp_id": null,
+        "total_volume": 0.0,
+        "avg_entry_price": 0.0,
+        "pre_avg_price": 0.0,
+        "initial_entry_price": 0.0,
         "open_time": 0,
+        "current_grid_level": "0",
+        "next_avg_price": null,
+        "next_fallback_price": null,
+        "in_position": false,
+        "in_position_papper": false,
+        "is_finished": false,
+        "pending_avg": false,
+        "pending_rolling_tp": false,
         "_comment_margin_type": "Valid values: CROSSED | ISOLATED",
         "grid": {
             "0": {
@@ -42,23 +53,33 @@
         "tp_map": {
             "0": {
                 "indent": 0.6,
-                "fallback_indent": 1.0
+                "fallback_indent": 1.0,
+                "price": null,
+                "is_active": false
             },
             "1": {
                 "indent": 0.6,
-                "fallback_indent": 1.0
+                "fallback_indent": 1.0,
+                "price": null,
+                "is_active": false
             },
             "2": {
                 "indent": 0.6,
-                "fallback_indent": 1.0
+                "fallback_indent": 1.0,
+                "price": null,
+                "is_active": false
             },
             "3": {
                 "indent": 0.6,
-                "fallback_indent": 1.0
+                "fallback_indent": 1.0,
+                "price": null,
+                "is_active": false
             },
             "4": {
                 "indent": 0.6,
-                "fallback_indent": 1.0
+                "fallback_indent": 1.0,
+                "price": null,
+                "is_active": false
             }
         }
     },
@@ -67,8 +88,19 @@
         "invest_size": 100,
         "leverage": 10,
         "margin_type": "ISOLATED",
-        "tp_id": null,
+        "total_volume": 0.0,
+        "avg_entry_price": 0.0,
+        "pre_avg_price": 0.0,
+        "initial_entry_price": 0.0,
         "open_time": 0,
+        "current_grid_level": "0",
+        "next_avg_price": null,
+        "next_fallback_price": null,
+        "in_position": false,
+        "in_position_papper": false,
+        "is_finished": false,
+        "pending_avg": false,
+        "pending_rolling_tp": false,
         "_comment_margin_type": "Valid values: CROSSED | ISOLATED",
         "grid": {
             "0": {
@@ -105,23 +137,33 @@
         "tp_map": {
             "0": {
                 "indent": 0.6,
-                "fallback_indent": 1.0
+                "fallback_indent": 1.0,
+                "price": null,
+                "is_active": false
             },
             "1": {
                 "indent": 0.6,
-                "fallback_indent": 1.0
+                "fallback_indent": 1.0,
+                "price": null,
+                "is_active": false
             },
             "2": {
                 "indent": 0.6,
-                "fallback_indent": 1.0
+                "fallback_indent": 1.0,
+                "price": null,
+                "is_active": false
             },
             "3": {
                 "indent": 0.6,
-                "fallback_indent": 1.0
+                "fallback_indent": 1.0,
+                "price": null,
+                "is_active": false
             },
             "4": {
                 "indent": 0.6,
-                "fallback_indent": 1.0
+                "fallback_indent": 1.0,
+                "price": null,
+                "is_active": false
             }
         }
     }

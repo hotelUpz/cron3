@@ -320,6 +320,26 @@ class BinanceClient:
         return self.validator.validate_cancel_all(data)
 
     # ==================================================
+    # CANCEL FOR SPECIFIC SIDE
+    # ==================================================
+    async def cancel_orders_for_side(self, symbol: str, position_side: str):
+        """Отменяет все открытые ордера по символу для указанной стороны (LONG или SHORT)."""
+        open_orders = await self.fetch_open_orders(symbol)
+        if not open_orders:
+            return {"success": True, "raw": [], "err": None}
+            
+        ids_to_cancel = []
+        for order in open_orders:
+            if order.get("positionSide") == position_side:
+                ids_to_cancel.append(order.get("orderId"))
+                
+        if not ids_to_cancel:
+            return {"success": True, "raw": [], "err": None}
+            
+        logger.info(f"[{symbol}] {position_side} Found {len(ids_to_cancel)} active orders. Canceling...")
+        return await self.cancel_limit_orders(symbol, ids_to_cancel)
+
+    # ==================================================
     # POSITIONS
     # ==================================================
     async def fetch_positions(self, symbol: Optional[str] = None) -> List[dict]:
@@ -345,27 +365,27 @@ class BinanceClient:
             return positions
         return []
     
-    # # ==================================================
-    # # OPEN ORDERS
-    # # ==================================================
-    # async def fetch_open_orders(self, symbol: Optional[str] = None) -> List[dict]:
+    # ==================================================
+    # OPEN ORDERS
+    # ==================================================
+    async def fetch_open_orders(self, symbol: Optional[str] = None) -> List[dict]:
 
-    #     params = {"recvWindow": 20000}
+        params = {"recvWindow": 20000}
 
-    #     if symbol:
-    #         params["symbol"] = symbol
+        if symbol:
+            params["symbol"] = symbol
 
-    #     data = await self._request(
-    #         "GET",
-    #         "https://fapi.binance.com/fapi/v1/openOrders",
-    #         params=params,
-    #         signed=True,
-    #     )
+        data = await self._request(
+            "GET",
+            "https://fapi.binance.com/fapi/v1/openOrders",
+            params=params,
+            signed=True,
+        )
 
-    #     if isinstance(data, list):
-    #         return data
+        if isinstance(data, list):
+            return data
 
-    #     return []
+        return []
 
     # ==================================================
     # LEVERAGE

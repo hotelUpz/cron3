@@ -31,8 +31,16 @@ def main():
         
     except KeyboardInterrupt:
         logger.info("Ctrl+C detected. Shutting down...")
+        try:
+            asyncio.run(bot.shutdown())
+        except Exception:
+            pass
     except Exception as e:
         logger.exception("Fatal error: %s", e)
+        try:
+            asyncio.run(bot.shutdown())
+        except Exception:
+            pass
 
 
 if __name__ == "__main__":
@@ -46,7 +54,10 @@ if __name__ == "__main__":
 # # ssh-add ssh_key.txt
 # # git remote set-url origin git@github.com:hotelUpz/uranus_bot.git
 # # source .ssh-autostart.sh
-# # git push --set-upstream origin master
+# В терминале Git Bash, находясь в папке с проектом:
+# source /c/Users/user/Desktop/My_Pro/HP_EliteBook_735/WORKSPACE/TRADING_SYSTEM/COMMON/.ssh-autostart.sh
+
+# git push --set-upstream origin master
 # # git config --global push.autoSetupRemote true
 # # ssh -T git@github.com 
 # # git log -1

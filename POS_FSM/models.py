@@ -3,7 +3,7 @@
 # Role: Модели состояний FSM
 # ==============================================================================
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 @dataclass
 class PositionState:
@@ -25,6 +25,9 @@ class PositionState:
     pending_avg: bool = False
     pending_rolling_tp: bool = False
     
+    grid: dict = field(default_factory=dict)
+    tp_map: dict = field(default_factory=dict)
+    
     def set_in_position(self, status: bool):
         self.in_position = status
         if status:
@@ -45,3 +48,5 @@ class PositionState:
         self.next_avg_price = None
         self.next_fallback_price = None
         self.current_grid_level = "0"
+        self.grid.clear()
+        self.tp_map.clear()

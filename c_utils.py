@@ -5,9 +5,9 @@
 
 # c_utils.py
 
-from __future__ import annotations
 from typing import *
 from datetime import datetime
+import asyncio
 import re
 import time
 import hashlib
@@ -182,5 +182,19 @@ class Utils:
                 json.dump(data, f, indent=4, ensure_ascii=False)
         except Exception:
             pass
+
+    @staticmethod
+    async def wait_for_fsm_sync(state, timeout_sec: float = 3.0, poll_interval: float = 0.01) -> bool:
+        """
+        Ожидает обновления средней цены входа от вебсокета (FSM sync).
+        Возвращает True если цена обновилась (sync success), False если произошел таймаут.
+        """
+        max_cycles = int(timeout_sec / poll_interval)
+        wait_cycles = 0
+        while state.avg_entry_price == state.pre_avg_price and wait_cycles < max_cycles:
+            await asyncio.sleep(poll_interval)
+            wait_cycles += 1
+        
+        return state.avg_entry_price != state.pre_avg_price
 
 # можно и нужно добавить метод расчета количества контракта для ордеров с соблюдением округлителей.

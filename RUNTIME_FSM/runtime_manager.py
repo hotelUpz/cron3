@@ -36,52 +36,100 @@ class RuntimeFsmManager:
             
             if sym not in self.locks:
                 self.locks[sym] = asyncio.Lock()
+
+    def populate_fsm_from_cache(self, fsm_states: dict):
+        """
+        Инициализируем PositionState из рантайм-кеша при старте (до REST-синхронизации).
+        Копируем все переменные стейта из JSON.
+        """
+        import copy
+        for symbol, states in fsm_states.items():
+            cache = self.caches.get(symbol, {})
+            for side in ("LONG", "SHORT"):
+                state = states.get(side)
+                if not state:
+                    continue
+                side_cache = cache.get(side, {})
+                if not side_cache:
+                    continue
+                    
+                # Загружаем простые переменные
+                state.total_volume = side_cache.get("total_volume", 0.0)
+                state.avg_entry_price = side_cache.get("avg_entry_price", 0.0)
+                state.pre_avg_price = side_cache.get("pre_avg_price", 0.0)
+                state.initial_entry_price = side_cache.get("initial_entry_price", 0.0)
+                state.open_time = side_cache.get("open_time", 0)
+                state.current_grid_level = side_cache.get("current_grid_level", "0")
+                state.next_avg_price = side_cache.get("next_avg_price")
+                state.next_fallback_price = side_cache.get("next_fallback_price")
+                
+                state.in_position = side_cache.get("in_position", False)
+                state.in_position_papper = side_cache.get("in_position_papper", False)
+                state.is_finished = side_cache.get("is_finished", False)
+                state.pending_avg = side_cache.get("pending_avg", False)
+                state.pending_rolling_tp = side_cache.get("pending_rolling_tp", False)
+                
+                # Копируем словари
+                state.grid = copy.deepcopy(side_cache.get("grid", {}))
+                state.tp_map = copy.deepcopy(side_cache.get("tp_map", {}))
                 
     # =========================================================================
     # СИНХРОНИЗАЦИЯ ПОСЛЕ ЗАПУСКА СТРИМА И СНЕПШОТОВ
     # =========================================================================
 
-    async def sync_with_fsm(self, fsm_states: dict):
+    async def sync_with_fsm(self, fsm_states: dict, force_save: bool = False):
         """
-        Метод-синхронизатор. Вызывается из BotCore ПОСЛЕ того, как мы получили 
-        актуальный слепок позиций с биржи (через REST или стрим).
-        Приводит json-кеш в соответствие с суровой реальностью биржи.
+        Метод-синхронизатор. Сериализует актуальный PositionState обратно в json-кеш.
+        Работает как "дамп" оперативной памяти на HDD.
         """
+        import copy
         for symbol, cache in self.caches.items():
             sym_states = fsm_states.get(symbol, {})
-            needs_save = False
+            needs_save = force_save
             
             for side in ("LONG", "SHORT"):
                 state = sym_states.get(side)
                 if not state:
                     continue
                 
-                side_cache = cache.get(side, {})
-                grid = side_cache.get("grid", {})
-                grid_0 = grid.get("0", {})
+                if side not in cache:
+                    cache[side] = {}
+                side_cache = cache[side]
                 
-                # Случай А: Биржа говорит, что позиции нет, а рантайм верит, что есть.
-                if not state.in_position and grid_0.get("is_active"):
-                    logger.warning(f"[{symbol}] {side} SYNC: На бирже позиции НЕТ, а в кеше висит 'is_active'. Сбрасываем рантайм...")
-                    self.reset_side_to_default(symbol, side)
-                    needs_save = True
+                # Формируем слепок текущего стейта
+                new_state_snapshot = {
+                    "total_volume": state.total_volume,
+                    "avg_entry_price": state.avg_entry_price,
+                    "pre_avg_price": state.pre_avg_price,
+                    "initial_entry_price": state.initial_entry_price,
+                    "open_time": state.open_time,
+                    "current_grid_level": state.current_grid_level,
+                    "next_avg_price": state.next_avg_price,
+                    "next_fallback_price": state.next_fallback_price,
+                    "in_position": state.in_position,
+                    "in_position_papper": state.in_position_papper,
+                    "is_finished": state.is_finished,
+                    "pending_avg": state.pending_avg,
+                    "pending_rolling_tp": state.pending_rolling_tp,
+                    "grid": copy.deepcopy(state.grid),
+                    "tp_map": copy.deepcopy(state.tp_map),
+                }
                 
-                # Случай Б: На бирже позиция ЕСТЬ, а рантайм не в курсе.
-                elif state.in_position and not grid_0.get("is_active"):
-                    logger.warning(f"[{symbol}] {side} SYNC: На бирже позиция ЕСТЬ, а в кеше она не активна. Синхронизируем...")
-                    if "grid" not in self.caches[symbol][side]:
-                        self.caches[symbol][side]["grid"] = {"0": {}}
-                    self.caches[symbol][side]["grid"]["0"]["is_active"] = True
-                    self.caches[symbol][side]["grid"]["0"]["price"] = state.avg_entry_price
+                changed = False
+                for k, v in new_state_snapshot.items():
+                    if side_cache.get(k) != v:
+                        changed = True
+                        side_cache[k] = v
+                
+                if changed:
                     needs_save = True
-                    
+
             if needs_save:
                 await self.save_cache(symbol)
 
-    def reset_side_to_default(self, symbol: str, side: str):
+    def reset_state_to_default(self, symbol: str, side: str, state):
         """
-        Сбрасывает конфигурацию конкретной стороны для монеты до дефолтной из _base.json.
-        Вызывается при закрытии позиции (обнаружено по стриму) или из торговой лупы при is_finished == True.
+        Сбрасывает стейт позиции до дефолтной раскладки сетки из _base.json.
         """
         base_file = DATA_DIR / "temp" / "_base.json"
         base_data = Utils.read_json_file(base_file)
@@ -89,30 +137,15 @@ class RuntimeFsmManager:
             logger.error(f"Cannot reset {symbol} {side}: _base.json is invalid.")
             return
 
-        if symbol not in self.caches:
-            self.caches[symbol] = {}
+        # Полный сброс переменных
+        state.reset()
         
-        # Глубоко копируем дефолтную сторону
+        # Глубоко копируем дефолтную сторону (вместе со структурами grid и tp_map)
         side_default = json.loads(json.dumps(base_data[side]))
+        state.grid = side_default.get("grid", {})
+        state.tp_map = side_default.get("tp_map", {})
         
-        # Сбрасываем динамические флаги
-        if "grid" in side_default:
-            for _, grid_cfg in side_default["grid"].items():
-                grid_cfg["is_active"] = False
-                grid_cfg["price"] = None
-                
-        if "tp_map" in side_default:
-            for _, tp_cfg in side_default["tp_map"].items():
-                tp_cfg["is_active"] = False
-                tp_cfg["price"] = None
-        else:
-            logger.error(f"[CRITICAL] Секция 'tp_map' ОТСУТСТВУЕТ для {side} при сбросе кеша!")
-
-        side_default["tp_id"] = None
-        side_default["open_time"] = 0
-
-        self.caches[symbol][side] = side_default
-        logger.debug(f"[{symbol}] {side} runtime cache reset to default.")
+        logger.debug(f"[{symbol}] {side} FSM state reset to default.")
 
     async def save_cache(self, symbol: str):
         """Конкурентно-безопасное сохранение in-memory кеша на диск."""

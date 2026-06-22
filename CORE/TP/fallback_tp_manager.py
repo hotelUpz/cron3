@@ -12,7 +12,7 @@ class FallbackTpManager:
     def __init__(self):
         pass
 
-    async def process(self, client, runtime_manager, symbol: str, side: str, state, side_cfg: dict, current_price: float, spec_data: dict):
+    async def process(self, client, runtime_manager, symbol: str, side: str, state, current_price: float, spec_data: dict):
         """Проверяет пробитие страховочной цены (Fallback TP) и бьет по рынку."""
         if not state.in_position or state.is_finished:
             return
@@ -26,7 +26,7 @@ class FallbackTpManager:
             if state.avg_entry_price <= 0:
                 return # Ждем пока сенсоры синхронизируют цену входа
             
-            tp_map = side_cfg.get("tp_map", {})
+            tp_map = state.tp_map
             current_level = state.current_grid_level
             
             if current_level not in tp_map:

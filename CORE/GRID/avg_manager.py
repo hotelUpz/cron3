@@ -6,6 +6,7 @@
 import asyncio
 from c_log import UnifiedLogger
 from CORE._utils import TradeMath
+from c_utils import Utils
 
 logger = UnifiedLogger("AvgManager")
 
@@ -20,9 +21,9 @@ class AverageManager:
         if key in self._grid_calculated:
             self._grid_calculated.remove(key)
 
-    async def _init_grid_prices(self, runtime_manager, symbol: str, side: str, state, side_cfg: dict, spec_data: dict) -> bool:
+    async def _init_grid_prices(self, runtime_manager, symbol: str, side: str, state, spec_data: dict) -> bool:
         """Единожды рассчитывает цены для всей сетки на основе initial_entry_price."""
-        grid = side_cfg["grid"]
+        grid = state.grid
         initial_price = state.initial_entry_price
         
         # Защита: если WS еще не подтянул initial_price, но есть avg_entry_price
@@ -44,26 +45,25 @@ class AverageManager:
                 needs_save = True
 
         if needs_save:
-            await runtime_manager.save_cache(symbol)
+            # Не вызываем save_cache здесь, это будет сделано в sync_with_fsm
+            pass
             
         return True # Расчет проведен
 
-    async def process(self, client, runtime_manager, symbol: str, side: str, state, side_cfg: dict, current_price: float, spec_data: dict, tp_manager):
+    async def process(self, client, runtime_manager, symbol: str, side: str, state, current_price: float, spec_data: dict, tp_manager):
         """Проверяет и выполняет логику усреднения для позиции."""
         if not state.in_position or state.pending_avg:
             return
 
-        grid = side_cfg["grid"]
+        grid = state.grid
 
         # 1. Единоразовый расчет сетки цен
         key = f"{symbol}_{side}"
         if key not in self._grid_calculated:
-            success = await self._init_grid_prices(runtime_manager, symbol, side, state, side_cfg, spec_data)
+            success = await self._init_grid_prices(runtime_manager, symbol, side, state, spec_data)
             if success:
                 self._grid_calculated.add(key)
-                # Подтягиваем свежий снапшот рантайма
-                side_cfg = runtime_manager.caches[symbol][side]
-                grid = side_cfg["grid"]
+                grid = state.grid
             else:
                 return
 
@@ -105,32 +105,23 @@ class AverageManager:
                 
             logger.info(f"[{symbol}] {side} Averaging triggered for level {next_level} at price {target_price} (current: {current_price})")
             
-            # Ставим флаг идемпотентности, запоминаем текущую среднюю и обновляем рантайм
+            # Ставим флаг идемпотентности, запоминаем текущую среднюю
             state.pending_avg = True
             state.pre_avg_price = state.avg_entry_price
             grid[next_level]["is_active"] = True
-            await runtime_manager.save_cache(symbol)
             
             # Асинхронно ставим ордер и ждем завершения полного пайплайна
             await self._execute_averaging_order(
-                client, runtime_manager, symbol, side, side_cfg, next_level, grid[next_level], current_price, spec_data, state, tp_manager
+                client, runtime_manager, symbol, side, next_level, grid[next_level], current_price, spec_data, state, tp_manager
             )
 
-    async def _execute_averaging_order(self, client, runtime_manager, symbol, side, side_cfg, level_str, level_data, current_price, spec_data, state, tp_manager):
-        invest_size = side_cfg["invest_size"]
+    async def _execute_averaging_order(self, client, runtime_manager, symbol, side, level_str, level_data, current_price, spec_data, state, tp_manager):
+        invest_size = runtime_manager.caches[symbol][side].get("invest_size", 100) # берем из статического кэша
         volume_pct = level_data["volume"]
         
-        # 1. ОТМЕНА СТАРОГО ТЕЙК ПРОФИТА ДО УСРЕДНЕНИЯ
-        old_tp_id = side_cfg.get("tp_id")
-        if old_tp_id:
-            logger.info(f"[{symbol}] {side} Canceling old TP {old_tp_id} before averaging...")
-            res_cancel = await client.cancel_order(symbol, old_tp_id)
-            if not res_cancel.success:
-                logger.warning(f"[{symbol}] Failed to cancel TP {old_tp_id} before avg: {res_cancel.msg}")
-            
-            # Очищаем tp_id в рантайме
-            side_cfg["tp_id"] = None
-            await runtime_manager.save_cache(symbol)
+        # 1. ОТМЕНА СТАРЫХ ЛИМИТНЫХ ОРДЕРОВ (ВКЛЮЧАЯ ТЕЙК ПРОФИТ) ДО УСРЕДНЕНИЯ
+        logger.info(f"[{symbol}] {side} Canceling all limit orders before averaging...")
+        await client.cancel_orders_for_side(symbol, side)
 
         volume = TradeMath.calculate_order_volume(invest_size, volume_pct, current_price, spec_data, symbol)
         order_side = "BUY" if side == "LONG" else "SELL"
@@ -151,25 +142,21 @@ class AverageManager:
             level_data["is_active"] = False
             state.pending_avg = False
             state.next_avg_price = None
-            await runtime_manager.save_cache(symbol)
             return
 
         logger.info(f"[{symbol}] {side} Averaging order SUCCESS for level {level_str}. Waiting for FSM sync...")
         
         # 3. ДОЖИДАЕМСЯ ОБНОВЛЕНИЯ avg_entry_price ОТ ВЕБСОКЕТА
         # Предохранитель от бесконечного зависания: ждем максимум 3 секунды
-        wait_cycles = 0
-        while state.avg_entry_price == state.pre_avg_price and wait_cycles < 300:
-            await asyncio.sleep(0.01)
-            wait_cycles += 1
+        sync_success = await Utils.wait_for_fsm_sync(state, timeout_sec=3.0, poll_interval=0.01)
             
-        if state.avg_entry_price == state.pre_avg_price:
+        if not sync_success:
             logger.warning(f"[{symbol}] {side} WS did not update avg_entry_price in time! Proceeding with math or stale price.")
         else:
             logger.info(f"[{symbol}] {side} FSM synced! New avg_entry_price: {state.avg_entry_price}")
 
         # 4. ПОСТАНОВКА НОВОГО ЛИМИТНОГО ТЕЙК ПРОФИТА
-        await tp_manager.place_take_profit(client, symbol, side, side_cfg, current_price, spec_data, state)
+        await tp_manager.place_take_profit(client, symbol, side, current_price, spec_data, state)
 
         # Освобождаем флаги
         state.pending_avg = False

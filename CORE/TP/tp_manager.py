@@ -12,15 +12,24 @@ class TakeProfitManager:
     def __init__(self, runtime_manager):
         self.runtime_manager = runtime_manager
 
-    async def place_take_profit(self, client, symbol: str, side: str, side_cfg: dict, current_price: float, spec_data: dict, state, volume: float = None):
-        """Расчет и постановка лимитного TP ордера."""
+    async def place_take_profit(self, client, symbol: str, side: str, current_price: float, spec_data: dict, state, volume: float = None):
+        """Расчет и постановка лимитного TP ордера с ретраями и предварительной отменой."""
         from CORE._utils import RiskCalculatingUtils
+        import asyncio
         
-        grid = side_cfg["grid"]
+        # Предварительно отменяем все лимитки для этой стороны
+        logger.info(f"[{symbol}] {side} Canceling old limit orders before placing new TP...")
+        await client.cancel_orders_for_side(symbol, side)
+
+        grid = state.grid
         current_level_str = RiskCalculatingUtils.get_current_grid_level(grid)
         
-        tp_map = side_cfg["tp_map"]
-        current_tp = tp_map[current_level_str]
+        tp_map = state.tp_map
+        current_tp = tp_map.get(current_level_str)
+        if not current_tp:
+            logger.error(f"[{symbol}] {side} Missing TP config for level {current_level_str}")
+            return False
+            
         tp_indent = current_tp["indent"]
         
         # Расчет цены TP
@@ -34,33 +43,35 @@ class TakeProfitManager:
         # Сторона ордера: обратная стороне позиции
         order_side = "SELL" if side == "LONG" else "BUY"
         
-        logger.info(f"[{symbol}] Placing {side} take profit limit order at {tp_price}. Vol: {volume}")
-        res = await client.make_order(
-            symbol=symbol,
-            qty=volume,
-            side=order_side,
-            position_side=side,
-            market_type="LIMIT",
-            price=tp_price
-        )
-        
-        if res.success and res.data:
-            order_id = res.data.get("orderId")
-            if order_id:
-                logger.info(f"[{symbol}] TP order successfully placed. ID: {order_id}")
-                
-                # Фиксируем ID в рантайме
-                self.runtime_manager.caches[symbol][side]["tp_id"] = order_id
-                
-                # Помечаем tp_map текущий уровень как активный
-                if "tp_map" not in self.runtime_manager.caches[symbol][side]:
-                    self.runtime_manager.caches[symbol][side]["tp_map"] = {current_level_str: {}}
+        max_retries = 3
+        for attempt in range(1, max_retries + 1):
+            logger.info(f"[{symbol}] Placing {side} take profit limit order at {tp_price}. Vol: {volume} (Attempt {attempt}/{max_retries})")
+            res = await client.make_order(
+                symbol=symbol,
+                qty=volume,
+                side=order_side,
+                position_side=side,
+                market_type="LIMIT",
+                price=tp_price
+            )
+            
+            if res.success and res.data:
+                order_id = res.data.get("orderId")
+                if order_id:
+                    logger.info(f"[{symbol}] TP order successfully placed. ID: {order_id}")
                     
-                self.runtime_manager.caches[symbol][side]["tp_map"][current_level_str]["is_active"] = True
-                self.runtime_manager.caches[symbol][side]["tp_map"][current_level_str]["price"] = tp_price
+                    # Помечаем tp_map текущий уровень как активный
+                    if current_level_str not in state.tp_map:
+                        state.tp_map[current_level_str] = {}
+                        
+                    state.tp_map[current_level_str]["is_active"] = True
+                    state.tp_map[current_level_str]["price"] = tp_price
+                    
+                    # Не вызываем save_cache здесь, sync_with_fsm сделает это
+                    return True
+                    
+            logger.error(f"[{symbol}] Failed to place TP for {side}: {res.msg}")
+            if attempt < max_retries:
+                await asyncio.sleep(1.0)
                 
-                await self.runtime_manager.save_cache(symbol)
-                return True
-                
-        logger.error(f"[{symbol}] Failed to place TP for {side}: {res.msg}")
         return False

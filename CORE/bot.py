@@ -121,7 +121,7 @@ class BotCore:
         await self.runtime_manager.save_cache(symbol)
 
         # 2. Математика расчета объема и TP
-        await self.tp_manager.place_take_profit(self.client, symbol, side, side_cfg, current_price, self.spec_data, self.fsm_states[symbol][side], volume=volume)
+        await self.tp_manager.place_take_profit(self.client, symbol, side, current_price, self.spec_data, self.fsm_states[symbol][side], volume=volume)
 
     async def _check_and_reset_finished_positions(self, symbol: str, states: dict, runtime_cfg: dict):
         """Проверяет флаги is_finished, пишет аналитику, отменяет ордера и сбрасывает рантайм.""" 
@@ -139,21 +139,15 @@ class BotCore:
                 open_time = runtime_cfg.get(side, {}).get("open_time", 0)
                 close_time = int(time.time() * 1000)
                 self.analytics.record_finished_position(self.client, symbol, side, open_time, close_time)
+                # Снимаем все тейк-профит ордера этой стороны
+                logger.info(f"[{symbol}] {side} Canceling all limit orders for this side")
+                await self.client.cancel_orders_for_side(symbol, side)
                 
-                # Снимаем тейк-профит ордер, если он был
-                tp_id = runtime_cfg.get(side, {}).get("tp_id")
-                if tp_id:
-                    logger.info(f"[{symbol}] {side} Canceling TP order {tp_id}")
-                    await self.client.cancel_limit_orders(symbol, [tp_id])
-                
-                # Сбрасываем рантайм-кеш в памяти
-                self.runtime_manager.reset_side_to_default(symbol, side)
+                # Сбрасываем рантайм-кеш в памяти и восстанавливаем стейт до дефолта
+                self.runtime_manager.reset_state_to_default(symbol, side, states[side])
                 
                 # Сбрасываем флаг калькуляции сетки в avg_manager
                 self.avg_manager.reset(symbol, side)
-                
-                # Возвращаем PositionState в дефолтное состояние (сброс is_finished и данных)
-                states[side].reset()
                 
                 # Если позиций две, то сбрасываем их с задержкой, чтобы биржа не забанила
                 if idx < len(sides_to_reset) - 1:
@@ -183,6 +177,9 @@ class BotCore:
         
         self.pos_monitor = PositionMonitor(states_cache=self.fsm_states, target_symbols=self.symbols)
         
+        # ПОДЧИНЯЕМ PositionState загруженному рантайм-кешу
+        self.runtime_manager.populate_fsm_from_cache(self.fsm_states)
+        
         api_key = os.getenv("BINANCE_API_KEY", "")
         self.pos_stream = PositionStream(
             api_key=api_key,
@@ -205,14 +202,14 @@ class BotCore:
         logger.info("Streams and REST synced! Running initial RuntimeFSM Sync...")
         await self.runtime_manager.sync_with_fsm(self.fsm_states)
 
-        try:
-            while self.is_running:
+        while self.is_running:
+            try:
                 
-                # ===== ОПОРНАЯ ТОЧКА ДЛЯ ТЕСТИРОВАНИЯ =====               
-                logger.info(f"DEBUG LOOP: Prices snapshot: {list(self.prices.items())[:3]}...")
-                # Скипаем дальнейший проход для отладкыи
-                await asyncio.sleep(TIME_SLACK_SEC)
-                # continue
+                # # ===== ОПОРНАЯ ТОЧКА ДЛЯ ТЕСТИРОВАНИЯ =====               
+                # logger.info(f"DEBUG LOOP: Prices snapshot: {list(self.prices.items())[:3]}...")
+                # # Скипаем дальнейший проход для отладкыи
+                # await asyncio.sleep(TIME_SLACK_SEC)
+                # # continue
                 # ==========================================
 
                 # Источник сигнала для позиции, которая не в позиции
@@ -251,8 +248,8 @@ class BotCore:
                                 signal_tasks.append(self._process_signal(symbol, side, side_cfg, current_price, concurrent_mode=is_concurrent))
                         else:
                             # Позиция уже открыта (или в процессе in_position_papper)
-                            await self.avg_manager.process(self.client, self.runtime_manager, symbol, side, state, side_cfg, current_price, self.spec_data, self.tp_manager)
-                            await self.fallback_tp_manager.process(self.client, self.runtime_manager, symbol, side, state, side_cfg, current_price, self.spec_data)
+                            await self.avg_manager.process(self.client, self.runtime_manager, symbol, side, state, current_price, self.spec_data, self.tp_manager)
+                            await self.fallback_tp_manager.process(self.client, self.runtime_manager, symbol, side, state, current_price, self.spec_data)
 
                     if signal_tasks:
                         await asyncio.gather(*signal_tasks)
@@ -260,18 +257,27 @@ class BotCore:
                     # В конце итерации по символу проверяем закрытие позиций
                     await self._check_and_reset_finished_positions(symbol, states, runtime_cfg)
                 
+                # Синхронизация рантаймов при изменениях в PositionState (постоянный контроль)
+                await self.runtime_manager.sync_with_fsm(self.fsm_states)
+
                 # Предотвращение блокировки event loop
                 await asyncio.sleep(TIME_SLACK_SEC)
 
-        except asyncio.CancelledError:
-            logger.info("_game_loop cancelled.")
-        finally:
-            self.is_running = False
-            spec_task.cancel()
-            self.price_stream.stop()
-            price_task.cancel()
-            await self.client.shutdown()
-            await asyncio.gather(spec_task, price_task, return_exceptions=True)
+            except asyncio.CancelledError:
+                logger.info("_game_loop cancelled.")
+                break
+            except Exception as e:
+                logger.error(f"Error in _game_loop: {e}", exc_info=True)
+                await asyncio.sleep(TIME_SLACK_SEC)
+                
+        self.is_running = False
+        spec_task.cancel()
+        self.price_stream.stop()
+        price_task.cancel()
+        # Попытка быстрого сохранения стейтов при нормальном завершении
+        await self.runtime_manager.sync_with_fsm(self.fsm_states, force_save=True)
+        await self.client.shutdown()
+        await asyncio.gather(spec_task, price_task, return_exceptions=True)
 
     async def start(self):
         """Запуск бота."""
@@ -280,3 +286,21 @@ class BotCore:
     def stop(self):
         """Остановка бота."""
         self.is_running = False
+
+    async def shutdown(self):
+        """Гарантированное сохранение рантайма (последний чих) и закрытие сессий."""
+        logger.info("Executing graceful BotCore shutdown...")
+        self.is_running = False
+        try:
+            # Принудительно дампим стейты
+            if hasattr(self, 'fsm_states') and hasattr(self, 'runtime_manager'):
+                await self.runtime_manager.sync_with_fsm(self.fsm_states, force_save=True)
+                logger.info("Final FSM snapshot saved to runtime cache.")
+        except Exception as e:
+            logger.error(f"Error saving FSM snapshot during shutdown: {e}")
+            
+        try:
+            if hasattr(self, 'client'):
+                await self.client.shutdown()
+        except Exception:
+            pass
