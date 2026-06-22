@@ -33,9 +33,13 @@ class FallbackTpManager:
                 return
                 
             fallback_indent_pct = tp_map[current_level]["fallback_indent"]
-            state.next_fallback_price = TradeMath.calculate_take_profit_price(
+            fb_price = TradeMath.calculate_take_profit_price(
                 state.avg_entry_price, fallback_indent_pct, side, spec_data, symbol
             )
+            state.next_fallback_price = fb_price
+            
+            # Сохраняем точный рассчитанный фолбэк-прайс (от средней цены входа) обратно в tp_map
+            tp_map[current_level]["fallback_price"] = fb_price
 
         # 2. Горячий путь (O(1) сравнение)
         triggered = False
@@ -66,6 +70,6 @@ class FallbackTpManager:
                 logger.info(f"[{symbol}] Fallback Market Order successfully executed.")
                 state.is_finished = True  # Только теперь говорим оркестратору, что всё
             else:
-                logger.error(f"[{symbol}] Failed to execute Fallback Market Order: {res.msg}")
+                logger.error(f"[{symbol}] Failed to execute Fallback Market Order: {res.error_msg}")
             
             state.pending_rolling_tp = False  # Снимаем блокировку

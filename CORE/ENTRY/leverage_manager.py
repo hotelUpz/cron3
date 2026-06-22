@@ -5,14 +5,24 @@
 
 from typing import Dict
 from c_log import UnifiedLogger
+from c_utils import Utils
+from consts import DATA_DIR
 
 logger = UnifiedLogger("LeverageManager")
+CACHE_FILE = DATA_DIR / "temp" / "leverage_cache.json"
 
 class LeverageManager:
     def __init__(self):
-        # Кэш в формате: "SYMBOL_MARGINTYPE_LEVERAGE" -> bool
-        # Пример: "BTCUSDT_ISOLATED_10": True
-        self._cache: Dict[str, bool] = {}
+        # Кэш персистентный, сохраняется в temp
+        self._cache: Dict[str, bool] = self._load_cache()
+
+    def _load_cache(self) -> Dict[str, bool]:
+        if CACHE_FILE.exists():
+            return Utils.read_json_file(CACHE_FILE) or {}
+        return {}
+
+    def _save_cache(self):
+        Utils.write_json_file(CACHE_FILE, self._cache)
 
     async def set_leverage_and_margin(self, client, symbol: str, side_cfg: dict):
         """
@@ -33,16 +43,17 @@ class LeverageManager:
         if not margin_res.success:
             # Binance возвращает ошибку, если тип маржи уже установлен (No need to change margin type.)
             # Это можно игнорировать как ошибку, но запишем лог
-            if margin_res.msg and "No need to change" in margin_res.msg:
+            if margin_res.error_msg and "No need to change" in margin_res.error_msg:
                 logger.debug(f"[{symbol}] Margin type {margin_type} is already set on exchange.")
             else:
-                logger.warning(f"[{symbol}] Failed to set margin type {margin_type}: {margin_res.msg}")
+                logger.warning(f"[{symbol}] Failed to set margin type {margin_type}: {margin_res.error_msg}")
                 
         # Установка плеча
         leverage_res = await client.set_leverage(symbol, leverage)
         if not leverage_res.success:
-            logger.error(f"[{symbol}] Failed to set leverage {leverage}: {leverage_res.msg}")
+            logger.error(f"[{symbol}] Failed to set leverage {leverage}: {leverage_res.error_msg}")
         else:
             logger.info(f"[{symbol}] Successfully set leverage to {leverage} and margin type to {margin_type}")
-            # Кешируем успешную установку
+            # Кешируем успешную установку и сохраняем на диск
             self._cache[cache_key] = True
+            self._save_cache()

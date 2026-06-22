@@ -37,12 +37,25 @@ class AverageManager:
         needs_save = False
         for level_str, level_data in grid.items():
             if level_str == "0":
-                continue
-            if level_data.get("price") is None:
+                if not level_data.get("is_active"):
+                    level_data["is_active"] = True
+                    level_data["price"] = initial_price
+                    needs_save = True
+            elif level_data.get("price") is None:
                 indent_pct = level_data["indent"]
                 price = TradeMath.calculate_grid_price(initial_price, indent_pct, side, spec_data, symbol)
                 level_data["price"] = price
                 needs_save = True
+                
+        # Предрасчет цен для фолбеков (экономия ресурсов)
+        for level_str, tp_data in state.tp_map.items():
+            base_price = grid[level_str].get("price")
+            if base_price:
+                if tp_data.get("fallback_price") is None:
+                    fb_indent = tp_data.get("fallback_indent", tp_data["indent"] * 1.5)
+                    fb_price = TradeMath.calculate_take_profit_price(base_price, fb_indent, side, spec_data, symbol)
+                    tp_data["fallback_price"] = fb_price
+                    needs_save = True
 
         if needs_save:
             # Не вызываем save_cache здесь, это будет сделано в sync_with_fsm
@@ -137,7 +150,7 @@ class AverageManager:
         )
         
         if not res.success:
-            logger.error(f"[{symbol}] Failed to open {side} averaging position: {res.msg}")
+            logger.error(f"[{symbol}] Failed to open {side} averaging position: {res.error_msg}")
             # Rollback in case of failure
             level_data["is_active"] = False
             state.pending_avg = False
@@ -151,7 +164,19 @@ class AverageManager:
         sync_success = await Utils.wait_for_fsm_sync(state, timeout_sec=3.0, poll_interval=0.01)
             
         if not sync_success:
-            logger.warning(f"[{symbol}] {side} WS did not update avg_entry_price in time! Proceeding with math or stale price.")
+            logger.warning(f"[{symbol}] {side} WS did not update avg_entry_price in time! Forcing REST fallback...")
+            try:
+                positions = await client.fetch_positions(symbol)
+                for p in positions:
+                    if p.get("positionSide") == side:
+                        new_avg = float(p.get("entryPrice", 0.0))
+                        new_vol = float(p.get("positionAmt", 0.0))
+                        if new_avg > 0:
+                            state.avg_entry_price = new_avg
+                            state.total_volume = new_vol
+                logger.info(f"[{symbol}] {side} REST fallback applied! New avg_entry_price: {state.avg_entry_price}")
+            except Exception as e:
+                logger.error(f"[{symbol}] {side} REST fallback failed: {e}")
         else:
             logger.info(f"[{symbol}] {side} FSM synced! New avg_entry_price: {state.avg_entry_price}")
 

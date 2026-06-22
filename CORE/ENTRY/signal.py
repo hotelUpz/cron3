@@ -54,7 +54,11 @@ class TimeControl():
         # Рассчитываем ближайшую кратную метку времени
         nearest_timestamp = (current_timestamp // self.interval_seconds) * self.interval_seconds
 
-        if self.last_fetch_timestamp is None or nearest_timestamp > self.last_fetch_timestamp:
+        if self.last_fetch_timestamp is None:
+            self.last_fetch_timestamp = nearest_timestamp
+            return False
+
+        if nearest_timestamp > self.last_fetch_timestamp:
             self.last_fetch_timestamp = nearest_timestamp
             return True
 

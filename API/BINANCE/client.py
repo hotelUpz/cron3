@@ -109,7 +109,7 @@ class BinanceClient:
         params: Optional[dict] = None,
         signed: bool = False,
         concurrent_mode: bool = False,
-    ) -> Any:
+    ) -> APIResponse:
         limit = API_CONCURRENT_RATE_LIMIT_SEC if concurrent_mode else API_RATE_LIMIT_SEC
         
         async with self._api_lock:
@@ -157,63 +157,61 @@ class BinanceClient:
                         except Exception:
                             text = ""
 
-                        return {
-                            "code": -1,
-                            "msg": "INVALID_JSON",
-                            "_meta": {
+                        return APIResponse(
+                            success=False,
+                            error_code=-1,
+                            error_msg="INVALID_JSON",
+                            meta={
                                 "http_status": http_status,
                                 "method": method,
                                 "url": url,
                                 "params": safe_params,
                                 "text": (text or "")[:300],
-                            },
+                            }
+                        )
+
+                    is_success = True
+                    error_code = None
+                    error_msg = None
+
+                    if isinstance(data, dict) and "code" in data:
+                        try:
+                            code_val = int(data["code"])
+                            if code_val < 0:
+                                is_success = False
+                                error_code = code_val
+                                error_msg = data.get("msg")
+                        except ValueError:
+                            pass
+                            
+                    return APIResponse(
+                        success=is_success,
+                        data=data,
+                        error_code=error_code,
+                        error_msg=error_msg,
+                        meta={
+                            "http_status": http_status,
+                            "method": method,
+                            "url": url,
+                            "params": safe_params,
                         }
-
-                    # 1) dict -> добавляем _meta и возвращаем
-                    if isinstance(data, dict):
-                        meta = data.get("_meta")
-                        if not isinstance(meta, dict):
-                            data["_meta"] = {}
-                        data["_meta"].update({
-                            "http_status": http_status,
-                            "method": method,
-                            "url": url,
-                            "params": safe_params,
-                        })
-                        # важно: при http != 200 Binance чаще всего отдаёт {code,msg}
-                        return data
-
-                    # 2) list -> возвращаем как есть (иначе сломаешь get_user_assets/openOrders/userTrades)
-                    if isinstance(data, list):
-                        return data
-
-                    # 3) что-то странное (строка/число/None) -> заворачиваем в dict-ошибку
-                    return {
-                        "code": -1,
-                        "msg": "INVALID_RESPONSE_TYPE",
-                        "raw": data,
-                        "_meta": {
-                            "http_status": http_status,
-                            "method": method,
-                            "url": url,
-                            "params": safe_params,
-                            "type": type(data).__name__,
-                        },
-                    }
+                    )
 
         except asyncio.TimeoutError:
-            return {
-                "code": -1,
-                "msg": "TIMEOUT",
-                "_meta": {"method": method, "url": url, "params": safe_params},
-            }
+            return APIResponse(
+                success=False,
+                error_code=-1,
+                error_msg="TIMEOUT",
+                meta={"method": method, "url": url, "params": safe_params}
+            )
 
         except Exception as e:
-            return {
-                "code": -1,
-                "msg": f"EXCEPTION {type(e).__name__}: {e}",
-                "_meta": {"method": method, "url": url, "params": safe_params},
-            }
+            return APIResponse(
+                success=False,
+                error_code=-1,
+                error_msg=f"EXCEPTION {type(e).__name__}: {e}",
+                meta={"method": method, "url": url, "params": safe_params}
+            )
 
     # ==================================================
     # ORDER
@@ -289,21 +287,20 @@ class BinanceClient:
             res = self.validator.validate_cancel(data)
             results.append(res)
 
-            if not res["success"]:
+            if not res.success:
                 errors.append(res)
 
         if errors:
-            return {
-                "success": False,
-                "raw": results,
-                "err": "CANCEL_ERRORS",
-            }
+            return APIResponse(
+                success=False,
+                data=results,
+                error_msg="CANCEL_ERRORS"
+            )
 
-        return {
-            "success": True,
-            "raw": results,
-            "err": None,
-        }
+        return APIResponse(
+            success=True,
+            data=results
+        )
 
     # ==================================================
     # CANCEL ALL
@@ -326,7 +323,7 @@ class BinanceClient:
         """Отменяет все открытые ордера по символу для указанной стороны (LONG или SHORT)."""
         open_orders = await self.fetch_open_orders(symbol)
         if not open_orders:
-            return {"success": True, "raw": [], "err": None}
+            return APIResponse(success=True, data=[])
             
         ids_to_cancel = []
         for order in open_orders:
@@ -334,7 +331,7 @@ class BinanceClient:
                 ids_to_cancel.append(order.get("orderId"))
                 
         if not ids_to_cancel:
-            return {"success": True, "raw": [], "err": None}
+            return APIResponse(success=True, data=[])
             
         logger.info(f"[{symbol}] {position_side} Found {len(ids_to_cancel)} active orders. Canceling...")
         return await self.cancel_limit_orders(symbol, ids_to_cancel)
@@ -354,8 +351,8 @@ class BinanceClient:
             signed=True,
         )
 
-        if isinstance(res, dict) and "positions" in res:
-            positions = res.get("positions", [])
+        if res.success and isinstance(res.data, dict) and "positions" in res.data:
+            positions = res.data.get("positions", [])
             if symbol:
                 sym = (symbol or "").upper()
                 try:
@@ -375,15 +372,15 @@ class BinanceClient:
         if symbol:
             params["symbol"] = symbol
 
-        data = await self._request(
+        res = await self._request(
             "GET",
             "https://fapi.binance.com/fapi/v1/openOrders",
             params=params,
             signed=True,
         )
 
-        if isinstance(data, list):
-            return data
+        if res.success and isinstance(res.data, list):
+            return res.data
 
         return []
 

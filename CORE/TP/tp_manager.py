@@ -32,8 +32,9 @@ class TakeProfitManager:
             
         tp_indent = current_tp["indent"]
         
-        # Расчет цены TP
-        tp_price = TradeMath.calculate_take_profit_price(current_price, tp_indent, side, spec_data, symbol)
+        # Расчет цены TP (строго от средней цены входа, а не от плавающего тикера)
+        base_price = state.avg_entry_price if state.avg_entry_price > 0 else current_price
+        tp_price = TradeMath.calculate_take_profit_price(base_price, tp_indent, side, spec_data, symbol)
         
         # Всегда продаем весь накопленный объем (если volume не передан явно)
         if volume is None:
@@ -58,19 +59,17 @@ class TakeProfitManager:
             if res.success and res.data:
                 order_id = res.data.get("orderId")
                 if order_id:
-                    logger.info(f"[{symbol}] TP order successfully placed. ID: {order_id}")
-                    
+                    logger.info(f"[{symbol}] {side} Take profit LIMIT order placed successfully! ID: {order_id}")
                     # Помечаем tp_map текущий уровень как активный
                     if current_level_str not in state.tp_map:
                         state.tp_map[current_level_str] = {}
                         
                     state.tp_map[current_level_str]["is_active"] = True
-                    state.tp_map[current_level_str]["price"] = tp_price
                     
                     # Не вызываем save_cache здесь, sync_with_fsm сделает это
                     return True
                     
-            logger.error(f"[{symbol}] Failed to place TP for {side}: {res.msg}")
+            logger.error(f"[{symbol}] Failed to place TP for {side}: {res.error_msg}")
             if attempt < max_retries:
                 await asyncio.sleep(1.0)
                 

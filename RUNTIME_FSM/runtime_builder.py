@@ -26,8 +26,9 @@ def build_runtime_caches():
     base_data = Utils.read_json_file(base_file)
     if not base_data:
         logger.error(f"Base template not found or empty at {base_file}")
-        return
+        return False
 
+    created_new = False
     symbols = _CFG.get("symbols", [])
     for symbol in symbols:
         sym_lower = symbol.lower()
@@ -49,12 +50,14 @@ def build_runtime_caches():
                     if "tp_map" in new_data[side]:
                         for tp_id, tp_cfg in new_data[side]["tp_map"].items():
                             tp_cfg["is_active"] = False
-                            tp_cfg["price"] = None
                     else:
                         logger.error(f"[CRITICAL] Секция 'tp_map' ОТСУТСТВУЕТ для {side} в _base.json!")
 
             Utils.write_json_file(target_file, new_data)
             logger.info(f"Created runtime cache for {symbol} at {target_file.name}")
+            created_new = True
+
+    return created_new
 
 def prompt_runtime_check():
     if not AVOID_CHECK_RUNTIME_CFG:

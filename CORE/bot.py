@@ -58,9 +58,8 @@ class BotCore:
         
         self.spec_data = {}
         
-        api_key = os.getenv("BINANCE_API_KEY", "")
-        api_secret = os.getenv("BINANCE_API_SECRET", "")
-        self.client = BinanceClient(api_key=api_key, api_secret=api_secret)
+        from consts import API_KEY, API_SECRET
+        self.client = BinanceClient(api_key=API_KEY, api_secret=API_SECRET)
         
         # Кеш FSM-состояний в формате {symbol: {"LONG": PositionState, "SHORT": PositionState}}
         self.fsm_states = {}
@@ -112,12 +111,14 @@ class BotCore:
             concurrent_mode=concurrent_mode
         )
         if not res.success:
-            logger.error(f"[{symbol}] Failed to open {side} position: {res.msg}")
+            logger.error(f"[{symbol}] Failed to open {side} position: {res.error_msg}")
             return
             
         current_time_ms = int(time.time() * 1000)
-        self.fsm_states[symbol][side].open_time = current_time_ms
+        state = self.fsm_states[symbol][side]
+        state.open_time = current_time_ms
         side_cfg["open_time"] = current_time_ms
+
         await self.runtime_manager.save_cache(symbol)
 
         # 2. Математика расчета объема и TP
@@ -162,8 +163,9 @@ class BotCore:
         
         # ШАГ 1. Сборка и проверка рантайм кешей (создание отсутствующих JSON)
         from RUNTIME_FSM.runtime_builder import build_runtime_caches, prompt_runtime_check
-        build_runtime_caches()
-        prompt_runtime_check()
+        created_new = build_runtime_caches()
+        if created_new:
+            prompt_runtime_check()
         
         self.runtime_manager.load_initial_caches(self.symbols)
         self.runtime_configs = self.runtime_manager.caches
@@ -180,12 +182,13 @@ class BotCore:
         # ПОДЧИНЯЕМ PositionState загруженному рантайм-кешу
         self.runtime_manager.populate_fsm_from_cache(self.fsm_states)
         
-        api_key = os.getenv("BINANCE_API_KEY", "")
+        from consts import API_KEY
         self.pos_stream = PositionStream(
-            api_key=api_key,
+            api_key=API_KEY,
             stop_flag=lambda: not self.is_running,
             monitor=self.pos_monitor,
-            target_symbols=set(self.symbols)
+            target_symbols=set(self.symbols),
+            client=self.client
         )
         pos_task = asyncio.create_task(self.pos_stream.start())
         
@@ -193,7 +196,11 @@ class BotCore:
         
         # Ожидание готовности прайс-стримов
         logger.info("Waiting for price streams to sync...")
-        await self.price_stream_synced.wait()
+        try:
+            await asyncio.wait_for(self.price_stream_synced.wait(), timeout=5.0)
+            logger.info("Price streams synced successfully.")
+        except asyncio.TimeoutError:
+            logger.warning("Timeout waiting for price streams to sync! Proceeding with available prices...")
         
         # Строгая гарантия: забираем начальный стейт позиций по REST
         await self.pos_monitor.sync_from_rest(self.client, self.symbols)
@@ -274,10 +281,11 @@ class BotCore:
         spec_task.cancel()
         self.price_stream.stop()
         price_task.cancel()
+        pos_task.cancel()
         # Попытка быстрого сохранения стейтов при нормальном завершении
         await self.runtime_manager.sync_with_fsm(self.fsm_states, force_save=True)
         await self.client.shutdown()
-        await asyncio.gather(spec_task, price_task, return_exceptions=True)
+        await asyncio.gather(spec_task, price_task, pos_task, return_exceptions=True)
 
     async def start(self):
         """Запуск бота."""

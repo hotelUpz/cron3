@@ -3,7 +3,7 @@
         "enable": true,
         "invest_size": 100,
         "leverage": 10,
-        "margin_type": "ISOLATED",
+        "margin_type": "CROSSED",
         "total_volume": 0.0,
         "avg_entry_price": 0.0,
         "pre_avg_price": 0.0,
@@ -54,31 +54,26 @@
             "0": {
                 "indent": 0.6,
                 "fallback_indent": 1.0,
-                "price": null,
                 "is_active": false
             },
             "1": {
                 "indent": 0.6,
                 "fallback_indent": 1.0,
-                "price": null,
                 "is_active": false
             },
             "2": {
                 "indent": 0.6,
                 "fallback_indent": 1.0,
-                "price": null,
                 "is_active": false
             },
             "3": {
                 "indent": 0.6,
                 "fallback_indent": 1.0,
-                "price": null,
                 "is_active": false
             },
             "4": {
                 "indent": 0.6,
                 "fallback_indent": 1.0,
-                "price": null,
                 "is_active": false
             }
         }
@@ -87,7 +82,7 @@
         "enable": true,
         "invest_size": 100,
         "leverage": 10,
-        "margin_type": "ISOLATED",
+        "margin_type": "CROSSED",
         "total_volume": 0.0,
         "avg_entry_price": 0.0,
         "pre_avg_price": 0.0,
@@ -138,31 +133,26 @@
             "0": {
                 "indent": 0.6,
                 "fallback_indent": 1.0,
-                "price": null,
                 "is_active": false
             },
             "1": {
                 "indent": 0.6,
                 "fallback_indent": 1.0,
-                "price": null,
                 "is_active": false
             },
             "2": {
                 "indent": 0.6,
                 "fallback_indent": 1.0,
-                "price": null,
                 "is_active": false
             },
             "3": {
                 "indent": 0.6,
                 "fallback_indent": 1.0,
-                "price": null,
                 "is_active": false
             },
             "4": {
                 "indent": 0.6,
                 "fallback_indent": 1.0,
-                "price": null,
                 "is_active": false
             }
         }

@@ -34,6 +34,9 @@ class BinanceListenKeyManager:
             headers={"X-MBX-APIKEY": self.api_key},
         ) as r:
             data = await r.json()
+            if "listenKey" not in data:
+                logger.error(f"[BINANCE] Failed to get listenKey. Response: {data}")
+                raise KeyError(f"No listenKey in response: {data}")
             self.listen_key = data["listenKey"]
 
         await self.session.put(
@@ -79,11 +82,13 @@ class PositionStream:
         stop_flag: Callable[[], bool],
         monitor: PositionMonitor,
         target_symbols: Optional[Set[str]] = None,
+        client = None,
     ):
         self.api_key = api_key
         self.stop_flag = stop_flag
         self.monitor = monitor
         self.target_symbols = {s.upper() for s in target_symbols} if target_symbols else set()
+        self.client = client
 
         self.session: Optional[aiohttp.ClientSession] = None
         self.websocket: Optional[aiohttp.ClientWebSocketResponse] = None
@@ -110,6 +115,8 @@ class PositionStream:
             self.websocket = await self.session.ws_connect(
                 self.ws_url,
                 autoping=True,
+                heartbeat=30,  # Отправляем PING каждые 30 секунд. Если нет ответа - дроп и реконнект
+                receive_timeout=60,  # Если ничего не получаем 60 сек - дроп и реконнект
                 max_msg_size=0,
                 timeout=15,
             )
@@ -176,27 +183,29 @@ class PositionStream:
     async def _handle_messages(self):
         while not self._external_stop and not self.stop_flag():
             try:
-                msg = await asyncio.wait_for(
-                    self.websocket.receive(),
-                    timeout=5.0,
-                )
+                # receive() будет прервано aiohttp если сработает heartbeat или receive_timeout
+                msg = await self.websocket.receive()
             except asyncio.TimeoutError:
-                continue
+                logger.warning("[MASTER WS] TimeoutError (heartbeat or receive_timeout missed). Forcing reconnect...")
+                raise RuntimeError("ws_timeout")
 
             if msg.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.ERROR):
                 logger.warning(f"[MASTER WS] socket closed: {msg.type}")
                 raise RuntimeError("ws_closed")
 
             if msg.type != aiohttp.WSMsgType.TEXT:
+                logger.debug(f"[MASTER WS] non-text msg type: {msg.type}")
                 continue
 
             try:
                 data = json.loads(msg.data)
+                # print(f"RAW WS MSG: {data}")
             except Exception as e:
                 logger.warning(f"[MASTER WS] invalid JSON: {e}")
                 continue
 
             etype = data.get("e")
+            logger.debug(f"[MASTER WS] RAW EVENT RECEIVED: {etype}")
             if not etype:
                 continue
 
@@ -225,6 +234,15 @@ class PositionStream:
                         raise RuntimeError("ws_connect_failed")
 
                     self.ready = True
+                    
+                    # Обязательная синхронизация по REST при любом подключении/переподключении стрима
+                    if self.client and self.target_symbols:
+                        try:
+                            logger.info("[MASTER WS] Connected. Running REST sync to catch up on missed updates...")
+                            await self.monitor.sync_from_rest(self.client, list(self.target_symbols))
+                        except Exception as e:
+                            logger.error(f"[MASTER WS] REST sync failed on connect: {e}")
+
                     await self._handle_messages()
 
                 except asyncio.CancelledError:
