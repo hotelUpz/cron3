@@ -10,3 +10,26 @@
 2026-06-23 02:11:23 | DEBUG | BINANCE_API | Order create @ 1782169883982 status=NEW executed=0.0 avg=0.0
 2026-06-23 02:21:08 | DEBUG | BINANCE_API | Order create @ 1782170468953 status=NEW executed=0.0 avg=0.0
 2026-06-23 02:21:14 | DEBUG | BINANCE_API | Order create @ 1782170474629 status=NEW executed=0.0 avg=0.0
+2026-06-23 03:37:15 | ERROR | BINANCE_API | ❌ Binance error code=-1111 msg=Precision is over the maximum defined for this asset.
+2026-06-23 03:37:15 | DEBUG | BINANCE_API | Order create @ 1782175035611 status=FILLED executed=5.0 avg=1.1281
+2026-06-23 03:37:18 | DEBUG | BINANCE_API | Order create @ 1782175038880 status=FILLED executed=5.0 avg=1.128
+2026-06-23 03:37:50 | DEBUG | BINANCE_API | Order create @ 1782175070999 status=NEW executed=0.0 avg=0.0
+2026-06-23 03:38:19 | DEBUG | BINANCE_API | Order create @ 1782175099731 status=NEW executed=0.0 avg=0.0
+2026-06-23 03:38:23 | INFO | BINANCE_API | [XRPUSDT] LONG Found 2 active orders. Canceling...
+2026-06-23 03:38:27 | DEBUG | BINANCE_API | Order create @ 1782175107066 status=FILLED executed=5.0 avg=1.127
+2026-06-23 03:38:30 | DEBUG | BINANCE_API | Order create @ 1782175110336 status=FILLED executed=5.0 avg=1.1269
+2026-06-23 03:38:33 | ERROR | BINANCE_API | ❌ Binance error code=-2022 msg=ReduceOnly Order is rejected.
+2026-06-23 03:40:56 | DEBUG | BINANCE_API | Order create @ 1782175256514 status=FILLED executed=5.0 avg=1.1281
+2026-06-23 03:41:03 | DEBUG | BINANCE_API | Order create @ 1782175263326 status=FILLED executed=5.0 avg=1.1284
+2026-06-23 03:41:06 | DEBUG | BINANCE_API | Order create @ 1782175266602 status=FILLED executed=5.0 avg=1.1283
+2026-06-23 03:41:10 | DEBUG | BINANCE_API | Order create @ 1782175270140 status=FILLED executed=5.0 avg=1.1283
+2026-06-23 03:44:01 | DEBUG | BINANCE_API | Order create @ 1782175441566 status=NEW executed=0.0 avg=0.0
+2026-06-23 03:44:03 | INFO | BINANCE_API | [XRPUSDT] LONG Found 1 active orders. Canceling...
+2026-06-23 03:44:06 | DEBUG | BINANCE_API | Order create @ 1782175446368 status=FILLED executed=5.0 avg=1.1302
+2026-06-23 03:44:11 | DEBUG | BINANCE_API | Order create @ 1782175451642 status=FILLED executed=5.0 avg=1.1301
+2026-06-23 03:45:10 | DEBUG | BINANCE_API | Order create @ 1782175510887 status=FILLED executed=5.0 avg=1.1307
+2026-06-23 03:45:16 | DEBUG | BINANCE_API | Order create @ 1782175516155 status=FILLED executed=5.0 avg=1.131
+2026-06-23 03:45:56 | DEBUG | BINANCE_API | Order create @ 1782175556992 status=FILLED executed=5.0 avg=1.1309
+2026-06-23 03:45:56 | DEBUG | BINANCE_API | RAW ORDER RESPONSE: {'orderId': 152321452142, 'symbol': 'XRPUSDT', 'status': 'FILLED', 'clientOrderId': '63aNu4Tc1ZTlkqo9XNGjMq', 'price': '0.0000', 'avgPrice': '1.13090', 'origQty': '5.0', 'executedQty': '5.0', 'cumQty': '5.0', 'cumQuote': '5.65450', 'timeInForce': 'GTC', 'type': 'MARKET', 'reduceOnly': False, 'closePosition': False, 'side': 'BUY', 'positionSide': 'LONG', 'stopPrice': '0.0000', 'workingType': 'CONTRACT_PRICE', 'priceProtect': False, 'origType': 'MARKET', 'priceMatch': 'NONE', 'selfTradePreventionMode': 'EXPIRE_MAKER', 'goodTillDate': 0, 'updateTime': 1782175557063}
+2026-06-23 03:46:02 | DEBUG | BINANCE_API | Order create @ 1782175562255 status=FILLED executed=5.0 avg=1.1308
+2026-06-23 03:46:02 | DEBUG | BINANCE_API | RAW ORDER RESPONSE: {'orderId': 152321456046, 'symbol': 'XRPUSDT', 'status': 'FILLED', 'clientOrderId': '6Rsf9huMTUrF7bKBwV7sYG', 'price': '0.0000', 'avgPrice': '1.13080', 'origQty': '5.0', 'executedQty': '5.0', 'cumQty': '5.0', 'cumQuote': '5.65400', 'timeInForce': 'GTC', 'type': 'MARKET', 'reduceOnly': True, 'closePosition': False, 'side': 'SELL', 'positionSide': 'LONG', 'stopPrice': '0.0000', 'workingType': 'CONTRACT_PRICE', 'priceProtect': False, 'origType': 'MARKET', 'priceMatch': 'NONE', 'selfTradePreventionMode': 'EXPIRE_MAKER', 'goodTillDate': 0, 'updateTime': 1782175562330}

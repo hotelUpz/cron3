@@ -22,6 +22,7 @@
     "log_to_file": true
   },
   "symbols": [
-    "STABLEUSDT"
+    "STABLEUSDT",
+    "WIFUSDT"
   ]
 }

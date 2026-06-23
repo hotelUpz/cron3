@@ -59,6 +59,8 @@ class OrderValidator:
             f"status={status} executed={executed} avg={avg_price}"
         )
 
+        self.logger.debug(f"RAW ORDER RESPONSE: {data}")
+        
         if market_type == "MARKET":
             if status != "FILLED" or executed <= 0:
                 res.success = False

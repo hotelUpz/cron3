@@ -55,7 +55,7 @@ if __name__ == "__main__":
 # # git remote set-url origin git@github.com:hotelUpz/uranus_bot.git
 # # source .ssh-autostart.sh
 # В терминале Git Bash, находясь в папке с проектом:
-# source /c/Users/user/Desktop/My_Pro/HP_EliteBook_735/WORKSPACE/TRADING_SYSTEM/COMMON/.ssh-autostart.sh
+# source C:/Users/User/Desktop/HP_EliteBook_735/PROGECTS/WORKSPACE/TRADING_SYSTEM/COMMON/.ssh-autostart.sh
 
 # git push --set-upstream origin master
 # # git config --global push.autoSetupRemote true

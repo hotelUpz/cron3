@@ -119,8 +119,6 @@ class BotCore:
         state.open_time = current_time_ms
         side_cfg["open_time"] = current_time_ms
 
-        await self.runtime_manager.save_cache(symbol)
-
         # Дожидаемся обновления avg_entry_price от вебсокета после входа
         state.pre_avg_price = 0.0
         sync_success = await Utils.wait_for_fsm_sync(state, timeout_sec=3.0, poll_interval=0.01)
@@ -143,8 +141,11 @@ class BotCore:
         else:
             logger.info(f"[{symbol}] {side} FSM synced at start! New avg_entry_price: {state.avg_entry_price}")
 
-        # 2. Математика расчета объема и TP
-        await self.tp_manager.place_take_profit(self.client, symbol, side, current_price, self.spec_data, self.fsm_states[symbol][side], volume=volume)
+        # 2. Математика расчета объема и TP (Используем реальный объем из стрима)
+        await self.tp_manager.place_take_profit(self.client, symbol, side, current_price, self.spec_data, self.fsm_states[symbol][side])
+        
+        # 3. Сохраняем стейт в рантайм кэш
+        await self.runtime_manager.save_cache(symbol)
 
     async def _check_and_reset_finished_positions(self, symbol: str, states: dict, runtime_cfg: dict):
         """Проверяет флаги is_finished, пишет аналитику, отменяет ордера и сбрасывает рантайм.""" 
