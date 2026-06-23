@@ -1,0 +1,4 @@
+2026-06-23 04:05:07 | DEBUG | LeverageManager | [WIFUSDT] Margin type CROSSED is already set on exchange.
+2026-06-23 04:05:07 | DEBUG | LeverageManager | [WIFUSDT] Margin type CROSSED is already set on exchange.
+2026-06-23 04:05:08 | INFO | LeverageManager | [WIFUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-23 04:05:08 | INFO | LeverageManager | [WIFUSDT] Successfully set leverage to 10 and margin type to CROSSED

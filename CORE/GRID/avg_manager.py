@@ -47,16 +47,6 @@ class AverageManager:
                 level_data["price"] = price
                 needs_save = True
                 
-        # Предрасчет цен для фолбеков (экономия ресурсов)
-        for level_str, tp_data in state.tp_map.items():
-            base_price = grid[level_str].get("price")
-            if base_price:
-                if tp_data.get("fallback_price") is None:
-                    fb_indent = tp_data.get("fallback_indent", tp_data["indent"] * 1.5)
-                    fb_price = TradeMath.calculate_take_profit_price(base_price, fb_indent, side, spec_data, symbol)
-                    tp_data["fallback_price"] = fb_price
-                    needs_save = True
-
         if needs_save:
             # Не вызываем save_cache здесь, это будет сделано в sync_with_fsm
             pass
@@ -65,7 +55,7 @@ class AverageManager:
 
     async def process(self, client, runtime_manager, symbol: str, side: str, state, current_price: float, spec_data: dict, tp_manager):
         """Проверяет и выполняет логику усреднения для позиции."""
-        if not state.in_position or state.pending_avg:
+        if not state.in_position or state.pending_avg or current_price is None:
             return
 
         grid = state.grid
@@ -186,4 +176,4 @@ class AverageManager:
         # Освобождаем флаги
         state.pending_avg = False
         state.next_avg_price = None
-        state.next_fallback_price = None
+        state.fallback_price = None

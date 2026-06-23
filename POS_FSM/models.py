@@ -17,7 +17,7 @@ class PositionState:
     open_time: int = 0                   # время открытия первой сделки (unix ms)
     current_grid_level: str = "0"        # текущий уровень сетки
     next_avg_price: float = None         # кешированная цена ближайшего усреднения
-    next_fallback_price: float = None    # кешированная цена страховочного маркета
+    fallback_price: float = None    # кешированная цена страховочного маркета
     
     in_position: bool = False
     in_position_papper: bool = False
@@ -46,7 +46,7 @@ class PositionState:
         self.pending_avg = False
         self.pending_rolling_tp = False
         self.next_avg_price = None
-        self.next_fallback_price = None
+        self.fallback_price = None
         self.current_grid_level = "0"
         self.grid.clear()
         self.tp_map.clear()

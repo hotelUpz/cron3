@@ -26,8 +26,8 @@ class PositionMonitor:
                     }
 
     async def sync_from_rest(self, client, symbols: list):
-        """Запрашивает актуальные позиции по REST и инициализирует FSM стейт."""
-        logger.info("Fetching initial positions via REST API...")
+        """Запрашивает актуальные позиции по REST и инициализирует/синхронизирует FSM стейт."""
+        logger.debug("[REST] Syncing active positions as failsafe...")
         positions = await client.fetch_positions()
         for pos in positions:
             sym = pos.get("symbol")
@@ -70,4 +70,8 @@ class PositionMonitor:
             state.is_finished = False
 
         if IS_SHOW_SIGNAL:
-            logger.debug(f"[MONITOR] UPDATE {symbol} {side} - qty: {pos_amt}, avg_price: {entry_price}")
+            logger.debug(
+                f"[MONITOR] UPDATE {symbol} {side} - qty: {pos_amt}, avg_price: {entry_price}",
+                throttle_sec=60,
+                throttle_key=f"monitor_update_{symbol}_{side}"
+            )

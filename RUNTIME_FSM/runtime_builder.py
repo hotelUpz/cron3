@@ -67,6 +67,8 @@ def prompt_runtime_check():
         print("="*60 + "\n")
         try:
             input()
+        except EOFError:
+            logger.warning("No interactive stdin found, skipping runtime check pause.")
         except KeyboardInterrupt:
             print("Прервано пользователем.")
             import sys

@@ -162,25 +162,38 @@ class UnifiedLogger:
             logger,
             extra={"context": context or name},
         )
+        self._last_log_times = {}
 
-    def debug(self, msg: str, *args, **kwargs):
-        if LOG_DEBUG:
+    def _should_throttle(self, msg: str, throttle_sec: int, throttle_key: Optional[str] = None) -> bool:
+        if throttle_sec <= 0:
+            return False
+        import time
+        current_time = time.time()
+        key = throttle_key if throttle_key is not None else msg
+        last_time = self._last_log_times.get(key, 0)
+        if current_time - last_time < throttle_sec:
+            return True
+        self._last_log_times[key] = current_time
+        return False
+
+    def debug(self, msg: str, *args, throttle_sec: int = 0, throttle_key: Optional[str] = None, **kwargs):
+        if LOG_DEBUG and not self._should_throttle(msg, throttle_sec, throttle_key):
             self._logger.debug(msg, *args, **kwargs)
 
-    def info(self, msg: str, *args, **kwargs):
-        if LOG_INFO:
+    def info(self, msg: str, *args, throttle_sec: int = 0, throttle_key: Optional[str] = None, **kwargs):
+        if LOG_INFO and not self._should_throttle(msg, throttle_sec, throttle_key):
             self._logger.info(msg, *args, **kwargs)
 
-    def warning(self, msg: str, *args, **kwargs):
-        if LOG_WARNING:
+    def warning(self, msg: str, *args, throttle_sec: int = 0, throttle_key: Optional[str] = None, **kwargs):
+        if LOG_WARNING and not self._should_throttle(msg, throttle_sec, throttle_key):
             self._logger.warning(msg, *args, **kwargs)
 
-    def error(self, msg: str, *args, **kwargs):
-        if LOG_ERROR:
+    def error(self, msg: str, *args, throttle_sec: int = 0, throttle_key: Optional[str] = None, **kwargs):
+        if LOG_ERROR and not self._should_throttle(msg, throttle_sec, throttle_key):
             self._logger.error(msg, *args, **kwargs)
 
-    def exception(self, msg: str, *args, exc: Exception = None, **kwargs):
-        if LOG_ERROR:
+    def exception(self, msg: str, *args, throttle_sec: int = 0, throttle_key: Optional[str] = None, exc: Exception = None, **kwargs):
+        if LOG_ERROR and not self._should_throttle(msg, throttle_sec, throttle_key):
             self._logger.exception(msg, *args, **kwargs)
 
     # ======================================================

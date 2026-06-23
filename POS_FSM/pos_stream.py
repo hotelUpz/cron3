@@ -201,7 +201,7 @@ class PositionStream:
                     timeout=5.0,
                 )
             except asyncio.TimeoutError:
-                logger.info("[MASTER WS] 5s timeout - waiting for messages...")
+                logger.debug("[MASTER WS] 5s timeout - waiting for messages...", throttle_sec=60)
                 continue
 
             if msg.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.ERROR):
@@ -227,7 +227,7 @@ class PositionStream:
                 continue
 
             if IS_SHOW_SIGNAL:
-                logger.debug(f"[MASTER WS] EVENT {etype}")
+                logger.debug(f"[MASTER WS] EVENT {etype}", throttle_sec=60, throttle_key=f"ws_event_{etype}")
 
             if etype == "ACCOUNT_UPDATE":
                 await self._handle_account_update(data)

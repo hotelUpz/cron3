@@ -1,6 +1,14 @@
 {
-    "total_positions_LONG": 0,
+    "total_positions_LONG": 1,
     "total_positions_SHORT": 0,
-    "total_pnl_usdt": 0.0,
-    "trades_ledger": []
+    "total_pnl_usdt": 0.1221,
+    "trades_ledger": [
+        {
+            "symbol": "STABLEUSDT",
+            "side": "LONG",
+            "open_time": 1782176700319,
+            "close_time": 1782177225381,
+            "pnl_usdt": 0.1221
+        }
+    ]
 }

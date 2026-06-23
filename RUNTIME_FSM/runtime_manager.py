@@ -61,7 +61,7 @@ class RuntimeFsmManager:
                 state.open_time = side_cache.get("open_time", 0)
                 state.current_grid_level = side_cache.get("current_grid_level", "0")
                 state.next_avg_price = side_cache.get("next_avg_price")
-                state.next_fallback_price = side_cache.get("next_fallback_price")
+                state.fallback_price = side_cache.get("fallback_price")
                 
                 state.in_position = side_cache.get("in_position", False)
                 state.in_position_papper = side_cache.get("in_position_papper", False)
@@ -105,7 +105,7 @@ class RuntimeFsmManager:
                     "open_time": state.open_time,
                     "current_grid_level": state.current_grid_level,
                     "next_avg_price": state.next_avg_price,
-                    "next_fallback_price": state.next_fallback_price,
+                    "fallback_price": state.fallback_price,
                     "in_position": state.in_position,
                     "in_position_papper": state.in_position_papper,
                     "is_finished": state.is_finished,

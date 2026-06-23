@@ -14,7 +14,7 @@ class FallbackTpManager:
 
     async def process(self, client, runtime_manager, symbol: str, side: str, state, current_price: float, spec_data: dict):
         """Проверяет пробитие страховочной цены (Fallback TP) и бьет по рынку."""
-        if not state.in_position or state.is_finished:
+        if not state.in_position or state.is_finished or current_price is None:
             return
 
         # Предохранитель от гонок: если уже летит маркет-ордер фолбека
@@ -22,7 +22,7 @@ class FallbackTpManager:
             return
 
         # 1. Детерминация цены фолбека (кешируем только прайс для горячего пути)
-        if state.next_fallback_price is None:
+        if state.fallback_price is None:
             if state.avg_entry_price <= 0:
                 return # Ждем пока сенсоры синхронизируют цену входа
             
@@ -36,16 +36,13 @@ class FallbackTpManager:
             fb_price = TradeMath.calculate_take_profit_price(
                 state.avg_entry_price, fallback_indent_pct, side, spec_data, symbol
             )
-            state.next_fallback_price = fb_price
-            
-            # Сохраняем точный рассчитанный фолбэк-прайс (от средней цены входа) обратно в tp_map
-            tp_map[current_level]["fallback_price"] = fb_price
+            state.fallback_price = fb_price
 
         # 2. Горячий путь (O(1) сравнение)
         triggered = False
-        if side == "LONG" and current_price >= state.next_fallback_price:
+        if side == "LONG" and current_price >= state.fallback_price:
             triggered = True
-        elif side == "SHORT" and current_price <= state.next_fallback_price:
+        elif side == "SHORT" and current_price <= state.fallback_price:
             triggered = True
 
         if triggered:
@@ -56,7 +53,7 @@ class FallbackTpManager:
             volume = TradeMath.round_qty(volume_float, spec_data, symbol)
             order_side = "SELL" if side == "LONG" else "BUY"
 
-            logger.warning(f"[{symbol}] {side} FALLBACK MARKET TRIGGERED! Price {current_price} crossed {state.next_fallback_price}. Closing all.")
+            logger.warning(f"[{symbol}] {side} FALLBACK MARKET TRIGGERED! Price {current_price} crossed {state.fallback_price}. Closing all.")
             
             res = await client.make_order(
                 symbol=symbol,
