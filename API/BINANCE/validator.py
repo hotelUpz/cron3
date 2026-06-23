@@ -54,12 +54,12 @@ class OrderValidator:
         executed = float(data.get("executedQty", 0))
         avg_price = float(data.get("avgPrice", 0))
 
-        self.logger.debug(
-            f"Order create @ {now()} "
-            f"status={status} executed={executed} avg={avg_price}"
-        )
+        # self.logger.debug(
+        #     f"Order create @ {now()} "
+        #     f"status={status} executed={executed} avg={avg_price}"
+        # )
 
-        self.logger.debug(f"RAW ORDER RESPONSE: {data}")
+        # self.logger.debug(f"RAW ORDER RESPONSE: {data}")
         
         if market_type == "MARKET":
             if status != "FILLED" or executed <= 0:

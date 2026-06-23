@@ -337,6 +337,18 @@ class BinanceClient:
         return await self.cancel_limit_orders(symbol, ids_to_cancel)
 
     # ==================================================
+    # ACCOUNT INFO
+    # ==================================================
+    async def fetch_account_info(self) -> APIResponse:
+        params = {"recvWindow": 20000}
+        return await self._request(
+            "GET",
+            self.positions_url,
+            params=params,
+            signed=True,
+        )
+
+    # ==================================================
     # POSITIONS
     # ==================================================
     async def fetch_positions(self, symbol: Optional[str] = None) -> List[dict]:

@@ -180,6 +180,62 @@ class BotCore:
             # Сохраняем рантайм (сразу за обе стороны, если их было две)
             await self.runtime_manager.save_cache(symbol)
 
+    async def _process_symbol_loop(self, symbol: str, is_signal: bool):
+        runtime_cfg = self.runtime_configs.get(symbol, {})
+        states = self.fsm_states[symbol]
+        current_price = self.prices.get(symbol)
+        
+        signal_tasks = []
+        
+        # Предварительно определяем, будут ли открыты обе стороны
+        sides_to_open = []
+        for side in ("LONG", "SHORT"):
+            state = states[side]
+            side_cfg = runtime_cfg.get(side)
+            if side_cfg and side_cfg.get("enable") and not state.in_position and not state.in_position_papper:
+                sides_to_open.append(side)
+
+        is_concurrent = len(sides_to_open) > 1
+        
+        for side in ("LONG", "SHORT"):
+            state = states[side]
+            side_cfg = runtime_cfg.get(side)
+            
+            if not side_cfg or not side_cfg.get("enable"):
+                continue
+            
+            if not state.in_position and not state.in_position_papper:
+                if is_signal:
+                    # Ставим временный флаг идемпотентности
+                    state.in_position_papper = True
+                    signal_tasks.append(self._process_signal(symbol, side, side_cfg, current_price, concurrent_mode=is_concurrent))
+            else:
+                # Позиция уже открыта (или в процессе in_position_papper)
+                await self.avg_manager.process(self.client, self.runtime_manager, symbol, side, state, current_price, self.spec_data, self.tp_manager)
+                await self.fallback_tp_manager.process(self.client, self.runtime_manager, symbol, side, state, current_price, self.spec_data)
+
+        if signal_tasks:
+            await asyncio.gather(*signal_tasks)
+            
+        # --- REST Failsafe ---
+        from consts import REST_FAILSAFE_SEC
+        current_time = time.monotonic()
+        if not hasattr(self, "_last_rest_syncs"):
+            self._last_rest_syncs = {}
+            
+        last_sync = self._last_rest_syncs.get(symbol, current_time)
+        if current_time - last_sync > REST_FAILSAFE_SEC or symbol not in self._last_rest_syncs:
+            self._last_rest_syncs[symbol] = current_time
+            any_open = any(s.in_position for s in states.values())
+            if any_open:
+                try:
+                    await self.pos_monitor.sync_from_rest(self.client, [symbol])
+                except Exception as e:
+                    logger.error(f"[{symbol}] Periodic REST sync failed: {e}")
+
+        # В конце итерации по символу проверяем закрытие позиций
+        await self._check_and_reset_finished_positions(symbol, states, runtime_cfg)
+
     async def _game_loop(self):
         """Главный цикл торгового ядра."""
         self.is_running = True
@@ -245,62 +301,10 @@ class BotCore:
                 # Источник сигнала для позиции, которая не в позиции
                 is_signal = self.time_control.is_new_interval()
 
-                for symbol in self.symbols:
-                    runtime_cfg = self.runtime_configs.get(symbol, {})
-                    states = self.fsm_states[symbol]
-                    current_price = self.prices.get(symbol)
-                    
-                    needs_save = False
-                    
-                    signal_tasks = []
-                    
-                    # Предварительно определяем, будут ли открыты обе стороны
-                    sides_to_open = []
-                    for side in ("LONG", "SHORT"):
-                        state = states[side]
-                        side_cfg = runtime_cfg.get(side)
-                        if side_cfg and side_cfg.get("enable") and not state.in_position and not state.in_position_papper:
-                            sides_to_open.append(side)
+                is_signal = self.time_control.is_new_interval()
 
-                    is_concurrent = len(sides_to_open) > 1
-                    
-                    for side in ("LONG", "SHORT"):
-                        state = states[side]
-                        side_cfg = runtime_cfg.get(side)
-                        
-                        if not side_cfg or not side_cfg.get("enable"):
-                            continue
-                        
-                        if not state.in_position and not state.in_position_papper:
-                            if is_signal:
-                                # Ставим временный флаг идемпотентности
-                                state.in_position_papper = True
-                                signal_tasks.append(self._process_signal(symbol, side, side_cfg, current_price, concurrent_mode=is_concurrent))
-                        else:
-                            # Позиция уже открыта (или в процессе in_position_papper)
-                            await self.avg_manager.process(self.client, self.runtime_manager, symbol, side, state, current_price, self.spec_data, self.tp_manager)
-                            await self.fallback_tp_manager.process(self.client, self.runtime_manager, symbol, side, state, current_price, self.spec_data)
-
-                    if signal_tasks:
-                        await asyncio.gather(*signal_tasks)
-                        
-                    # --- REST Failsafe (Каждые 15 секунд проверяем, не закрыта ли позиция вручную) ---
-                    # Если позиция открыта в кеше, но вебсокет промолчал о ее закрытии (например по TP или руками)
-                    current_time = time.monotonic()
-                    if not hasattr(self, "_last_rest_sync"):
-                        self._last_rest_sync = current_time
-                        
-                    if current_time - self._last_rest_sync > 15.0:
-                        self._last_rest_sync = current_time
-                        any_open = any(s.in_position for s in states.values())
-                        if any_open:
-                            try:
-                                await self.pos_monitor.sync_from_rest(self.client, [symbol])
-                            except Exception as e:
-                                logger.error(f"[{symbol}] Periodic REST sync failed: {e}")
-
-                    # В конце итерации по символу проверяем закрытие позиций
-                    await self._check_and_reset_finished_positions(symbol, states, runtime_cfg)
+                tasks = [self._process_symbol_loop(symbol, is_signal) for symbol in self.symbols]
+                await asyncio.gather(*tasks)
                 
                 # Синхронизация рантаймов при изменениях в PositionState (постоянный контроль)
                 await self.runtime_manager.sync_with_fsm(self.fsm_states)

@@ -27,12 +27,18 @@ class FallbackTpManager:
                 return # Ждем пока сенсоры синхронизируют цену входа
             
             tp_map = state.tp_map
-            current_level = state.current_grid_level
+            from CORE._utils import RiskCalculatingUtils
+            current_level = RiskCalculatingUtils.get_current_grid_level(state.grid)
             
             if current_level not in tp_map:
                 return
                 
-            fallback_indent_pct = tp_map[current_level]["fallback_indent"]
+            fallback_indent_pct = tp_map[current_level].get("fallback_indent")
+            
+            # Если fallback_indent не задан (null), пропускаем проверку
+            if fallback_indent_pct is None:
+                return
+
             fb_price = TradeMath.calculate_take_profit_price(
                 state.avg_entry_price, fallback_indent_pct, side, spec_data, symbol
             )
@@ -48,6 +54,10 @@ class FallbackTpManager:
         if triggered:
             # Предохранитель от повторного срабатывания (чтоб 100 раз не переебнуться)
             state.pending_rolling_tp = True
+            
+            # ОТМЕНА ВСЕХ ЛИМИТНЫХ ОРДЕРОВ ЧТОБЫ ОСВОБОДИТЬ КВОТУ ДЛЯ MARKET REDUCE-ONLY
+            logger.info(f"[{symbol}] {side} Canceling all limit orders before executing Fallback Market...")
+            await client.cancel_orders_for_side(symbol, side)
             
             volume_float = abs(state.total_volume)
             volume = TradeMath.round_qty(volume_float, spec_data, symbol)
@@ -67,6 +77,10 @@ class FallbackTpManager:
                 logger.info(f"[{symbol}] Fallback Market Order successfully executed.")
                 state.is_finished = True  # Только теперь говорим оркестратору, что всё
             else:
-                logger.error(f"[{symbol}] Failed to execute Fallback Market Order: {res.error_msg}")
+                if res.error_code == -2022 or "-2022" in str(res.error_msg):
+                    logger.warning(f"[{symbol}] Fallback Market Order rejected with -2022 (ReduceOnly). Position is already closed by Limit TP. Assuming success.")
+                    state.is_finished = True
+                else:
+                    logger.error(f"[{symbol}] Failed to execute Fallback Market Order: {res.error_msg}")
             
             state.pending_rolling_tp = False  # Снимаем блокировку

@@ -7,10 +7,14 @@
     "req_timeout_sec": 10.0,
     "avoid_check_runtime_cfg": false,
     "api_rate_limit_sec": 0.1,
-    "api_concurrent_rate_limit_sec": 0.01
+    "api_concurrent_rate_limit_sec": 0.01,
+    "rest_failsafe_sec": 1.0
   },
   "signal": {
     "timeframe": "5m"
+  },
+  "analytics": {
+    "csv_max_rows": 1000
   },
   "logging": {
     "debug": true,

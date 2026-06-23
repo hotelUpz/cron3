@@ -30,8 +30,10 @@ class TakeProfitManager:
             logger.error(f"[{symbol}] {side} Missing TP config for level {current_level_str}")
             return False
             
-        tp_indent = current_tp["indent"]
-        
+        tp_indent = current_tp.get("indent")
+        if tp_indent is None:
+            logger.info(f"[{symbol}] {side} TP indent is null. Skipping LIMIT order placement to rely on Fallback TP.")
+            return True
         # Расчет цены TP (строго от средней цены входа, а не от плавающего тикера)
         base_price = state.avg_entry_price if state.avg_entry_price > 0 else current_price
         tp_price = TradeMath.calculate_take_profit_price(base_price, tp_indent, side, spec_data, symbol)

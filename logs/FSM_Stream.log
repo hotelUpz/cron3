@@ -1,335 +1,52 @@
-2026-06-23 02:01:51 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 02:01:52 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 02:01:52 | INFO | FSM_Stream | [MASTER WS] connecting to wss://fstream.binance.com/ws/0MWlT2hbxmG2wxOyXGnjJnTfWxuEze6rFUaJkga7BBOloFxIks6EW7C7bwZnpL3Q...
-2026-06-23 02:01:53 | INFO | FSM_Stream | [MASTER WS] connected successfully. Status: False
-2026-06-23 02:02:06 | INFO | FSM_Stream | PositionStream: stop requested
-2026-06-23 02:02:08 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 02:02:36 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 02:02:37 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 02:02:37 | INFO | FSM_Stream | [MASTER WS] connecting to wss://fstream.binance.com/ws/0MWlT2hbxmG2wxOyXGnjJnTfWxuEze6rFUaJkga7BBOloFxIks6EW7C7bwZnpL3Q...
-2026-06-23 02:02:37 | INFO | FSM_Stream | [MASTER WS] connected successfully. Status: False
-2026-06-23 02:02:45 | INFO | FSM_Stream | PositionStream: stop requested
-2026-06-23 02:02:47 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 02:03:20 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 02:03:21 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 02:03:21 | INFO | FSM_Stream | [MASTER WS] connecting to wss://fstream.binance.com/ws/0MWlT2hbxmG2wxOyXGnjJnTfWxuEze6rFUaJkga7BBOloFxIks6EW7C7bwZnpL3Q...
-2026-06-23 02:03:22 | INFO | FSM_Stream | [MASTER WS] connected successfully. Status: False
-2026-06-23 02:03:27 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 02:03:32 | INFO | FSM_Stream | PositionStream: stop requested
-2026-06-23 02:03:32 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 02:03:32 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 02:03:45 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 02:03:46 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 02:03:46 | INFO | FSM_Stream | [MASTER WS] connecting to wss://fstream.binance.com/ws/0MWlT2hbxmG2wxOyXGnjJnTfWxuEze6rFUaJkga7BBOloFxIks6EW7C7bwZnpL3Q...
-2026-06-23 02:03:47 | INFO | FSM_Stream | [MASTER WS] connected successfully. Status: False
-2026-06-23 02:03:52 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 02:03:57 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 02:03:58 | INFO | FSM_Stream | PositionStream: stop requested
-2026-06-23 02:04:02 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 02:04:02 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 02:04:28 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 02:05:02 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 02:05:39 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 02:07:11 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 02:07:37 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 02:08:02 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 02:11:15 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 02:11:21 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 02:21:06 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 02:21:12 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: 0MWlT... (length: 64)
-2026-06-23 03:33:31 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:33:31 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:33:31 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:33:31 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:33:32 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:33:33 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:33:33 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:33:33 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:33:34 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:33:34 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:33:34 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:33:34 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:33:35 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:33:35 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:33:35 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:33:35 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:33:36 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:33:37 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:33:37 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:33:37 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:33:38 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:33:38 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:33:38 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:33:38 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:33:39 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:33:39 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:33:39 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:33:39 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:33:40 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:33:41 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:33:41 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:33:41 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:35:24 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:35:24 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:35:24 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:35:24 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:35:25 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:35:25 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:35:25 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:35:25 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:35:26 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:35:27 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:35:27 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:35:27 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:35:28 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:35:28 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:35:28 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:35:28 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:35:29 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:35:29 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:35:29 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:35:29 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:35:30 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:35:31 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:35:31 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:35:31 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:35:32 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:35:32 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:35:32 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:35:32 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:35:33 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:35:33 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}
-2026-06-23 03:35:33 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-Traceback (most recent call last):
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 245, in start
-    listen_key = await self.listen_mgr.create()
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
-    raise KeyError(f"No listenKey in response: {data}")
-KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action'}"
-2026-06-23 03:35:33 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:36:43 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:36:44 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
-2026-06-23 03:36:44 | INFO | FSM_Stream | [MASTER WS] connecting to wss://fstream.binance.com/ws/JzM8zIim0XjNChC84SudY2Ep2MLKnEB8bEpYBXXsiNJhrK4QlAx6loVUY8PbBjt3...
-2026-06-23 03:36:45 | INFO | FSM_Stream | [MASTER WS] connected successfully. Status: False
-2026-06-23 03:36:45 | INFO | FSM_Stream | [MASTER WS] Connected. Running REST sync to catch up on missed updates...
-2026-06-23 03:36:45 | INFO | FSM_Stream | PositionStream: stop requested
-2026-06-23 03:36:46 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:37:01 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:37:02 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
-2026-06-23 03:37:02 | INFO | FSM_Stream | [MASTER WS] connecting to wss://fstream.binance.com/ws/JzM8zIim0XjNChC84SudY2Ep2MLKnEB8bEpYBXXsiNJhrK4QlAx6loVUY8PbBjt3...
-2026-06-23 03:37:02 | INFO | FSM_Stream | [MASTER WS] connected successfully. Status: False
-2026-06-23 03:37:02 | INFO | FSM_Stream | [MASTER WS] Connected. Running REST sync to catch up on missed updates...
-2026-06-23 03:37:03 | INFO | FSM_Stream | PositionStream: stop requested
-2026-06-23 03:37:04 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:37:13 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:37:13 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
-2026-06-23 03:37:13 | INFO | FSM_Stream | [MASTER WS] connecting to wss://fstream.binance.com/ws/JzM8zIim0XjNChC84SudY2Ep2MLKnEB8bEpYBXXsiNJhrK4QlAx6loVUY8PbBjt3...
-2026-06-23 03:37:14 | INFO | FSM_Stream | [MASTER WS] connected successfully. Status: False
-2026-06-23 03:37:14 | INFO | FSM_Stream | [MASTER WS] Connected. Running REST sync to catch up on missed updates...
-2026-06-23 03:37:19 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 03:37:22 | INFO | FSM_Stream | PositionStream: stop requested
-2026-06-23 03:37:23 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:37:48 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:37:49 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
-2026-06-23 03:37:49 | INFO | FSM_Stream | [MASTER WS] connecting to wss://fstream.binance.com/ws/JzM8zIim0XjNChC84SudY2Ep2MLKnEB8bEpYBXXsiNJhrK4QlAx6loVUY8PbBjt3...
-2026-06-23 03:37:50 | INFO | FSM_Stream | [MASTER WS] connected successfully. Status: False
-2026-06-23 03:37:50 | INFO | FSM_Stream | [MASTER WS] Connected. Running REST sync to catch up on missed updates...
-2026-06-23 03:37:54 | INFO | FSM_Stream | PositionStream: stop requested
-2026-06-23 03:37:55 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:38:17 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:38:18 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
-2026-06-23 03:38:18 | INFO | FSM_Stream | [MASTER WS] connecting to wss://fstream.binance.com/ws/JzM8zIim0XjNChC84SudY2Ep2MLKnEB8bEpYBXXsiNJhrK4QlAx6loVUY8PbBjt3...
-2026-06-23 03:38:18 | INFO | FSM_Stream | [MASTER WS] connected successfully. Status: False
-2026-06-23 03:38:18 | INFO | FSM_Stream | [MASTER WS] Connected. Running REST sync to catch up on missed updates...
-2026-06-23 03:38:24 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 03:38:29 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 03:38:33 | INFO | FSM_Stream | PositionStream: stop requested
-2026-06-23 03:38:34 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 03:38:34 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:40:54 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 03:40:55 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
-2026-06-23 03:40:55 | INFO | FSM_Stream | [MASTER WS] connecting to wss://fstream.binance.com/ws/JzM8zIim0XjNChC84SudY2Ep2MLKnEB8bEpYBXXsiNJhrK4QlAx6loVUY8PbBjt3...
-2026-06-23 03:40:55 | INFO | FSM_Stream | [MASTER WS] connected successfully. Status: False
-2026-06-23 03:40:55 | INFO | FSM_Stream | [MASTER WS] Connected. Running REST sync to catch up on missed updates...
-2026-06-23 03:41:01 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 03:41:06 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 03:41:10 | INFO | FSM_Stream | PositionStream: stop requested
-2026-06-23 03:41:11 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 03:41:11 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 03:43:58 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
-2026-06-23 03:45:07 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
-2026-06-23 03:45:53 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
-2026-06-23 04:12:59 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:13:04 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:13:09 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:13:14 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:13:19 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:13:24 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:13:29 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:13:34 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:13:39 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:13:44 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:13:49 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:13:54 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:13:59 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:14:04 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:14:09 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:14:14 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:14:19 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:14:24 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:14:29 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:14:34 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:14:39 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:14:44 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:14:49 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:14:54 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:14:59 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:15:04 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:15:09 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:15:14 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:15:19 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:15:24 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:15:29 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:15:34 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:15:39 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:15:44 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:15:49 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:15:54 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:15:59 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:16:04 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:16:09 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:16:14 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:16:17 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 04:16:24 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 04:16:25 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
-2026-06-23 04:16:25 | INFO | FSM_Stream | [MASTER WS] connecting to wss://fstream.binance.com/ws/JzM8zIim0XjNChC84SudY2Ep2MLKnEB8bEpYBXXsiNJhrK4QlAx6loVUY8PbBjt3...
-2026-06-23 04:16:26 | INFO | FSM_Stream | [MASTER WS] connected successfully. Status: False
-2026-06-23 04:16:26 | INFO | FSM_Stream | [MASTER WS] Connected. Running REST sync to catch up on missed updates...
-2026-06-23 04:16:31 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:16:31 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 04:18:27 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 04:18:28 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
-2026-06-23 04:18:28 | INFO | FSM_Stream | [MASTER WS] connecting to wss://fstream.binance.com/ws/JzM8zIim0XjNChC84SudY2Ep2MLKnEB8bEpYBXXsiNJhrK4QlAx6loVUY8PbBjt3...
-2026-06-23 04:18:29 | INFO | FSM_Stream | [MASTER WS] connected successfully. Status: False
-2026-06-23 04:18:29 | INFO | FSM_Stream | [MASTER WS] Connected. Running REST sync to catch up on missed updates...
-2026-06-23 04:18:34 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:19:34 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:20:34 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:21:35 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:22:28 | INFO | FSM_Stream | PositionStream: WS disconnected
-2026-06-23 04:22:34 | INFO | FSM_Stream | [MASTER WS] direct connection - creating session with specific headers
-2026-06-23 04:22:34 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
-2026-06-23 04:22:34 | INFO | FSM_Stream | [MASTER WS] connecting to wss://fstream.binance.com/ws/JzM8zIim0XjNChC84SudY2Ep2MLKnEB8bEpYBXXsiNJhrK4QlAx6loVUY8PbBjt3...
-2026-06-23 04:22:35 | INFO | FSM_Stream | [MASTER WS] connected successfully. Status: False
-2026-06-23 04:22:35 | INFO | FSM_Stream | [MASTER WS] Connected. Running REST sync to catch up on missed updates...
-2026-06-23 04:22:41 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:23:41 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:24:41 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:25:41 | INFO | FSM_Stream | [MASTER WS] 5s timeout - waiting for messages...
-2026-06-23 04:26:26 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-23 05:38:40 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
+2026-06-23 06:03:40 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 06:28:41 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 06:53:41 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 07:18:41 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 07:43:42 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 08:08:42 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 08:33:42 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 08:58:43 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 09:23:43 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 09:48:44 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 10:13:44 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 10:38:44 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 11:03:45 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 11:28:45 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 11:53:45 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 12:18:46 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 12:43:46 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 13:08:46 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 13:33:47 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 13:58:47 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 14:23:47 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 14:48:48 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 15:13:48 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 15:38:48 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 16:03:49 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 16:28:49 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 16:53:49 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 17:18:50 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 17:43:50 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 18:08:50 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 18:33:51 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 18:54:03 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
+2026-06-23 18:54:24 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-23 18:58:51 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 18:59:07 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-23 18:59:16 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
+2026-06-23 18:59:52 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-23 19:00:00 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
+2026-06-23 19:25:00 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 19:50:00 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 20:15:01 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 20:40:01 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 21:05:01 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 21:30:02 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 21:55:02 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 22:20:03 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-23 22:31:49 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-23 22:31:55 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: JzM8z... (length: 64)
+2026-06-23 23:25:20 | WARNING | FSM_Stream | [BINANCE] listenKey keepalive failed: Cannot connect to host fapi.binance.com:443 ssl:default [getaddrinfo failed]
+2026-06-23 23:50:21 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-24 00:02:20 | INFO | FSM_Stream | PositionStream: WS disconnected

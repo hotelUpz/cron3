@@ -8,10 +8,13 @@
 from datetime import datetime, timezone
 import pytz
 
-class TimeControl():    
+GRACE_PERIOD_SEC = 60.0 # Буфер времени от начала свечи, в пределах которого происходит проверка новых сигналов
+
+class TimeControl:    
     def __init__(self, interval="5m"):
         self.interval_seconds = self.interval_to_seconds(interval)
         self.last_fetch_timestamp = None
+        self.window_open_until = 0
     
     def get_date_time_now(self, tz_location):
         now = datetime.now(tz_location)
@@ -41,25 +44,17 @@ class TimeControl():
         }
         return mapping.get(interval, 60)  # По умолчанию "1m"
 
-    def is_new_interval(self):
+    def is_new_interval(self) -> bool:
         """
-        Проверяет, появилась ли новая метка времени кратная интервалу.
+        Возвращает True, если текущее время находится в пределах первой минуты (60 сек)
+        с начала текущего интервала (свечи).
         """
         if not self.interval_seconds:
             return False
-        
-        now = datetime.now(timezone.utc)  # Используем объект времени с временной зоной UTC
+            
+        now = datetime.now(timezone.utc)
         current_timestamp = int(now.timestamp())
-
-        # Рассчитываем ближайшую кратную метку времени
         nearest_timestamp = (current_timestamp // self.interval_seconds) * self.interval_seconds
 
-        if self.last_fetch_timestamp is None:
-            self.last_fetch_timestamp = nearest_timestamp
-            return False
-
-        if nearest_timestamp > self.last_fetch_timestamp:
-            self.last_fetch_timestamp = nearest_timestamp
-            return True
-
-        return False
+        # Если с момента начала свечи прошло меньше 60 секунд — окно открыто
+        return (current_timestamp - nearest_timestamp) < GRACE_PERIOD_SEC

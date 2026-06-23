@@ -15,7 +15,6 @@ class PositionState:
     pre_avg_price: float = 0.0           # Цена входа ДО усреднения (для синхронизации)
     initial_entry_price: float = 0.0     # начальная точка входа позиции
     open_time: int = 0                   # время открытия первой сделки (unix ms)
-    current_grid_level: str = "0"        # текущий уровень сетки
     next_avg_price: float = None         # кешированная цена ближайшего усреднения
     fallback_price: float = None    # кешированная цена страховочного маркета
     
@@ -47,6 +46,5 @@ class PositionState:
         self.pending_rolling_tp = False
         self.next_avg_price = None
         self.fallback_price = None
-        self.current_grid_level = "0"
         self.grid.clear()
         self.tp_map.clear()

@@ -8,7 +8,7 @@ from POS_FSM.models import PositionState
 from c_log import UnifiedLogger
 
 logger = UnifiedLogger("FSM_Monitor")
-IS_SHOW_SIGNAL = True
+IS_SHOW_SIGNAL = False
 
 class PositionMonitor:
     def __init__(self, states_cache: Dict[str, Dict[str, PositionState]], target_symbols: list = None):
@@ -27,7 +27,7 @@ class PositionMonitor:
 
     async def sync_from_rest(self, client, symbols: list):
         """Запрашивает актуальные позиции по REST и инициализирует/синхронизирует FSM стейт."""
-        logger.debug("[REST] Syncing active positions as failsafe...")
+        # logger.debug("[REST] Syncing active positions as failsafe...")
         positions = await client.fetch_positions()
         for pos in positions:
             sym = pos.get("symbol")
@@ -51,6 +51,8 @@ class PositionMonitor:
         # Фиксируем количество и среднюю цену (разрешаем отрицательный total_volume)
         state.total_volume = pos_amt
         state.avg_entry_price = entry_price
+        
+        # logger.debug(f"[MONITOR] update_from_stream called for {symbol} {side} - qty: {pos_amt}, avg: {entry_price}")
 
         # Проверка наличия позиции (по модулю объема)
         if abs(pos_amt) == 0:

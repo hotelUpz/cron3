@@ -12,7 +12,7 @@ from c_utils import Utils
 from c_log import UnifiedLogger
 
 logger = UnifiedLogger("FSM_Stream")
-IS_SHOW_SIGNAL = True
+IS_SHOW_SIGNAL = False
 
 class BinanceListenKeyManager:
     """
@@ -106,7 +106,7 @@ class PositionStream:
 
     async def _create_session(self) -> aiohttp.ClientSession:
         timeout = aiohttp.ClientTimeout(total=None)
-        logger.info("[MASTER WS] direct connection - creating session with specific headers")
+        # logger.info("[MASTER WS] direct connection - creating session with specific headers")
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
             "Accept": "application/json",
@@ -117,7 +117,7 @@ class PositionStream:
 
     async def _connect(self) -> bool:
         try:
-            logger.info(f"[MASTER WS] connecting to {self.ws_url}...")
+            # logger.info(f"[MASTER WS] connecting to {self.ws_url}...")
             self.websocket = await self.session.ws_connect(
                 self.ws_url,
                 autoping=True,
@@ -131,7 +131,7 @@ class PositionStream:
                 }
             )
             self.is_connected = True
-            logger.info(f"[MASTER WS] connected successfully. Status: {self.websocket.closed}")
+            # logger.info(f"[MASTER WS] connected successfully. Status: {self.websocket.closed}")
             return True
         except aiohttp.WSServerHandshakeError as e:
             logger.error(f"[MASTER WS] handshake failed: status={e.status}, message={e.message}, headers={e.headers}")
@@ -160,6 +160,8 @@ class PositionStream:
     async def _handle_account_update(self, data: dict):
         acc = data.get("a", {})
         positions = acc.get("P", [])
+        
+        # logger.debug(f"[MASTER WS] _handle_account_update positions count: {len(positions)}")
 
         for p in positions:
             raw_symbol = p.get("s", "")
@@ -201,7 +203,7 @@ class PositionStream:
                     timeout=5.0,
                 )
             except asyncio.TimeoutError:
-                logger.debug("[MASTER WS] 5s timeout - waiting for messages...", throttle_sec=60)
+                # logger.debug("[MASTER WS] 5s timeout - waiting for messages...", throttle_sec=60)
                 continue
 
             if msg.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.ERROR):
@@ -212,7 +214,7 @@ class PositionStream:
                 logger.info(f"[MASTER WS] non-text msg type: {msg.type} data: {msg.data}")
                 continue
 
-            logger.info(f"[MASTER WS RAW] {msg.data}")
+            # logger.info(f"[MASTER WS RAW] {msg.data}")
 
             try:
                 data = json.loads(msg.data)
@@ -222,7 +224,7 @@ class PositionStream:
                 continue
 
             etype = data.get("e")
-            logger.debug(f"[MASTER WS] RAW EVENT RECEIVED: {etype}")
+            # logger.debug(f"[MASTER WS] RAW EVENT RECEIVED: {etype}")
             if not etype:
                 continue
 
@@ -255,7 +257,7 @@ class PositionStream:
                     # Обязательная синхронизация по REST при любом подключении/переподключении стрима
                     if self.client and self.target_symbols:
                         try:
-                            logger.info("[MASTER WS] Connected. Running REST sync to catch up on missed updates...")
+                            # logger.info("[MASTER WS] Connected. Running REST sync to catch up on missed updates...")
                             await self.monitor.sync_from_rest(self.client, list(self.target_symbols))
                         except Exception as e:
                             logger.error(f"[MASTER WS] REST sync failed on connect: {e}")

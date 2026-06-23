@@ -42,6 +42,7 @@ class UnlockedRotatingFileHandler(RotatingFileHandler):
                 self.doRollover()
                 
             msg = self.format(record)
+            os.makedirs(os.path.dirname(self.baseFilename), exist_ok=True)
             with open(self.baseFilename, self.mode, encoding=self.encoding) as f:
                 f.write(msg + self.terminator)
         except Exception:

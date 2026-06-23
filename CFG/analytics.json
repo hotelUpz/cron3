@@ -1,0 +1,28 @@
+{
+    "total_positions_LONG": 13,
+    "total_positions_SHORT": 37,
+    "total_trades": 53,
+    "winning_trades": 31,
+    "winrate_pct": 58.49,
+    "per_coin": {
+        "WIFUSDT": {
+            "total_trades": 28,
+            "winning_trades": 18,
+            "winrate_pct": 64.29,
+            "total_pnl_usdt": 2.9772,
+            "current_drawdown": -3.4639
+        },
+        "STABLEUSDT": {
+            "total_trades": 25,
+            "winning_trades": 13,
+            "winrate_pct": 52.0,
+            "total_pnl_usdt": 1.6349,
+            "current_drawdown": -4.6677
+        }
+    },
+    "total_drawdown_usdt": -8.1315,
+    "initial_balance_usdt": 82.0,
+    "current_balance_usdt": 77.1922,
+    "total_trading_pnl_usdt": 4.6121,
+    "total_pnl_usdt": -4.8078
+}
