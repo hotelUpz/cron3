@@ -12,14 +12,10 @@ logger = UnifiedLogger("AvgManager")
 
 class AverageManager:
     def __init__(self):
-        # Флаг для отслеживания того, что расчет сетки для (symbol, side) уже проведен
-        self._grid_calculated = set()
+        pass
 
     def reset(self, symbol: str, side: str):
-        """Сбрасывает флаг расчета сетки (вызывается при закрытии позиции)."""
-        key = f"{symbol}_{side}"
-        if key in self._grid_calculated:
-            self._grid_calculated.remove(key)
+        pass
 
     async def _init_grid_prices(self, runtime_manager, symbol: str, side: str, state, spec_data: dict) -> bool:
         """Единожды рассчитывает цены для всей сетки на основе initial_entry_price."""
@@ -60,15 +56,10 @@ class AverageManager:
 
         grid = state.grid
 
-        # 1. Единоразовый расчет сетки цен
-        key = f"{symbol}_{side}"
-        if key not in self._grid_calculated:
-            success = await self._init_grid_prices(runtime_manager, symbol, side, state, spec_data)
-            if success:
-                self._grid_calculated.add(key)
-                grid = state.grid
-            else:
-                return
+        # 1. Расчет отсутствующих цен сетки (если price == None)
+        success = await self._init_grid_prices(runtime_manager, symbol, side, state, spec_data)
+        if not success:
+            return
 
         # 2. Детерминация цены (кешируем только прайс для горячего пути)
         if state.next_avg_price is None:

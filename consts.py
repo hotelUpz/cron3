@@ -21,6 +21,13 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "CFG"
 CFG_PATH = DATA_DIR / "app.json"
+ANALYTICS_DIR = BASE_DIR / "ANALYTICS"
+CACHE_DIR = BASE_DIR / "CACHE"
+
+# Создаем директории если их нет
+ANALYTICS_DIR.mkdir(parents=True, exist_ok=True)
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
 
 
 def _read_json(path: Path) -> Dict[str, Any]:
@@ -39,10 +46,13 @@ _CFG: Dict[str, Any] = _read_json(CFG_PATH)
 # ============================================================
 API_KEY: str = os.getenv("API_KEY") or ""
 API_SECRET: str = os.getenv("API_SECRET") or ""
+TG_TOKEN: str = os.getenv("TG_TOKEN") or ""
 
 # ============================================================
 # APP / UTILS
 # ============================================================
+TG_ENABLED: bool = bool(_CFG.get("telegram", {}).get("enabled", False))
+TG_ALLOWED_USERS: list[int] = _CFG.get("telegram", {}).get("allowed_users", [])
 TIME_ZONE: str = str(_CFG["app"]["time_zone"])
 PRECISION: int = int(_CFG["app"]["precision"])
 SPEC_TTL_SEC: float = float(_CFG["app"]["spec_ttl_sec"])

@@ -22,7 +22,7 @@ def _ensure_dirs():
 def build_runtime_caches():
     _ensure_dirs()
     
-    base_file = TEMP_DIR / "_base.json"
+    base_file = DATA_DIR / "_base.json"
     base_data = Utils.read_json_file(base_file)
     if not base_data:
         logger.error(f"Base template not found or empty at {base_file}")
@@ -40,6 +40,20 @@ def build_runtime_caches():
             
             for side in ("LONG", "SHORT"):
                 if side in new_data:
+                    new_data[side].update({
+                        "total_volume": 0.0,
+                        "avg_entry_price": 0.0,
+                        "pre_avg_price": 0.0,
+                        "initial_entry_price": 0.0,
+                        "open_time": 0,
+                        "next_avg_price": None,
+                        "fallback_price": None,
+                        "in_position": False,
+                        "in_position_papper": False,
+                        "is_finished": False,
+                        "pending_avg": False,
+                        "pending_rolling_tp": False
+                    })
                     if "grid" in new_data[side]:
                         for grid_id, grid_cfg in new_data[side]["grid"].items():
                             grid_cfg["is_active"] = False

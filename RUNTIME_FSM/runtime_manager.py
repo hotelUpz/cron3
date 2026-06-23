@@ -129,7 +129,7 @@ class RuntimeFsmManager:
         """
         Сбрасывает стейт позиции до дефолтной раскладки сетки из _base.json.
         """
-        base_file = DATA_DIR / "temp" / "_base.json"
+        base_file = DATA_DIR / "_base.json"
         base_data = Utils.read_json_file(base_file)
         if not base_data or side not in base_data:
             logger.error(f"Cannot reset {symbol} {side}: _base.json is invalid.")
@@ -140,8 +140,18 @@ class RuntimeFsmManager:
         
         # Глубоко копируем дефолтную сторону (вместе со структурами grid и tp_map)
         side_default = json.loads(json.dumps(base_data[side]))
-        state.grid = side_default.get("grid", {})
-        state.tp_map = side_default.get("tp_map", {})
+        
+        # Инжектим рантайм-поля в сетку и тейк-профиты
+        grid_data = side_default.get("grid", {})
+        for k, v in grid_data.items():
+            v["is_active"] = False
+            v["price"] = None
+        state.grid = grid_data
+        
+        tp_data = side_default.get("tp_map", {})
+        for k, v in tp_data.items():
+            v["is_active"] = False
+        state.tp_map = tp_data
         
         logger.debug(f"[{symbol}] {side} FSM state reset to default.")
 

@@ -6,10 +6,10 @@
 from typing import Dict
 from c_log import UnifiedLogger
 from c_utils import Utils
-from consts import DATA_DIR
+from consts import CACHE_DIR
 
 logger = UnifiedLogger("LeverageManager")
-CACHE_FILE = DATA_DIR / "temp" / "leverage_cache.json"
+CACHE_FILE = CACHE_DIR / "leverage_cache.json"
 
 class LeverageManager:
     def __init__(self):

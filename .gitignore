@@ -4,3 +4,4 @@ __pycache__/
 ssh_key.pub
 ssh_key.txt
 .ssh-autostart.sh
+TESTS/

@@ -50,3 +50,10 @@
 2026-06-23 23:25:20 | WARNING | FSM_Stream | [BINANCE] listenKey keepalive failed: Cannot connect to host fapi.binance.com:443 ssl:default [getaddrinfo failed]
 2026-06-23 23:50:21 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
 2026-06-24 00:02:20 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-24 00:04:43 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ot4QC... (length: 64)
+2026-06-24 00:29:43 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-24 00:54:44 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-24 01:19:44 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-24 01:44:45 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-24 02:09:45 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-24 02:34:45 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive

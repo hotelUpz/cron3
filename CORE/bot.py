@@ -53,8 +53,11 @@ class BotCore:
         from CORE.TP.fallback_tp_manager import FallbackTpManager
         self.fallback_tp_manager = FallbackTpManager()
         
-        from analytics import AnalyticsManager
+        from ANALYTICS.analytics import AnalyticsManager
         self.analytics = AnalyticsManager()
+        
+        from consts import TG_ENABLED
+        self.is_paused = TG_ENABLED
         
         self.spec_data = {}
         
@@ -242,8 +245,9 @@ class BotCore:
         
         # ШАГ 1. Сборка и проверка рантайм кешей (создание отсутствующих JSON)
         from RUNTIME_FSM.runtime_builder import build_runtime_caches, prompt_runtime_check
+        from consts import TG_ENABLED
         created_new = build_runtime_caches()
-        if created_new:
+        if created_new and not TG_ENABLED:
             prompt_runtime_check()
         
         self.runtime_manager.load_initial_caches(self.symbols)
@@ -290,6 +294,9 @@ class BotCore:
 
         while self.is_running:
             try:
+                if self.is_paused:
+                    await asyncio.sleep(1.0)
+                    continue
                 
                 # # ===== ОПОРНАЯ ТОЧКА ДЛЯ ТЕСТИРОВАНИЯ =====               
                 # logger.info(f"DEBUG LOOP: Prices snapshot: {list(self.prices.items())[:3]}...")

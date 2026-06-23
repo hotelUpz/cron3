@@ -1,5 +1,5 @@
 # ==============================================================================
-# Path: CORE/analytics.py
+# Path: ANALYTICS/analytics.py
 # Role: Домен аналитики и ведения журнала сделок
 # ==============================================================================
 
@@ -9,7 +9,7 @@ import logging
 import csv
 from datetime import datetime, timezone
 from pathlib import Path
-from consts import DATA_DIR, ANALYTICS_CSV_MAX_ROWS
+from consts import ANALYTICS_DIR, ANALYTICS_CSV_MAX_ROWS
 
 logger = logging.getLogger("Analytics")
 
@@ -18,8 +18,8 @@ class AnalyticsManager:
     Ведет журнал сделок и статистику закрытых позиций.
     """
     def __init__(self):
-        self.log_file = DATA_DIR / "analytics.json"
-        self.csv_file = DATA_DIR / "trades_ledger.csv"
+        self.log_file = ANALYTICS_DIR / "analytics.json"
+        self.csv_file = ANALYTICS_DIR / "trades_ledger.csv"
         self._lock = asyncio.Lock()
         self._csv_lock = asyncio.Lock()
         self._background_tasks = set()

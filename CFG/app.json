@@ -28,5 +28,12 @@
   "symbols": [
     "STABLEUSDT",
     "WIFUSDT"
-  ]
+  ],
+  "telegram": {
+    "enabled": true,
+    "allowed_users": [
+      1059524161,
+      610822492
+    ]
+  }
 }

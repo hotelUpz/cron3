@@ -14,9 +14,21 @@ import asyncio
 from typing import *
 
 
-# ============================================================
-# CORE APP (MAIN PROCESS ONLY)
-# ============================================================
+async def run_app(bot, logger):
+    from consts import TG_ENABLED
+    tasks = [bot.start()]
+    
+    if TG_ENABLED:
+        try:
+            from TG.tg_receiver import TelegramReceiver
+            tg_bot = TelegramReceiver(bot)
+            tasks.append(tg_bot.start())
+            logger.info("TGReceiver will be started alongside BotCore.")
+        except Exception as e:
+            logger.error(f"Failed to initialize TGReceiver: {e}")
+            
+    await asyncio.gather(*tasks)
+
 def main():
     import logging
     from c_log import UnifiedLogger
@@ -27,7 +39,7 @@ def main():
     try:
         bot = BotCore()
         logger.info("Starting BotCore...")
-        asyncio.run(bot.start())
+        asyncio.run(run_app(bot, logger))
         
     except KeyboardInterrupt:
         logger.info("Ctrl+C detected. Shutting down...")
