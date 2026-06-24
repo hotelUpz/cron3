@@ -57,7 +57,11 @@ class BotCore:
         self.analytics = AnalyticsManager()
         
         from consts import TG_ENABLED
-        self.is_paused = TG_ENABLED
+        auto_start = _CFG.get("app", {}).get("auto_start", False)
+        if TG_ENABLED:
+            self.is_paused = not auto_start
+        else:
+            self.is_paused = False
         
         self.spec_data = {}
         
@@ -90,13 +94,11 @@ class BotCore:
         
         if symbol not in self.fsm_states:
             self.fsm_states[symbol] = {
-                "LONG": PositionState(),
-                "SHORT": PositionState()
+                "LONG": PositionState(symbol=symbol, side="LONG"),
+                "SHORT": PositionState(symbol=symbol, side="SHORT")
             }
             
         # 3. Add to monitors and streams
-        if hasattr(self, 'pos_monitor'):
-            self.pos_monitor.target_symbols.append(symbol)
         if hasattr(self, 'pos_stream'):
             self.pos_stream.target_symbols.add(symbol)
             
@@ -384,6 +386,10 @@ class BotCore:
 
     async def start(self):
         """Запуск бота."""
+        if self.is_paused:
+            logger.info("BotCore started in PAUSED state (waiting for TG Start).")
+        else:
+            logger.info("BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.")
         await self._game_loop()
 
     def stop(self):

@@ -2,3 +2,7 @@
 2026-06-24 03:35:00 | DEBUG | LeverageManager | [DASHUSDT] Margin type CROSSED is already set on exchange.
 2026-06-24 03:35:00 | INFO | LeverageManager | [DASHUSDT] Successfully set leverage to 10 and margin type to CROSSED
 2026-06-24 03:35:01 | INFO | LeverageManager | [DASHUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-24 04:00:46 | DEBUG | LeverageManager | [ALGOUSDT] Margin type CROSSED is already set on exchange.
+2026-06-24 04:00:46 | DEBUG | LeverageManager | [ALGOUSDT] Margin type CROSSED is already set on exchange.
+2026-06-24 04:00:46 | INFO | LeverageManager | [ALGOUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-24 04:00:46 | INFO | LeverageManager | [ALGOUSDT] Successfully set leverage to 10 and margin type to CROSSED

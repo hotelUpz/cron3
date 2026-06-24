@@ -57,7 +57,8 @@ class TelegramReceiver:
                 KeyboardButton(text="⚙️ Set Coins")
             ],
             [
-                KeyboardButton(text="📜 Get Logs")
+                KeyboardButton(text="📜 Get Logs"),
+                KeyboardButton(text="ℹ️ Status")
             ]
         ]
         return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
@@ -68,6 +69,14 @@ class TelegramReceiver:
                 KeyboardButton(text="✅ Confirm Start"),
                 KeyboardButton(text="⚙️ Set Coins")
             ],
+            [
+                KeyboardButton(text="🔙 Cancel")
+            ]
+        ]
+        return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
+
+    def _get_cancel_keyboard(self):
+        keyboard = [
             [
                 KeyboardButton(text="🔙 Cancel")
             ]
@@ -85,10 +94,14 @@ class TelegramReceiver:
         @self.dp.message(F.text == "▶️ Start")
         async def on_pre_start(message: Message, state: FSMContext):
             await state.clear()
+            
+            if not self.bot_core.is_paused:
+                await message.answer("⚠️ Trading is already running!", reply_markup=self._get_main_keyboard())
+                return
+                
             from consts import _CFG
             symbols = _CFG.get("symbols", [])
             
-            banner_lines = ["<b>Подтвердите настройки запуска:</b>\n"]
             for sym in symbols:
                 sym_lower = sym.lower()
                 runtime_path = self.template_manager.runtime_dir / f"{sym_lower}.json"
@@ -98,21 +111,38 @@ class TelegramReceiver:
                         with open(runtime_path, 'r', encoding='utf-8') as f:
                             data = json.load(f)
                             
-                        l_en = data.get("LONG", {}).get("enable", False)
-                        l_sz = data.get("LONG", {}).get("invest_size", 0)
-                        s_en = data.get("SHORT", {}).get("enable", False)
-                        s_sz = data.get("SHORT", {}).get("invest_size", 0)
-                        
-                        banner_lines.append(f"<b>{sym}</b>:")
-                        banner_lines.append(f"  LONG: {'✅ On' if l_en else '❌ Off'} ({l_sz}$)")
-                        banner_lines.append(f"  SHORT: {'✅ On' if s_en else '❌ Off'} ({s_sz}$)")
-                    except Exception:
-                        banner_lines.append(f"<b>{sym}</b>: [Ошибка чтения конфигурации]")
+                        lines = [f"<b>{sym} Settings:</b>"]
+                        for side in ["LONG", "SHORT"]:
+                            cfg = data.get(side, {})
+                            en = cfg.get("enable", False)
+                            sz = cfg.get("invest_size", 0)
+                            lev = cfg.get("leverage", 0)
+                            margin = cfg.get("margin_type", "CROSSED")
+                            
+                            lines.append(f"  <b>{side}</b>: {'✅ On' if en else '❌ Off'}")
+                            if en:
+                                lines.append(f"    ├ Invest: {sz}$ | Lev: {lev}x | {margin}")
+                                
+                                grid = cfg.get("grid", {})
+                                indents = []
+                                for k in sorted(grid.keys(), key=lambda x: int(x)):
+                                    indents.append(str(grid[k].get("indent", 0)))
+                                lines.append(f"    ├ Grid: [{', '.join(indents)}]")
+                                
+                                tp_map = cfg.get("tp_map", {})
+                                tps = []
+                                for k in sorted(tp_map.keys(), key=lambda x: int(x)):
+                                    tps.append(str(tp_map[k].get("indent", 0)))
+                                lines.append(f"    └ TP: [{', '.join(tps)}]")
+                                
+                        msg_text = "\n".join(lines)
+                        await message.answer(msg_text, parse_mode="HTML")
+                    except Exception as e:
+                        await message.answer(f"<b>{sym}</b>: [Ошибка чтения конфигурации: {e}]", parse_mode="HTML")
                 else:
-                    banner_lines.append(f"<b>{sym}</b>: [Рантайм не создан]")
+                    await message.answer(f"<b>{sym}</b>: [Рантайм не создан]", parse_mode="HTML")
             
-            text = "\n".join(banner_lines)
-            await message.answer(text, reply_markup=self._get_confirm_start_keyboard(), parse_mode="HTML")
+            await message.answer("<b>Подтвердите настройки запуска:</b>", reply_markup=self._get_confirm_start_keyboard(), parse_mode="HTML")
 
         @self.dp.message(F.text == "🔙 Cancel")
         async def on_cancel(message: Message, state: FSMContext):
@@ -124,11 +154,22 @@ class TelegramReceiver:
         @self.dp.message(F.text == "✅ Confirm Start")
         async def on_confirm_start(message: Message, state: FSMContext):
             await state.clear()
+            
+            # Save auto_start = True to app.json
+            from consts import DATA_DIR
+            from c_utils import Utils
+            app_json_path = DATA_DIR / "app.json"
+            app_data = Utils.read_json_file(app_json_path)
+            if "app" not in app_data:
+                app_data["app"] = {}
+            app_data["app"]["auto_start"] = True
+            Utils.write_json_file(app_json_path, app_data)
+            
             if not self.bot_core.is_paused:
                 await message.answer("Trading is already running!", reply_markup=self._get_main_keyboard())
                 return
             self.bot_core.is_paused = False
-            logger.info("[TG] User started trading loops.")
+            logger.info("[TG] User started trading loops. auto_start flag saved to True.")
             await message.answer("<b>Control Panel</b>\nCurrent Status: ▶️ Running", reply_markup=self._get_main_keyboard(), parse_mode="HTML")
 
         @self.dp.message(F.text == "⏸️ Stop")
@@ -140,6 +181,13 @@ class TelegramReceiver:
             self.bot_core.is_paused = True
             logger.info("[TG] User stopped trading loops.")
             await message.answer("<b>Control Panel</b>\nCurrent Status: ⏸️ Paused", reply_markup=self._get_main_keyboard(), parse_mode="HTML")
+
+        @self.dp.message(F.text == "ℹ️ Status")
+        async def on_status(message: Message, state: FSMContext):
+            await state.clear()
+            status = "⏸️ Paused" if self.bot_core.is_paused else "▶️ Running"
+            text = f"<b>Control Panel</b>\nCurrent Status: {status}"
+            await message.answer(text, reply_markup=self._get_main_keyboard(), parse_mode="HTML")
 
         @self.dp.message(F.text == "📜 Get Logs")
         async def on_get_logs(message: Message, state: FSMContext):
@@ -196,7 +244,7 @@ class TelegramReceiver:
 
         @self.dp.message(F.text == "⚙️ Set Coins")
         async def on_set_coins(message: Message, state: FSMContext):
-            await message.answer("Пожалуйста, введите символ монеты (например: WIFUSDT):", reply_markup=self._get_confirm_start_keyboard())
+            await message.answer("Пожалуйста, введите символ монеты (например: WIFUSDT):", reply_markup=self._get_cancel_keyboard())
             await state.set_state(TGStates.waiting_for_symbol)
 
         @self.dp.message(TGStates.waiting_for_symbol)
@@ -269,7 +317,12 @@ class TelegramReceiver:
                     # MUST sync the in-memory PositionState with the updated cache so price=None takes effect
                     self.bot_core.runtime_manager.populate_fsm_from_cache(self.bot_core.fsm_states)
                 
-                await message.answer(f"✅ {msg}")
+                if self.bot_core.is_paused:
+                    msg += "\n\n⚠️ Бот сейчас на паузе. Нажмите '▶️ Start' -> '✅ Confirm Start', чтобы начать торговлю."
+                else:
+                    msg += "\n\n🚀 Монета добавлена в запущенный цикл и начнет торговаться со следующей 5-минутной свечи!"
+                
+                await message.answer(f"✅ {msg}", reply_markup=self._get_main_keyboard())
                 await state.clear()
             else:
                 await message.answer(f"❌ {msg}\nПопробуйте отправить исправленный JSON еще раз.")

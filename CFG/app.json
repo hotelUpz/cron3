@@ -1,40 +1,42 @@
 {
-  "app": {
-    "time_zone": "UTC",
-    "precision": 18,
-    "spec_ttl_sec": 60,
-    "time_slack_sec": 0.15,
-    "req_timeout_sec": 10.0,
-    "avoid_check_runtime_cfg": false,
-    "api_rate_limit_sec": 0.1,
-    "api_concurrent_rate_limit_sec": 0.01,
-    "rest_failsafe_sec": 1.0
-  },
-  "signal": {
-    "timeframe": "5m"
-  },
-  "analytics": {
-    "csv_max_rows": 1000
-  },
-  "logging": {
-    "debug": true,
-    "info": true,
-    "warning": true,
-    "error": true,
-    "max_log_lines": 10000,
-    "log_to_console": true,
-    "log_to_file": true
-  },
-  "symbols": [
-    "STABLEUSDT",
-    "WIFUSDT",
-    "DASHUSDT"
-  ],
-  "telegram": {
-    "enabled": true,
-    "allowed_users": [
-      1059524161,
-      610822492
-    ]
-  }
+    "app": {
+        "time_zone": "UTC",
+        "precision": 18,
+        "spec_ttl_sec": 60,
+        "time_slack_sec": 0.15,
+        "req_timeout_sec": 10.0,
+        "avoid_check_runtime_cfg": false,
+        "api_rate_limit_sec": 0.1,
+        "api_concurrent_rate_limit_sec": 0.01,
+        "rest_failsafe_sec": 1.0,
+        "auto_start": true
+    },
+    "signal": {
+        "timeframe": "5m"
+    },
+    "analytics": {
+        "csv_max_rows": 1000
+    },
+    "logging": {
+        "debug": true,
+        "info": true,
+        "warning": true,
+        "error": true,
+        "max_log_lines": 10000,
+        "log_to_console": true,
+        "log_to_file": true
+    },
+    "symbols": [
+        "STABLEUSDT",
+        "WIFUSDT",
+        "DASHUSDT",
+        "ALGOUSDT"
+    ],
+    "telegram": {
+        "enabled": true,
+        "allowed_users": [
+            1059524161,
+            610822492
+        ]
+    }
 }
