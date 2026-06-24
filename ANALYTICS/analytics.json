@@ -1,36 +1,43 @@
 {
     "total_positions_LONG": 13,
     "total_positions_SHORT": 37,
-    "total_trades": 54,
-    "winning_trades": 32,
-    "winrate_pct": 59.26,
+    "total_trades": 130,
+    "winning_trades": 94,
+    "winrate_pct": 72.31,
     "per_coin": {
         "WIFUSDT": {
-            "total_trades": 28,
-            "winning_trades": 18,
-            "winrate_pct": 64.29,
-            "total_pnl_usdt": 2.9772,
-            "current_drawdown": -3.0903
+            "total_trades": 51,
+            "winning_trades": 36,
+            "winrate_pct": 70.59,
+            "total_pnl_usdt": 6.4179,
+            "current_drawdown": -10.7389
         },
         "STABLEUSDT": {
-            "total_trades": 25,
-            "winning_trades": 13,
-            "winrate_pct": 52.0,
-            "total_pnl_usdt": 1.6349,
-            "current_drawdown": -4.1079
+            "total_trades": 37,
+            "winning_trades": 24,
+            "winrate_pct": 64.86,
+            "total_pnl_usdt": 9.6177,
+            "current_drawdown": -2.1505
         },
         "DASHUSDT": {
-            "total_trades": 1,
-            "winning_trades": 1,
-            "winrate_pct": 100.0,
-            "total_pnl_usdt": 0.1199,
-            "current_drawdown": -0.0991
+            "total_trades": 25,
+            "winning_trades": 23,
+            "winrate_pct": 92.0,
+            "total_pnl_usdt": 2.8872,
+            "current_drawdown": -5.3762
+        },
+        "ALGOUSDT": {
+            "total_trades": 17,
+            "winning_trades": 11,
+            "winrate_pct": 64.71,
+            "total_pnl_usdt": 1.2661,
+            "current_drawdown": -3.3994
         }
     },
-    "total_drawdown_usdt": -7.3182,
+    "total_drawdown_usdt": -21.6649,
     "initial_balance_usdt": 82.0,
-    "current_balance_usdt": 77.9473,
-    "total_trading_pnl_usdt": 4.732,
-    "total_pnl_usdt": -4.0527,
-    "last_updated_ts": 1782262849014
+    "current_balance_usdt": 74.3715,
+    "total_trading_pnl_usdt": 20.1889,
+    "total_pnl_usdt": -7.6285,
+    "last_updated_ts": 1782328746316
 }

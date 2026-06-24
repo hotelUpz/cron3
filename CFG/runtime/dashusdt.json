@@ -10,31 +10,31 @@
                 "indent": 0,
                 "volume": 20,
                 "is_active": true,
-                "price": 36.73
+                "price": 36.84
             },
             "1": {
                 "indent": -5.0,
                 "volume": 20,
-                "is_active": false,
-                "price": 34.89
+                "is_active": true,
+                "price": 35.0
             },
             "2": {
                 "indent": -8.0,
                 "volume": 20,
-                "is_active": false,
-                "price": 33.79
+                "is_active": true,
+                "price": 33.89
             },
             "3": {
                 "indent": -13.0,
                 "volume": 20,
-                "is_active": false,
-                "price": 31.96
+                "is_active": true,
+                "price": 32.05
             },
             "4": {
                 "indent": -21.0,
                 "volume": 20,
                 "is_active": false,
-                "price": 29.02
+                "price": 29.1
             }
         },
         "tp_map": {
@@ -46,17 +46,17 @@
             "1": {
                 "indent": 1.2,
                 "fallback_indent": 1.6,
-                "is_active": false
+                "is_active": true
             },
             "2": {
                 "indent": 1.8,
                 "fallback_indent": 2.3,
-                "is_active": false
+                "is_active": true
             },
             "3": {
                 "indent": 2.4,
                 "fallback_indent": 3.0,
-                "is_active": false
+                "is_active": true
             },
             "4": {
                 "indent": 3.0,
@@ -64,13 +64,13 @@
                 "is_active": false
             }
         },
-        "total_volume": 0.545,
-        "avg_entry_price": 36.73,
-        "pre_avg_price": 0.0,
-        "initial_entry_price": 36.73,
-        "open_time": 1782261301538,
-        "next_avg_price": 34.89,
-        "fallback_price": 37.1,
+        "total_volume": 2.328,
+        "avg_entry_price": 34.36245274914,
+        "pre_avg_price": 35.20926643192,
+        "initial_entry_price": 36.84,
+        "open_time": 1782264900872,
+        "next_avg_price": 29.1,
+        "fallback_price": 35.39,
         "in_position": true,
         "in_position_papper": false,
         "is_finished": false,
@@ -88,31 +88,31 @@
                 "indent": 0,
                 "volume": 20,
                 "is_active": true,
-                "price": 36.51
+                "price": 32.12
             },
             "1": {
                 "indent": -5.0,
                 "volume": 20,
                 "is_active": false,
-                "price": 38.34
+                "price": 33.73
             },
             "2": {
                 "indent": -8.0,
                 "volume": 20,
                 "is_active": false,
-                "price": 39.43
+                "price": 34.69
             },
             "3": {
                 "indent": -13.0,
                 "volume": 20,
                 "is_active": false,
-                "price": 41.26
+                "price": 36.3
             },
             "4": {
                 "indent": -21.0,
                 "volume": 20,
                 "is_active": false,
-                "price": 44.18
+                "price": 38.87
             }
         },
         "tp_map": {
@@ -142,13 +142,13 @@
                 "is_active": false
             }
         },
-        "total_volume": -0.548,
-        "avg_entry_price": 36.51,
+        "total_volume": -0.623,
+        "avg_entry_price": 32.12,
         "pre_avg_price": 0.0,
-        "initial_entry_price": 36.51,
-        "open_time": 1782262855611,
-        "next_avg_price": 38.34,
-        "fallback_price": 36.14,
+        "initial_entry_price": 32.12,
+        "open_time": 1782328800415,
+        "next_avg_price": 33.73,
+        "fallback_price": 31.8,
         "in_position": true,
         "in_position_papper": false,
         "is_finished": false,

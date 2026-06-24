@@ -4,14 +4,14 @@
         "invest_size": 100,
         "leverage": 10,
         "margin_type": "CROSSED",
-        "total_volume": 2230.0,
-        "avg_entry_price": 0.0358801524664,
-        "pre_avg_price": 0.0363025710829,
-        "initial_entry_price": 0.03651,
-        "open_time": 1782184549391,
+        "total_volume": 1704.0,
+        "avg_entry_price": 0.0352523943662,
+        "pre_avg_price": 0.0353698233216,
+        "initial_entry_price": 0.03547,
+        "open_time": 1782316229693,
         "current_grid_level": "0",
-        "next_avg_price": 0.03359,
-        "fallback_price": 0.03624,
+        "next_avg_price": 0.0337,
+        "fallback_price": 0.0356,
         "in_position": true,
         "in_position_papper": false,
         "is_finished": false,
@@ -21,31 +21,31 @@
         "grid": {
             "0": {
                 "indent": 0,
-                "price": 0.03651,
+                "price": 0.03547,
                 "volume": 20,
                 "is_active": true
             },
             "1": {
                 "indent": -0.6,
-                "price": 0.03629,
+                "price": 0.03526,
                 "volume": 20,
                 "is_active": true
             },
             "2": {
                 "indent": -1.2,
-                "price": 0.03607,
+                "price": 0.03504,
                 "volume": 20,
                 "is_active": true
             },
             "3": {
                 "indent": -5.0,
-                "price": 0.03468,
+                "price": 0.0337,
                 "volume": 20,
-                "is_active": true
+                "is_active": false
             },
             "4": {
                 "indent": -8.0,
-                "price": 0.03359,
+                "price": 0.03263,
                 "volume": 20,
                 "is_active": false
             }
@@ -69,7 +69,7 @@
             "3": {
                 "indent": 0.6,
                 "fallback_indent": 1.0,
-                "is_active": true
+                "is_active": false
             },
             "4": {
                 "indent": 0.6,
@@ -83,14 +83,14 @@
         "invest_size": 100,
         "leverage": 10,
         "margin_type": "CROSSED",
-        "total_volume": -1764.0,
-        "avg_entry_price": 0.034012414966,
-        "pre_avg_price": 0.0339243002545,
-        "initial_entry_price": 0.03376,
-        "open_time": 1782243900662,
+        "total_volume": -1763.0,
+        "avg_entry_price": 0.0340258876914,
+        "pre_avg_price": 0.033924783715,
+        "initial_entry_price": 0.03384,
+        "open_time": 1782320100758,
         "current_grid_level": "0",
-        "next_avg_price": 0.03545,
-        "fallback_price": 0.03367,
+        "next_avg_price": 0.03553,
+        "fallback_price": 0.03369,
         "in_position": true,
         "in_position_papper": false,
         "is_finished": false,
@@ -100,31 +100,31 @@
         "grid": {
             "0": {
                 "indent": 0,
-                "price": 0.03376,
+                "price": 0.03384,
                 "volume": 20,
                 "is_active": true
             },
             "1": {
                 "indent": -0.6,
-                "price": 0.03396,
+                "price": 0.03404,
                 "volume": 20,
                 "is_active": true
             },
             "2": {
                 "indent": -1.2,
-                "price": 0.03417,
+                "price": 0.03425,
                 "volume": 20,
                 "is_active": true
             },
             "3": {
                 "indent": -5.0,
-                "price": 0.03545,
+                "price": 0.03553,
                 "volume": 20,
                 "is_active": false
             },
             "4": {
                 "indent": -8.0,
-                "price": 0.03646,
+                "price": 0.03655,
                 "volume": 20,
                 "is_active": false
             }

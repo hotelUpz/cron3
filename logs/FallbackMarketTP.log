@@ -40,3 +40,6 @@
 2026-06-23 11:28:08 | INFO | FallbackMarketTP | [WIFUSDT] SHORT Canceling all limit orders before executing Fallback Market...
 2026-06-23 11:28:08 | WARNING | FallbackMarketTP | [WIFUSDT] SHORT FALLBACK MARKET TRIGGERED! Price 0.1535 crossed 0.1535. Closing all.
 2026-06-23 11:28:08 | ERROR | FallbackMarketTP | [WIFUSDT] Failed to execute Fallback Market Order: ReduceOnly Order is rejected.
+2026-06-24 20:00:30 | INFO | FallbackMarketTP | [ALGOUSDT] SHORT Canceling all limit orders before executing Fallback Market...
+2026-06-24 20:00:31 | WARNING | FallbackMarketTP | [ALGOUSDT] SHORT FALLBACK MARKET TRIGGERED! Price 0.0858 crossed 0.0858. Closing all.
+2026-06-24 20:00:31 | WARNING | FallbackMarketTP | [ALGOUSDT] Fallback Market Order rejected with -2022 (ReduceOnly). Position is already closed by Limit TP. Assuming success.
