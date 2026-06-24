@@ -57,3 +57,7 @@
 2026-06-24 01:44:45 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
 2026-06-24 02:09:45 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
 2026-06-24 02:34:45 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-24 03:19:20 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ot4QC... (length: 64)
+2026-06-24 03:20:48 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-24 03:30:27 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ot4QC... (length: 64)
+2026-06-24 03:47:21 | INFO | FSM_Stream | PositionStream: WS disconnected

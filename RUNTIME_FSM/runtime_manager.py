@@ -127,33 +127,11 @@ class RuntimeFsmManager:
 
     def reset_state_to_default(self, symbol: str, side: str, state):
         """
-        Сбрасывает стейт позиции до дефолтной раскладки сетки из _base.json.
+        Сбрасывает рантайм стейт позиции. Пользовательская конфигурация (инденты, объемы) 
+        в grid и tp_map сохраняется, обнуляются только оперативные переменные (is_active, price и тд).
         """
-        base_file = DATA_DIR / "_base.json"
-        base_data = Utils.read_json_file(base_file)
-        if not base_data or side not in base_data:
-            logger.error(f"Cannot reset {symbol} {side}: _base.json is invalid.")
-            return
-
-        # Полный сброс переменных
         state.reset()
-        
-        # Глубоко копируем дефолтную сторону (вместе со структурами grid и tp_map)
-        side_default = json.loads(json.dumps(base_data[side]))
-        
-        # Инжектим рантайм-поля в сетку и тейк-профиты
-        grid_data = side_default.get("grid", {})
-        for k, v in grid_data.items():
-            v["is_active"] = False
-            v["price"] = None
-        state.grid = grid_data
-        
-        tp_data = side_default.get("tp_map", {})
-        for k, v in tp_data.items():
-            v["is_active"] = False
-        state.tp_map = tp_data
-        
-        logger.debug(f"[{symbol}] {side} FSM state reset to default.")
+        logger.debug(f"[{symbol}] {side} FSM state reset to default (kept custom config).")
 
     async def save_cache(self, symbol: str):
         """Конкурентно-безопасное сохранение in-memory кеша на диск."""

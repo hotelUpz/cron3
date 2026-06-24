@@ -192,6 +192,9 @@ class AnalyticsManager:
             # Update Drawdowns
             await self._update_drawdowns(client, data)
             
+            import time
+            data["last_updated_ts"] = int(time.time() * 1000)
+            
             self._write_data(data)
             
         logger.info(f"[ANALYTICS] Position finished: {symbol} {side} PnL={pnl}")

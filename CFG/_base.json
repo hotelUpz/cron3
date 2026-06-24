@@ -11,19 +11,19 @@
                 "volume": 20
             },
             "1": {
-                "indent": -0.6,
-                "volume": 20
-            },
-            "2": {
-                "indent": -1.2,
-                "volume": 20
-            },
-            "3": {
                 "indent": -5.0,
                 "volume": 20
             },
-            "4": {
+            "2": {
                 "indent": -8.0,
+                "volume": 20
+            },
+            "3": {
+                "indent": -13.0,
+                "volume": 20
+            },
+            "4": {
+                "indent": -21.0,
                 "volume": 20
             }
         },
@@ -33,20 +33,20 @@
                 "fallback_indent": 1.0
             },
             "1": {
-                "indent": 0.6,
-                "fallback_indent": 1.0
+                "indent": 1.2,
+                "fallback_indent": 1.6
             },
             "2": {
-                "indent": 0.6,
-                "fallback_indent": 1.0
+                "indent": 1.8,
+                "fallback_indent": 2.3
             },
             "3": {
-                "indent": 0.6,
-                "fallback_indent": 1.0
+                "indent": 2.4,
+                "fallback_indent": 3.0
             },
             "4": {
-                "indent": 0.6,
-                "fallback_indent": 1.0
+                "indent": 3.0,
+                "fallback_indent": 3.6
             }
         }
     },
@@ -62,19 +62,19 @@
                 "volume": 20
             },
             "1": {
-                "indent": -0.6,
-                "volume": 20
-            },
-            "2": {
-                "indent": -1.2,
-                "volume": 20
-            },
-            "3": {
                 "indent": -5.0,
                 "volume": 20
             },
-            "4": {
+            "2": {
                 "indent": -8.0,
+                "volume": 20
+            },
+            "3": {
+                "indent": -13.0,
+                "volume": 20
+            },
+            "4": {
+                "indent": -21.0,
                 "volume": 20
             }
         },
@@ -84,20 +84,20 @@
                 "fallback_indent": 1.0
             },
             "1": {
-                "indent": 0.6,
-                "fallback_indent": 1.0
+                "indent": 1.2,
+                "fallback_indent": 1.6
             },
             "2": {
-                "indent": 0.6,
-                "fallback_indent": 1.0
+                "indent": 1.8,
+                "fallback_indent": 2.3
             },
             "3": {
-                "indent": 0.6,
-                "fallback_indent": 1.0
+                "indent": 2.4,
+                "fallback_indent": 3.0
             },
             "4": {
-                "indent": 0.6,
-                "fallback_indent": 1.0
+                "indent": 3.0,
+                "fallback_indent": 3.6
             }
         }
     }

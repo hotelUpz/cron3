@@ -24,5 +24,6 @@
     "initial_balance_usdt": 82.0,
     "current_balance_usdt": 77.1922,
     "total_trading_pnl_usdt": 4.6121,
-    "total_pnl_usdt": -4.8078
+    "total_pnl_usdt": -4.8078,
+    "last_updated_ts": 1782260962156
 }

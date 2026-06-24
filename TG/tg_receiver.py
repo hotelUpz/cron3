@@ -5,7 +5,7 @@
 import asyncio
 import os
 from aiogram import Bot, Dispatcher, F
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
@@ -49,18 +49,30 @@ class TelegramReceiver:
     def _get_main_keyboard(self):
         keyboard = [
             [
-                InlineKeyboardButton(text="▶️ Start", callback_data="cmd_pre_start"),
-                InlineKeyboardButton(text="⏸️ Stop", callback_data="cmd_stop_trade")
+                KeyboardButton(text="▶️ Start"),
+                KeyboardButton(text="⏸️ Stop")
             ],
             [
-                InlineKeyboardButton(text="📊 Analytics", callback_data="cmd_analytics"),
-                InlineKeyboardButton(text="⚙️ Set Coins", callback_data="cmd_set_coins")
+                KeyboardButton(text="📊 Analytics"),
+                KeyboardButton(text="⚙️ Set Coins")
             ],
             [
-                InlineKeyboardButton(text="📜 Get Logs", callback_data="cmd_get_logs")
+                KeyboardButton(text="📜 Get Logs")
             ]
         ]
-        return InlineKeyboardMarkup(inline_keyboard=keyboard)
+        return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
+
+    def _get_confirm_start_keyboard(self):
+        keyboard = [
+            [
+                KeyboardButton(text="✅ Confirm Start"),
+                KeyboardButton(text="⚙️ Set Coins")
+            ],
+            [
+                KeyboardButton(text="🔙 Cancel")
+            ]
+        ]
+        return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
     def _register_handlers(self):
         @self.dp.message(Command("start"))
@@ -70,8 +82,8 @@ class TelegramReceiver:
             text = f"<b>Control Panel</b>\nCurrent Status: {status}"
             await message.answer(text, reply_markup=self._get_main_keyboard(), parse_mode="HTML")
 
-        @self.dp.callback_query(F.data == "cmd_pre_start")
-        async def on_pre_start(callback: CallbackQuery, state: FSMContext):
+        @self.dp.message(F.text == "▶️ Start")
+        async def on_pre_start(message: Message, state: FSMContext):
             await state.clear()
             from consts import _CFG
             symbols = _CFG.get("symbols", [])
@@ -100,70 +112,92 @@ class TelegramReceiver:
                     banner_lines.append(f"<b>{sym}</b>: [Рантайм не создан]")
             
             text = "\n".join(banner_lines)
-            
-            kb = InlineKeyboardMarkup(inline_keyboard=[
-                [
-                    InlineKeyboardButton(text="✅ Confirm Start", callback_data="cmd_confirm_start"),
-                    InlineKeyboardButton(text="⚙️ Reconfigure", callback_data="cmd_set_coins")
-                ]
-            ])
-            await callback.message.edit_text(text, reply_markup=kb, parse_mode="HTML")
-            await callback.answer()
+            await message.answer(text, reply_markup=self._get_confirm_start_keyboard(), parse_mode="HTML")
 
-        @self.dp.callback_query(F.data == "cmd_confirm_start")
-        async def on_confirm_start(callback: CallbackQuery, state: FSMContext):
+        @self.dp.message(F.text == "🔙 Cancel")
+        async def on_cancel(message: Message, state: FSMContext):
             await state.clear()
+            status = "⏸️ Paused" if self.bot_core.is_paused else "▶️ Running"
+            text = f"<b>Control Panel</b>\nCurrent Status: {status}"
+            await message.answer(text, reply_markup=self._get_main_keyboard(), parse_mode="HTML")
+
+        @self.dp.message(F.text == "✅ Confirm Start")
+        async def on_confirm_start(message: Message, state: FSMContext):
+            await state.clear()
+            if not self.bot_core.is_paused:
+                await message.answer("Trading is already running!", reply_markup=self._get_main_keyboard())
+                return
             self.bot_core.is_paused = False
             logger.info("[TG] User started trading loops.")
-            await callback.message.edit_text("<b>Control Panel</b>\nCurrent Status: ▶️ Running", reply_markup=self._get_main_keyboard(), parse_mode="HTML")
-            await callback.answer("Trading started!")
+            await message.answer("<b>Control Panel</b>\nCurrent Status: ▶️ Running", reply_markup=self._get_main_keyboard(), parse_mode="HTML")
 
-        @self.dp.callback_query(F.data == "cmd_stop_trade")
-        async def on_stop_trade(callback: CallbackQuery, state: FSMContext):
+        @self.dp.message(F.text == "⏸️ Stop")
+        async def on_stop_trade(message: Message, state: FSMContext):
             await state.clear()
+            if self.bot_core.is_paused:
+                await message.answer("Trading is already paused!", reply_markup=self._get_main_keyboard())
+                return
             self.bot_core.is_paused = True
             logger.info("[TG] User stopped trading loops.")
-            await callback.message.edit_text("<b>Control Panel</b>\nCurrent Status: ⏸️ Paused", reply_markup=self._get_main_keyboard(), parse_mode="HTML")
-            await callback.answer("Trading paused!")
+            await message.answer("<b>Control Panel</b>\nCurrent Status: ⏸️ Paused", reply_markup=self._get_main_keyboard(), parse_mode="HTML")
 
-        @self.dp.callback_query(F.data == "cmd_get_logs")
-        async def on_get_logs(callback: CallbackQuery, state: FSMContext):
+        @self.dp.message(F.text == "📜 Get Logs")
+        async def on_get_logs(message: Message, state: FSMContext):
             await state.clear()
-            await callback.answer("Fetching logs...")
             log_path = os.path.join("logs", "all.log")
             if os.path.exists(log_path):
-                await callback.message.answer_document(FSInputFile(log_path))
+                await message.answer_document(FSInputFile(log_path))
             else:
-                await callback.message.answer("Global log file not found.")
+                await message.answer("Global log file not found.")
 
-        @self.dp.callback_query(F.data == "cmd_analytics")
-        async def on_analytics(callback: CallbackQuery, state: FSMContext):
+        @self.dp.message(F.text == "📊 Analytics")
+        async def on_analytics(message: Message, state: FSMContext):
             await state.clear()
-            await callback.answer("Fetching analytics...")
+            import json
+            from datetime import datetime, timezone
+            from zoneinfo import ZoneInfo
+            from consts import _CFG
             
             # Read JSON
             analytics_path = ANALYTICS_DIR / "analytics.json"
             if analytics_path.exists():
                 text = analytics_path.read_text(encoding="utf-8")
+                
+                header = ""
+                try:
+                    data = json.loads(text)
+                    ts = data.get("last_updated_ts")
+                    if ts:
+                        tz_str = _CFG.get("app", {}).get("time_zone", "UTC")
+                        try:
+                            dt = datetime.fromtimestamp(ts / 1000.0, tz=ZoneInfo(tz_str))
+                        except Exception:
+                            dt = datetime.fromtimestamp(ts / 1000.0, tz=timezone.utc)
+                        time_str = dt.strftime('%Y-%m-%d %H:%M:%S %Z')
+                        header = f"<b>ℹ️ Аналитика рассчитана по состоянию на: {time_str}</b>\n\n"
+                    else:
+                        header = "<b>ℹ️ Аналитика рассчитана по состоянию на: [неизвестно]</b>\n\n"
+                except Exception as e:
+                    logger.error(f"Error parsing analytics JSON for timestamp: {e}")
+
                 # Telegram has message length limits, so we send it as a monospaced block or split
-                if len(text) > 4000:
-                    text = text[:4000] + "\n...[truncated]"
-                await callback.message.answer(f"<pre>{text}</pre>", parse_mode="HTML")
+                if len(text) > 3800:
+                    text = text[:3800] + "\n...[truncated]"
+                await message.answer(f"{header}<pre>{text}</pre>", parse_mode="HTML")
             else:
-                await callback.message.answer("Analytics JSON not found in ANALYTICS_DIR.")
+                await message.answer("Analytics JSON not found in ANALYTICS_DIR.")
 
             # Send CSV
             csv_path = ANALYTICS_DIR / "trades_ledger.csv"
             if csv_path.exists():
-                await callback.message.answer_document(FSInputFile(str(csv_path)))
+                await message.answer_document(FSInputFile(str(csv_path)))
             else:
-                await callback.message.answer("Trades ledger CSV not found.")
+                await message.answer("Trades ledger CSV not found.")
 
-        @self.dp.callback_query(F.data == "cmd_set_coins")
-        async def on_set_coins(callback: CallbackQuery, state: FSMContext):
-            await callback.message.answer("Пожалуйста, введите символ монеты (например: WIFUSDT):")
+        @self.dp.message(F.text == "⚙️ Set Coins")
+        async def on_set_coins(message: Message, state: FSMContext):
+            await message.answer("Пожалуйста, введите символ монеты (например: WIFUSDT):", reply_markup=self._get_confirm_start_keyboard())
             await state.set_state(TGStates.waiting_for_symbol)
-            await callback.answer()
 
         @self.dp.message(TGStates.waiting_for_symbol)
         async def process_symbol(message: Message, state: FSMContext):
@@ -214,15 +248,26 @@ class TelegramReceiver:
         async def process_json(message: Message, state: FSMContext):
             json_str = message.text.strip()
             
+            import json
+            symbol = ""
+            try:
+                data = json.loads(json_str)
+                symbol = data.get("symbol", "").upper()
+            except Exception:
+                pass
+            
             async with self._lock:
                 success, msg = self.template_manager.apply_tg_template(json_str)
             
             if success:
-                # Trigger RuntimeManager to reload caches
-                self.bot_core.runtime_manager.load_initial_caches(self.bot_core.symbols)
-                self.bot_core.runtime_configs = self.bot_core.runtime_manager.caches
-                # MUST sync the in-memory PositionState with the updated cache so price=None takes effect
-                self.bot_core.runtime_manager.populate_fsm_from_cache(self.bot_core.fsm_states)
+                if symbol and symbol not in self.bot_core.symbols:
+                    await self.bot_core.add_symbol(symbol)
+                else:
+                    # Trigger RuntimeManager to reload caches for existing symbols
+                    self.bot_core.runtime_manager.load_initial_caches(self.bot_core.symbols)
+                    self.bot_core.runtime_configs = self.bot_core.runtime_manager.caches
+                    # MUST sync the in-memory PositionState with the updated cache so price=None takes effect
+                    self.bot_core.runtime_manager.populate_fsm_from_cache(self.bot_core.fsm_states)
                 
                 await message.answer(f"✅ {msg}")
                 await state.clear()

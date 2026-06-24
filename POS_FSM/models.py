@@ -46,5 +46,12 @@ class PositionState:
         self.pending_rolling_tp = False
         self.next_avg_price = None
         self.fallback_price = None
-        self.grid.clear()
-        self.tp_map.clear()
+        
+        # Сбрасываем только рантаймовские поля сетки (price, is_active), сохраняя пользовательские настройки
+        for k, v in self.grid.items():
+            v["is_active"] = False
+            v["price"] = None
+            
+        # Аналогично для тейк-профитов
+        for k, v in self.tp_map.items():
+            v["is_active"] = False

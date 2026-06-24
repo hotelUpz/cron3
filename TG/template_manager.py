@@ -27,7 +27,7 @@ class TemplateManager:
 
         tg_template = {
             "symbol": symbol,
-            "_notes": "Полный шаблон настроек. Отредактируйте нужные параметры.",
+            "_notes": "Full settings template. Edit the required parameters.",
         }
         for side in ("LONG", "SHORT"):
             if side in base_data:

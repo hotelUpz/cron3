@@ -1,0 +1,26 @@
+2026-06-24 03:19:11 | INFO | App | Starting BotCore...
+2026-06-24 03:19:19 | INFO | App | TGReceiver will be started alongside BotCore.
+2026-06-24 03:19:19 | INFO | RuntimeBuilder | Created runtime cache for DASHUSDT at dashusdt.json
+2026-06-24 03:19:19 | INFO | TGReceiver | Starting Telegram Receiver...
+2026-06-24 03:19:20 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ot4QC... (length: 64)
+2026-06-24 03:19:51 | INFO | TGReceiver | [TG] User stopped trading loops.
+2026-06-24 03:20:48 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-24 03:20:48 | INFO | App | Ctrl+C detected. Shutting down...
+2026-06-24 03:30:17 | INFO | App | Starting BotCore...
+2026-06-24 03:30:26 | INFO | App | TGReceiver will be started alongside BotCore.
+2026-06-24 03:30:26 | INFO | TGReceiver | Starting Telegram Receiver...
+2026-06-24 03:30:27 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ot4QC... (length: 64)
+2026-06-24 03:31:46 | INFO | TGReceiver | [TG] User started trading loops.
+2026-06-24 03:35:00 | DEBUG | LeverageManager | [DASHUSDT] Margin type CROSSED is already set on exchange.
+2026-06-24 03:35:00 | DEBUG | LeverageManager | [DASHUSDT] Margin type CROSSED is already set on exchange.
+2026-06-24 03:35:00 | INFO | LeverageManager | [DASHUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-24 03:35:01 | INFO | LeverageManager | [DASHUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-24 03:35:06 | INFO | TakeProfitManager | [DASHUSDT] SHORT Canceling old limit orders before placing new TP...
+2026-06-24 03:35:06 | INFO | TakeProfitManager | [DASHUSDT] LONG Canceling old limit orders before placing new TP...
+2026-06-24 03:35:06 | INFO | TakeProfitManager | [DASHUSDT] Placing SHORT take profit limit order at 36.5. Vol: 0.545 (Attempt 1/3)
+2026-06-24 03:35:06 | INFO | TakeProfitManager | [DASHUSDT] Placing LONG take profit limit order at 36.95. Vol: 0.545 (Attempt 1/3)
+2026-06-24 03:35:06 | INFO | TakeProfitManager | [DASHUSDT] SHORT Take profit LIMIT order placed successfully! ID: 10394740143
+2026-06-24 03:35:07 | INFO | TakeProfitManager | [DASHUSDT] LONG Take profit LIMIT order placed successfully! ID: 10394740151
+2026-06-24 03:36:10 | INFO | TemplateManager | Updated runtime config for ALGOUSDT via TG.
+2026-06-24 03:47:21 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-24 03:47:22 | INFO | App | Ctrl+C detected. Shutting down...

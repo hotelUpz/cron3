@@ -27,7 +27,8 @@
   },
   "symbols": [
     "STABLEUSDT",
-    "WIFUSDT"
+    "WIFUSDT",
+    "DASHUSDT"
   ],
   "telegram": {
     "enabled": true,

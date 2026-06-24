@@ -199,3 +199,9 @@
 2026-06-23 23:30:13 | INFO | TakeProfitManager | [STABLEUSDT] SHORT Canceling old limit orders before placing new TP...
 2026-06-23 23:30:14 | INFO | TakeProfitManager | [STABLEUSDT] Placing SHORT take profit limit order at 0.03381. Vol: 1764.0 (Attempt 1/3)
 2026-06-23 23:30:14 | INFO | TakeProfitManager | [STABLEUSDT] SHORT Take profit LIMIT order placed successfully! ID: 920901662
+2026-06-24 03:35:06 | INFO | TakeProfitManager | [DASHUSDT] SHORT Canceling old limit orders before placing new TP...
+2026-06-24 03:35:06 | INFO | TakeProfitManager | [DASHUSDT] LONG Canceling old limit orders before placing new TP...
+2026-06-24 03:35:06 | INFO | TakeProfitManager | [DASHUSDT] Placing SHORT take profit limit order at 36.5. Vol: 0.545 (Attempt 1/3)
+2026-06-24 03:35:06 | INFO | TakeProfitManager | [DASHUSDT] Placing LONG take profit limit order at 36.95. Vol: 0.545 (Attempt 1/3)
+2026-06-24 03:35:06 | INFO | TakeProfitManager | [DASHUSDT] SHORT Take profit LIMIT order placed successfully! ID: 10394740143
+2026-06-24 03:35:07 | INFO | TakeProfitManager | [DASHUSDT] LONG Take profit LIMIT order placed successfully! ID: 10394740151

@@ -70,6 +70,52 @@ class BotCore:
         # Сетевые адаптеры и стримы
         self.price_stream = BinanceHotPriceStream(self.symbols)
 
+    async def add_symbol(self, symbol: str):
+        symbol = symbol.upper()
+        if symbol in self.symbols:
+            return
+            
+        # 1. Update app.json
+        app_json_path = DATA_DIR / "app.json"
+        app_data = Utils.read_json_file(app_json_path)
+        if symbol not in app_data.get("symbols", []):
+            if "symbols" not in app_data:
+                app_data["symbols"] = []
+            app_data["symbols"].append(symbol)
+            Utils.write_json_file(app_json_path, app_data)
+            logger.info(f"[{symbol}] Added to app.json.")
+            
+        # 2. Update bot lists and FSM states
+        self.symbols.append(symbol)
+        
+        if symbol not in self.fsm_states:
+            self.fsm_states[symbol] = {
+                "LONG": PositionState(),
+                "SHORT": PositionState()
+            }
+            
+        # 3. Add to monitors and streams
+        if hasattr(self, 'pos_monitor'):
+            self.pos_monitor.target_symbols.append(symbol)
+        if hasattr(self, 'pos_stream'):
+            self.pos_stream.target_symbols.add(symbol)
+            
+        # 4. Reload caches
+        self.runtime_manager.load_initial_caches(self.symbols)
+        self.runtime_configs = self.runtime_manager.caches
+        self.runtime_manager.populate_fsm_from_cache(self.fsm_states)
+        
+        # 5. Restart price stream
+        logger.info(f"Restarting price stream to include new symbol: {symbol}")
+        if hasattr(self, 'price_stream') and self.price_stream:
+            await self.price_stream.aclose()
+            
+        self.price_stream = BinanceHotPriceStream(self.symbols)
+        self.price_stream_synced.clear()
+        asyncio.create_task(self.price_stream.run(self._on_tick))
+        
+        logger.info(f"[{symbol}] Dynamically added to BotCore.")
+
     async def _specification_task(self):
         """Фоновая задача: Обновление спецификации."""
         try:
