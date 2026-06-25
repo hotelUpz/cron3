@@ -108,5 +108,88 @@ def generate_equity_curve() -> str:
     
     return str(PLOT_FILE)
 
+def generate_coin_analytics(symbol: str) -> str:
+    if not JSON_FILE.exists():
+        return ""
+        
+    try:
+        with open(JSON_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        return ""
+        
+    per_coin = data.get("per_coin", {})
+    if symbol not in per_coin:
+        return ""
+        
+    cdata = per_coin[symbol]
+    
+    # Extract metrics
+    avg_daily = cdata.get("avg_daily_profit", 0.0)
+    risk_reward = cdata.get("risk_reward_ratio", 0.0)
+    drme = cdata.get("DRME", 0.0)
+    mdme = cdata.get("MDME", 0.0)
+    max_dd = cdata.get("max_drawdown", 0.0)
+    min_dd = cdata.get("min_drawdown", 0.0)
+    cur_dd = cdata.get("current_drawdown", 0.0)
+    
+    net_profit = cdata.get("net_profit_usdt", 0.0)
+    max_np = cdata.get("max_net_profit", net_profit)
+    min_np = cdata.get("min_net_profit", net_profit)
+    
+    metrics = {
+        "Current Net Profit": net_profit,
+        "Avg Daily Profit": avg_daily,
+        "Risk/Reward": risk_reward,
+        "DRME": drme,
+        "MDME": mdme,
+        "Min Drawdown": min_dd,
+        "Current Drawdown": cur_dd,
+        "Max Drawdown": max_dd,
+        "Min Net Profit": min_np,
+        "Max Net Profit": max_np
+    }
+    
+    labels = list(metrics.keys())
+    values = list(metrics.values())
+    
+    # Create horizontal bar chart
+    plt.figure(figsize=(8, 7))
+    
+    # Color bars based on value (positive green, negative red, neutral blue)
+    colors = []
+    for val in values:
+        if val > 0:
+            colors.append("#4CAF50") # Green
+        elif val < 0:
+            colors.append("#F44336") # Red
+        else:
+            colors.append("#2196F3") # Blue
+            
+    bars = plt.barh(labels, values, color=colors, height=0.6)
+    
+    # Add values in the center of the chart
+    for bar in bars:
+        width = bar.get_width()
+        
+        plt.text(0, bar.get_y() + bar.get_height()/2, f'{width:.4f}', 
+                 va='center', ha='center', fontweight='bold',
+                 bbox=dict(facecolor='white', alpha=0.8, edgecolor='none', pad=2))
+                 
+    plt.title(f"Advanced Analytics: {symbol}", fontsize=16, pad=15)
+    plt.xlabel("Value", fontsize=12)
+    
+    # Add a vertical line at 0
+    plt.axvline(x=0, color='black', linewidth=1, alpha=0.3)
+    
+    plt.grid(axis='x', linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    
+    out_file = ANALYTICS_DIR / f"coin_analytics_{symbol.lower()}.png"
+    plt.savefig(out_file)
+    plt.close()
+    
+    return str(out_file)
+
 if __name__ == "__main__":
     generate_equity_curve()

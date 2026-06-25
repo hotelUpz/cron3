@@ -23,6 +23,7 @@ class TGStates(StatesGroup):
     waiting_for_edit_symbol = State()
     waiting_for_edit_json = State()
     waiting_for_base_json = State()
+    waiting_for_initial_balance = State()
 
 class TelegramReceiver:
     def __init__(self, bot_core):
@@ -64,7 +65,11 @@ class TelegramReceiver:
                 KeyboardButton(text="ℹ️ Status")
             ],
             [
-                KeyboardButton(text="📂 Get CFG")
+                KeyboardButton(text="📂 Get CFG"),
+                KeyboardButton(text="🗑️ Сбросить аналитику")
+            ],
+            [
+                KeyboardButton(text="💰 Задать нач. баланс")
             ]
         ]
         return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
@@ -254,15 +259,80 @@ class TelegramReceiver:
                 
             await message.answer_document(FSInputFile(dump_path))
 
+        @self.dp.message(F.text == "🗑️ Сбросить аналитику")
+        async def on_reset_analytics(message: Message, state: FSMContext):
+            await state.clear()
+            analytics_path = ANALYTICS_DIR / "analytics.json"
+            if analytics_path.exists():
+                try:
+                    os.remove(analytics_path)
+                    await message.answer("✅ Файл аналитики успешно удален. Он будет создан заново при следующем обновлении.")
+                except Exception as e:
+                    await message.answer(f"❌ Ошибка при удалении файла аналитики: {e}")
+            else:
+                await message.answer("⚠️ Файл аналитики не найден.")
+
+        @self.dp.message(F.text == "💰 Задать нач. баланс")
+        async def on_set_initial_balance(message: Message, state: FSMContext):
+            await state.clear()
+            await message.answer("Введите новый начальный баланс (start_balance_usdt) в USDT (например, 100.5):", reply_markup=self._get_cancel_keyboard())
+            await state.set_state(TGStates.waiting_for_initial_balance)
+
+        @self.dp.message(TGStates.waiting_for_initial_balance)
+        async def process_initial_balance(message: Message, state: FSMContext):
+            if message.text == "🔙 Cancel":
+                await state.clear()
+                await message.answer("Действие отменено.", reply_markup=self._get_main_keyboard())
+                return
+                
+            try:
+                new_balance = float(message.text.replace(',', '.'))
+                if new_balance < 0:
+                    raise ValueError("Баланс не может быть отрицательным.")
+            except ValueError:
+                await message.answer("❌ Некорректное число. Введите баланс еще раз (например, 100.5) или нажмите Cancel:")
+                return
+                
+            import json
+            analytics_path = ANALYTICS_DIR / "analytics.json"
+            if analytics_path.exists():
+                try:
+                    with open(analytics_path, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    
+                    data["start_balance_usdt"] = round(new_balance, 4)
+                    
+                    with open(analytics_path, "w", encoding="utf-8") as f:
+                        json.dump(data, f, indent=4)
+                        
+                    await message.answer(f"✅ Начальный баланс успешно установлен на {new_balance} USDT.", reply_markup=self._get_main_keyboard())
+                except Exception as e:
+                    await message.answer(f"❌ Ошибка обновления файла аналитики: {e}", reply_markup=self._get_main_keyboard())
+            else:
+                await message.answer("⚠️ Файл аналитики пока не существует. Подождите, пока бот создаст его.", reply_markup=self._get_main_keyboard())
+                
+            await state.clear()
+
         @self.dp.message(F.text == "📊 Analytics")
         async def on_analytics(message: Message, state: FSMContext):
             await state.clear()
+            
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="🌍 Общая аналитика", callback_data="analytics_global")],
+                [InlineKeyboardButton(text="🪙 Аналитика по монете", callback_data="analytics_coin_menu")]
+            ])
+            await message.answer("Выберите режим аналитики:", reply_markup=keyboard)
+
+        @self.dp.callback_query(F.data == "analytics_global")
+        async def process_analytics_global(callback: CallbackQuery, state: FSMContext):
+            await callback.answer()
+            message = callback.message
+            
             import json
             from datetime import datetime, timezone
             from zoneinfo import ZoneInfo
             from consts import _CFG
             
-            # Read JSON
             analytics_path = ANALYTICS_DIR / "analytics.json"
             if analytics_path.exists():
                 text = analytics_path.read_text(encoding="utf-8")
@@ -280,14 +350,20 @@ class TelegramReceiver:
                         time_str = dt.strftime('%Y-%m-%d %H:%M:%S %Z')
                         
                         help_str = (
-                            "<b>📚 Analytics Cheat Sheet</b>\n"
+                            "<b>📚 Analytics Cheat Sheet (Global)</b>\n"
                             "▪️ <b>roi_pct</b>: Return on Investment (%) → <i>(Cur_Balance - Start_Balance) / Start_Balance * 100</i>\n"
-                            "▪️ <b>load_ratio</b>: Grid Load Ratio → <i>|Unrealized PnL| / Gross Profit</i> (Floating risk taken per 1 USDT of closed profit)\n"
-                            "▪️ <b>recovery_factor</b>: Recovery Factor → <i>Gross Profit / |Max Drawdown|</i> (Can profit cover max drawdowns?)\n"
-                            "▪️ <b>gross_profit_usdt</b>: Total realized profit from all closed trades (incl. commissions/funding)\n"
+                            "▪️ <b>load_ratio</b>: Grid Load Ratio → <i>|Unrealized PnL| / Gross Profit</i>\n"
+                            "▪️ <b>recovery_factor</b>: Recovery Factor → <i>Gross Profit / |Max Drawdown|</i>\n"
+                            "▪️ <b>gross_profit_usdt</b>: Total realized profit from all closed trades\n"
                             "▪️ <b>net_profit_usdt</b>: True mathematical growth → <i>Gross Profit + Unrealized PnL</i>\n"
-                            "▪️ <b>unrealized_pnl_usdt</b>: Current floating drawdown of all open positions\n"
-                            "▪️ <b>cur_balance_usdt</b>: Current mathematical margin balance → <i>Start Balance + Net Profit</i>\n"
+                            "▪️ <b>cur_balance_usdt</b>: Current margin balance → <i>Start Balance + Net Profit</i>\n\n"
+                            "<b>🪙 Per-Coin Metrics</b>\n"
+                            "▪️ <b>avg_daily_profit</b>: Average profit per active day of trading\n"
+                            "▪️ <b>max_position_size</b>: Max historical margin size actually reached (real size)\n"
+                            "▪️ <b>risk_reward_ratio</b>: <i>|Max Drawdown| / Avg Daily Profit</i>\n"
+                            "▪️ <b>DRME</b> (Daily Return on Max Exposure): <i>Avg Daily Profit / Max Position Size</i>\n"
+                            "▪️ <b>MDME</b> (Max Drawdown on Max Exposure): <i>|Max Drawdown| / Max Position Size</i>\n"
+                            "▪️ <b>max_drawdown</b> / <b>min_drawdown</b>: Max/Min historical floating drawdowns\n"
                         )
                         
                         header = f"{help_str}\n<b>ℹ️ Расчет по состоянию на: {time_str}</b>\n\n"
@@ -296,32 +372,108 @@ class TelegramReceiver:
                 except Exception as e:
                     logger.error(f"Error parsing analytics JSON for timestamp: {e}")
 
-                # Telegram has message length limits, so we send it as a monospaced block or split
-                if len(text) > 3800:
-                    text = text[:3800] + "\n...[truncated]"
-                await message.answer(f"{header}<pre>{text}</pre>", parse_mode="HTML")
+                # Send header first
+                await message.answer(header, parse_mode="HTML")
+                
+                # Format JSON into beautiful text
+                try:
+                    data = json.loads(text)
+                    
+                    # Global Metrics
+                    msg = "<b>🌍 GLOBAL ANALYTICS</b>\n\n"
+                    
+                    msg += "<b>💰 Balances:</b>\n"
+                    msg += f"▪️ Start: <b>{data.get('start_balance_usdt', 0)}</b> USDT\n"
+                    msg += f"▪️ Current: <b>{data.get('cur_balance_usdt', 0)}</b> USDT\n"
+                    msg += f"▪️ Peak: <b>{data.get('peak_balance_usdt', 0)}</b> USDT\n"
+                    msg += f"▪️ Min (Bottom): <b>{data.get('min_balance_usdt', 0)}</b> USDT\n\n"
+                    
+                    msg += "<b>📈 Performance:</b>\n"
+                    msg += f"▪️ Net Profit: <b>{data.get('net_profit_usdt', 0)}</b> USDT\n"
+                    msg += f"▪️ Gross Profit: <b>{data.get('gross_profit_usdt', 0)}</b> USDT\n"
+                    msg += f"▪️ Unrealized PnL: <b>{data.get('unrealized_pnl_usdt', 0)}</b> USDT\n"
+                    msg += f"▪️ Max Drawdown: <b>{data.get('max_drawdown_usdt', 0)}</b> USDT\n"
+                    msg += f"▪️ ROI: <b>{data.get('roi_pct', 0)}%</b>\n"
+                    msg += f"▪️ Recovery Factor: <b>{data.get('recovery_factor', 0)}</b>\n"
+                    msg += f"▪️ Trades: <b>{data.get('total_trades', 0)}</b> (Winrate: <b>{data.get('winrate_pct', 0)}%</b>)\n\n"
+                    
+                    # Send formatted text in chunks if needed
+                    await message.answer(msg, parse_mode="HTML")
+                    
+                    # Per-Coin Metrics
+                    if "per_coin" in data and data["per_coin"]:
+                        msg_coins = "<b>🪙 PER-COIN METRICS</b>\n\n"
+                        for coin, cdata in data["per_coin"].items():
+                            msg_coins += f"🔹 <b>{coin}</b>\n"
+                            msg_coins += f"  • Trades: <b>{cdata.get('total_trades', 0)}</b> (Winrate: <b>{cdata.get('winrate_pct', 0)}%</b>)\n"
+                            msg_coins += f"  • Net Profit: <b>{cdata.get('net_profit_usdt', 0)}</b> USDT\n"
+                            msg_coins += f"  • Profit Range: Max <b>{cdata.get('max_net_profit', 0)}</b> / Min <b>{cdata.get('min_net_profit', 0)}</b>\n"
+                            msg_coins += f"  • Drawdown: Cur <b>{cdata.get('current_drawdown', 0)}</b> / Max <b>{cdata.get('max_drawdown', 0)}</b>\n"
+                            msg_coins += f"  • Avg Daily Profit: <b>{cdata.get('avg_daily_profit', 0)}</b> USDT\n"
+                            msg_coins += f"  • Max Position Size: <b>{cdata.get('max_position_size', 0)}</b> USDT\n"
+                            msg_coins += f"  • Risk/Reward: <b>{cdata.get('risk_reward_ratio', 0)}</b>\n"
+                            msg_coins += f"  • DRME: <b>{cdata.get('DRME', 0)}</b> | MDME: <b>{cdata.get('MDME', 0)}</b>\n\n"
+                            
+                        # Split coins into chunks to avoid length limits
+                        max_chunk = 3900
+                        if len(msg_coins) > max_chunk:
+                            for i in range(0, len(msg_coins), max_chunk):
+                                await message.answer(msg_coins[i:i+max_chunk], parse_mode="HTML")
+                        else:
+                            await message.answer(msg_coins, parse_mode="HTML")
+                except Exception as e:
+                    logger.error(f"Error formatting analytics text: {e}")
+                    await message.answer("Error formatting analytics data.")
             else:
                 await message.answer("Analytics JSON not found in ANALYTICS_DIR.")
 
-            # Send CSVs
             csv_path = ANALYTICS_DIR / "trades_ledger.csv"
             if csv_path.exists():
                 await message.answer_document(FSInputFile(str(csv_path)))
             else:
                 await message.answer("Trades ledger CSV not found.")
                 
-            # Send Equity Curve Plot
+            # Send Equity Curve
             try:
-                import sys
-                import os
-                sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
                 from ANALYTICS.plotter import generate_equity_curve
-                
                 plot_path = generate_equity_curve()
                 if plot_path and os.path.exists(plot_path):
                     await message.answer_photo(FSInputFile(plot_path), caption="📈 График движения баланса (Equity Curve)")
             except Exception as e:
                 logger.error(f"Error generating or sending equity curve: {e}")
+
+        @self.dp.callback_query(F.data == "analytics_coin_menu")
+        async def process_analytics_coin_menu(callback: CallbackQuery, state: FSMContext):
+            await callback.answer()
+            message = callback.message
+            
+            coins = list(self.bot_core.symbols)
+            if not coins:
+                await message.answer("❌ Нет активных монет для аналитики.")
+                return
+                
+            keyboard_buttons = []
+            for coin in coins:
+                keyboard_buttons.append([InlineKeyboardButton(text=f"🪙 {coin}", callback_data=f"analytics_coin_{coin}")])
+                
+            keyboard = InlineKeyboardMarkup(inline_keyboard=keyboard_buttons)
+            await message.answer("Выберите монету для детальной аналитики:", reply_markup=keyboard)
+
+        @self.dp.callback_query(F.data.startswith("analytics_coin_"))
+        async def process_analytics_coin_select(callback: CallbackQuery, state: FSMContext):
+            await callback.answer()
+            symbol = callback.data.replace("analytics_coin_", "")
+            
+            from ANALYTICS.plotter import generate_coin_analytics
+            try:
+                plot_path = generate_coin_analytics(symbol)
+                if plot_path and os.path.exists(plot_path):
+                    await callback.message.answer_photo(FSInputFile(plot_path), caption=f"📈 Analytics: {symbol}")
+                else:
+                    await callback.message.answer(f"❌ Не удалось сгенерировать аналитику для {symbol}.")
+            except Exception as e:
+                logger.error(f"Error generating coin analytics: {e}")
+                await callback.message.answer(f"❌ Ошибка генерации аналитики для {symbol}: {e}")
 
         @self.dp.message(F.text == "⚙️ Set Coins")
         async def on_set_coins(message: Message, state: FSMContext):

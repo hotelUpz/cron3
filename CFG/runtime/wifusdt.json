@@ -83,14 +83,14 @@
         "invest_size": 100,
         "leverage": 10,
         "margin_type": "CROSSED",
-        "total_volume": -422.3,
-        "avg_entry_price": 0.1419971584182,
-        "pre_avg_price": 0.1415990081474,
-        "initial_entry_price": 0.1412,
-        "open_time": 1782405900483,
+        "total_volume": -142.3,
+        "avg_entry_price": 0.1405,
+        "pre_avg_price": 0.0,
+        "initial_entry_price": 0.1405,
+        "open_time": 1782412502098,
         "current_grid_level": "0",
-        "next_avg_price": 0.1483,
-        "fallback_price": 0.1406,
+        "next_avg_price": 0.1413,
+        "fallback_price": 0.1391,
         "in_position": true,
         "in_position_papper": false,
         "is_finished": false,
@@ -100,31 +100,31 @@
         "grid": {
             "0": {
                 "indent": 0,
-                "price": 0.1412,
+                "price": 0.1405,
                 "volume": 20,
                 "is_active": true
             },
             "1": {
                 "indent": -0.6,
-                "price": 0.142,
+                "price": 0.1413,
                 "volume": 20,
-                "is_active": true
+                "is_active": false
             },
             "2": {
                 "indent": -1.2,
-                "price": 0.1429,
+                "price": 0.1422,
                 "volume": 20,
-                "is_active": true
+                "is_active": false
             },
             "3": {
                 "indent": -5.0,
-                "price": 0.1483,
+                "price": 0.1475,
                 "volume": 20,
                 "is_active": false
             },
             "4": {
                 "indent": -8.0,
-                "price": 0.1525,
+                "price": 0.1517,
                 "volume": 20,
                 "is_active": false
             }
@@ -138,12 +138,12 @@
             "1": {
                 "indent": 0.6,
                 "fallback_indent": 1.0,
-                "is_active": true
+                "is_active": false
             },
             "2": {
                 "indent": 0.6,
                 "fallback_indent": 1.0,
-                "is_active": true
+                "is_active": false
             },
             "3": {
                 "indent": 0.6,
