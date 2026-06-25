@@ -429,18 +429,22 @@ class BinanceClient:
         )
 
     # ==================================================
-    # REALIZED PNL
+    # INCOME PNL
     # ==================================================
-    async def get_realized_pnl(
+    async def get_income_pnl(
         self,
         symbol: str,
         start_time: Optional[int] = None,
         end_time: Optional[int] = None,
-    ) -> Optional[float]:
-
+    ) -> Optional[dict]:
+        """
+        Fetches all income events (REALIZED_PNL, COMMISSION, FUNDING_FEE)
+        for a specific symbol within the given time window.
+        """
         params = {
             "symbol": symbol,
             "recvWindow": 20000,
+            "limit": 1000,
         }
 
         if start_time:
@@ -450,7 +454,7 @@ class BinanceClient:
 
         res = await self._request(
             "GET",
-            self.user_trades_url,
+            "https://fapi.binance.com/fapi/v1/income",
             params=params,
             signed=True,
         )
@@ -460,7 +464,9 @@ class BinanceClient:
 
         rows = res.data
 
-        pnl_usdt = 0.0
+        gross_pnl = 0.0
+        commission = 0.0
+        funding_fee = 0.0
         matched = False
 
         for r in rows:
@@ -468,10 +474,24 @@ class BinanceClient:
             if start_time and ts < (start_time - int(TIME_SLACK_SEC * 1000)):
                 continue
 
-            pnl_usdt += float(r.get("realizedPnl", 0.0))
+            inc_type = r.get("incomeType", "")
+            income_val = float(r.get("income", 0.0))
+
+            if inc_type == "REALIZED_PNL":
+                gross_pnl += income_val
+            elif inc_type == "COMMISSION":
+                commission += income_val
+            elif inc_type == "FUNDING_FEE":
+                funding_fee += income_val
+                
             matched = True
 
         if not matched:
             return None
 
-        return round(pnl_usdt, 4)
+        return {
+            "gross_pnl": gross_pnl,
+            "commission": commission,
+            "funding_fee": funding_fee,
+            "net_pnl": gross_pnl + commission + funding_fee
+        }

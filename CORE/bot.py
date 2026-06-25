@@ -118,6 +118,60 @@ class BotCore:
         
         logger.info(f"[{symbol}] Dynamically added to BotCore.")
 
+    async def delete_symbol(self, symbol: str):
+        symbol = symbol.upper()
+        if symbol not in self.symbols:
+            return
+            
+        logger.info(f"[{symbol}] Dynamically deleting symbol from BotCore...")
+        
+        # 1. Remove from app.json
+        app_json_path = DATA_DIR / "app.json"
+        app_data = Utils.read_json_file(app_json_path)
+        if symbol in app_data.get("symbols", []):
+            app_data["symbols"].remove(symbol)
+            Utils.write_json_file(app_json_path, app_data)
+            logger.info(f"[{symbol}] Removed from app.json.")
+            
+        # 2. Update bot lists and FSM states
+        self.symbols.remove(symbol)
+        
+        if symbol in self.fsm_states:
+            del self.fsm_states[symbol]
+            
+        if symbol in self.runtime_configs:
+            del self.runtime_configs[symbol]
+            
+        if symbol in self.prices:
+            del self.prices[symbol]
+            
+        # 3. Remove from monitors and streams
+        if hasattr(self, 'pos_stream') and symbol in self.pos_stream.target_symbols:
+            self.pos_stream.target_symbols.remove(symbol)
+            
+        # 4. Delete the runtime JSON cache
+        runtime_path = self.runtime_manager.runtime_dir / f"{symbol.lower()}.json"
+        if runtime_path.exists():
+            try:
+                runtime_path.unlink()
+                logger.info(f"[{symbol}] Deleted runtime cache file.")
+            except Exception as e:
+                logger.error(f"[{symbol}] Failed to delete runtime cache: {e}")
+                
+        # 5. Restart price stream
+        logger.info(f"Restarting price stream to exclude deleted symbol: {symbol}")
+        if hasattr(self, 'price_stream') and self.price_stream:
+            await self.price_stream.aclose()
+            
+        if self.symbols:
+            self.price_stream = BinanceHotPriceStream(self.symbols)
+            self.price_stream_synced.clear()
+            asyncio.create_task(self.price_stream.run(self._on_tick))
+        else:
+            self.price_stream = None
+            
+        logger.info(f"[{symbol}] Successfully deleted from BotCore.")
+
     async def _specification_task(self):
         """Фоновая задача: Обновление спецификации."""
         try:
@@ -390,6 +444,8 @@ class BotCore:
             logger.info("BotCore started in PAUSED state (waiting for TG Start).")
         else:
             logger.info("BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.")
+        
+        self.analytics.start_realtime_tracker(self.client)
         await self._game_loop()
 
     def stop(self):

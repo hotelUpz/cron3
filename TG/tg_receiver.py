@@ -18,8 +18,11 @@ from TG.template_manager import TemplateManager
 logger = UnifiedLogger("TGReceiver")
 
 class TGStates(StatesGroup):
-    waiting_for_symbol = State()
-    waiting_for_json = State()
+    waiting_for_add_symbol = State()
+    waiting_for_del_symbol = State()
+    waiting_for_edit_symbol = State()
+    waiting_for_edit_json = State()
+    waiting_for_base_json = State()
 
 class TelegramReceiver:
     def __init__(self, bot_core):
@@ -59,6 +62,26 @@ class TelegramReceiver:
             [
                 KeyboardButton(text="📜 Get Logs"),
                 KeyboardButton(text="ℹ️ Status")
+            ],
+            [
+                KeyboardButton(text="📂 Get CFG")
+            ]
+        ]
+        return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
+
+    def _get_set_coins_keyboard(self):
+        keyboard = [
+            [
+                KeyboardButton(text="➕ Add"),
+                KeyboardButton(text="✏️ Edit"),
+                KeyboardButton(text="🗑️ Del")
+            ],
+            [
+                KeyboardButton(text="📄 _base"),
+                KeyboardButton(text="❓ Help")
+            ],
+            [
+                KeyboardButton(text="🔙 Back")
             ]
         ]
         return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
@@ -198,6 +221,39 @@ class TelegramReceiver:
             else:
                 await message.answer("Global log file not found.")
 
+        @self.dp.message(F.text == "📂 Get CFG")
+        async def on_get_cfg(message: Message, state: FSMContext):
+            await state.clear()
+            from consts import DATA_DIR
+            from c_utils import Utils
+            import json
+            
+            dump_data = {}
+            
+            # Read app.json
+            app_json = DATA_DIR / "app.json"
+            if app_json.exists():
+                dump_data["app.json"] = Utils.read_json_file(app_json)
+                
+            # Read _base.json
+            base_json = DATA_DIR / "_base.json"
+            if base_json.exists():
+                dump_data["_base.json"] = Utils.read_json_file(base_json)
+                
+            # Read runtimes
+            dump_data["runtime"] = {}
+            runtime_dir = DATA_DIR / "runtime"
+            if runtime_dir.exists():
+                for file_path in runtime_dir.glob("*.json"):
+                    dump_data["runtime"][file_path.name] = Utils.read_json_file(file_path)
+                    
+            dump_path = os.path.join("logs", "all_configs.json")
+            os.makedirs("logs", exist_ok=True)
+            with open(dump_path, "w", encoding="utf-8") as f:
+                json.dump(dump_data, f, indent=4)
+                
+            await message.answer_document(FSInputFile(dump_path))
+
         @self.dp.message(F.text == "📊 Analytics")
         async def on_analytics(message: Message, state: FSMContext):
             await state.clear()
@@ -235,97 +291,206 @@ class TelegramReceiver:
             else:
                 await message.answer("Analytics JSON not found in ANALYTICS_DIR.")
 
-            # Send CSV
+            # Send CSVs
             csv_path = ANALYTICS_DIR / "trades_ledger.csv"
             if csv_path.exists():
                 await message.answer_document(FSInputFile(str(csv_path)))
             else:
                 await message.answer("Trades ledger CSV not found.")
+                
+            # Send Equity Curve Plot
+            try:
+                import sys
+                import os
+                sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+                from ANALYTICS.plotter import generate_equity_curve
+                
+                plot_path = generate_equity_curve()
+                if plot_path and os.path.exists(plot_path):
+                    await message.answer_photo(FSInputFile(plot_path), caption="📈 График движения баланса (Equity Curve)")
+            except Exception as e:
+                logger.error(f"Error generating or sending equity curve: {e}")
 
         @self.dp.message(F.text == "⚙️ Set Coins")
         async def on_set_coins(message: Message, state: FSMContext):
-            await message.answer("Пожалуйста, введите символ монеты (например: WIFUSDT):", reply_markup=self._get_cancel_keyboard())
-            await state.set_state(TGStates.waiting_for_symbol)
+            await state.clear()
+            await message.answer("<b>Управление монетами:</b>\nВыберите действие в меню.", reply_markup=self._get_set_coins_keyboard(), parse_mode="HTML")
 
-        @self.dp.message(TGStates.waiting_for_symbol)
-        async def process_symbol(message: Message, state: FSMContext):
+        @self.dp.message(F.text == "🔙 Back")
+        async def on_back_from_coins(message: Message, state: FSMContext):
+            await state.clear()
+            status = "⏸️ Paused" if self.bot_core.is_paused else "▶️ Running"
+            text = f"<b>Control Panel</b>\nCurrent Status: {status}"
+            await message.answer(text, reply_markup=self._get_main_keyboard(), parse_mode="HTML")
+
+        @self.dp.message(F.text == "❓ Help")
+        async def on_help_coins(message: Message, state: FSMContext):
+            help_text = (
+                "<b>Гайд по управлению монетами:</b>\n\n"
+                "➕ <b>Add</b>: Добавить новую монету. Бот возьмет шаблон из <code>_base.json</code> и сразу запустит монету в работу.\n"
+                "✏️ <b>Edit</b>: Редактировать настройки запущенной монеты. Бот пришлет текущий конфиг, вы его правите и отправляете обратно.\n"
+                "🗑️ <b>Del</b>: Удалить монету. Бот моментально удалит её из всех систем и перестанет следить за ней (ордера на бирже останутся).\n"
+                "📄 <b>_base</b>: Отредактировать глобальный шаблон (применяется при добавлении новых монет)."
+            )
+            await message.answer(help_text, parse_mode="HTML")
+
+        # =========================================================
+        # ADD SYMBOL
+        # =========================================================
+        @self.dp.message(F.text == "➕ Add")
+        async def on_add_btn(message: Message, state: FSMContext):
+            await message.answer("Введите символ монеты для добавления (например: WIFUSDT):", reply_markup=self._get_cancel_keyboard())
+            await state.set_state(TGStates.waiting_for_add_symbol)
+
+        @self.dp.message(TGStates.waiting_for_add_symbol)
+        async def process_add_symbol(message: Message, state: FSMContext):
+            if message.text == "🔙 Cancel":
+                return await on_set_coins(message, state)
+                
             symbol = message.text.strip().upper()
             if not symbol.endswith("USDT"):
                 await message.answer("Символ должен заканчиваться на USDT. Попробуйте еще раз:")
                 return
 
-            template_str = self.template_manager.generate_tg_template(symbol)
-            if "error" in template_str:
-                await message.answer(f"Ошибка генерации шаблона: {template_str}")
+            # Apply base template automatically and add to BotCore
+            import json
+            base_data = self.template_manager.apply_tg_template(json.dumps({"symbol": symbol}))
+            # Wait, apply_tg_template parses JSON, but if we don't pass full JSON it might fail or reset.
+            # We need to manually construct the config or use a helper.
+            # Actually, `template_manager.generate_tg_template` gets base.
+            base_str = self.template_manager.generate_tg_template(symbol)
+            success, msg = self.template_manager.apply_tg_template(base_str)
+            
+            if success:
+                if symbol not in self.bot_core.symbols:
+                    await self.bot_core.add_symbol(symbol)
+                await message.answer(f"✅ Монета {symbol} успешно добавлена и запущена в работу на основе базового шаблона!", reply_markup=self._get_set_coins_keyboard())
+                await state.clear()
+            else:
+                await message.answer(f"❌ Ошибка добавления: {msg}", reply_markup=self._get_set_coins_keyboard())
+                await state.clear()
+
+        # =========================================================
+        # DEL SYMBOL
+        # =========================================================
+        @self.dp.message(F.text == "🗑️ Del")
+        async def on_del_btn(message: Message, state: FSMContext):
+            await message.answer("Введите символ монеты для УДАЛЕНИЯ (например: WIFUSDT):", reply_markup=self._get_cancel_keyboard())
+            await state.set_state(TGStates.waiting_for_del_symbol)
+
+        @self.dp.message(TGStates.waiting_for_del_symbol)
+        async def process_del_symbol(message: Message, state: FSMContext):
+            if message.text == "🔙 Cancel":
+                return await on_set_coins(message, state)
+                
+            symbol = message.text.strip().upper()
+            if symbol not in self.bot_core.symbols:
+                await message.answer(f"❌ Монета {symbol} не найдена в активных.", reply_markup=self._get_set_coins_keyboard())
                 await state.clear()
                 return
 
-            await message.answer("<b>Чистый шаблон настроек (для копирования и изменения):</b>", parse_mode="HTML")
-            
-            # Телеграм режет длинные сообщения, поэтому бьем на чанки если нужно
-            if len(template_str) > 4000:
-                await message.answer(f"<pre>{template_str[:4000]}</pre>", parse_mode="HTML")
-                await message.answer(f"<pre>{template_str[4000:]}</pre>", parse_mode="HTML")
-            else:
-                await message.answer(f"<pre>{template_str}</pre>", parse_mode="HTML")
-            
-            # Теперь показываем текущее рантайм-состояние (грязный кэш)
+            await self.bot_core.delete_symbol(symbol)
+            await message.answer(f"✅ Монета {symbol} успешно удалена из всех систем бота (ордера на бирже оставлены без изменений).", reply_markup=self._get_set_coins_keyboard())
+            await state.clear()
+
+        # =========================================================
+        # EDIT SYMBOL
+        # =========================================================
+        @self.dp.message(F.text == "✏️ Edit")
+        async def on_edit_btn(message: Message, state: FSMContext):
+            await message.answer("Введите символ монеты для редактирования (например: WIFUSDT):", reply_markup=self._get_cancel_keyboard())
+            await state.set_state(TGStates.waiting_for_edit_symbol)
+
+        @self.dp.message(TGStates.waiting_for_edit_symbol)
+        async def process_edit_symbol(message: Message, state: FSMContext):
+            if message.text == "🔙 Cancel":
+                return await on_set_coins(message, state)
+                
+            symbol = message.text.strip().upper()
+            if symbol not in self.bot_core.symbols:
+                await message.answer(f"❌ Монета {symbol} не найдена в активных.")
+                return
+
             runtime_path = self.template_manager.runtime_dir / f"{symbol.lower()}.json"
             if runtime_path.exists():
                 import json
                 try:
                     with open(runtime_path, 'r', encoding='utf-8') as f:
                         rt_data = json.load(f)
-                    rt_str = json.dumps(rt_data, indent=4)
-                    await message.answer("<b>Текущее состояние монеты (рантайм кэш):</b>", parse_mode="HTML")
+                    
+                    # We create an editable template from runtime
+                    editable = {"symbol": symbol}
+                    for side in ("LONG", "SHORT"):
+                        if side in rt_data:
+                            editable[side] = rt_data[side]
+                    
+                    rt_str = json.dumps(editable, indent=4)
+                    await message.answer("<b>Текущие настройки монеты (скопируйте, измените и отправьте обратно):</b>", parse_mode="HTML")
+                    
                     if len(rt_str) > 4000:
                         await message.answer(f"<pre>{rt_str[:4000]}</pre>", parse_mode="HTML")
                         await message.answer(f"<pre>{rt_str[4000:]}</pre>", parse_mode="HTML")
                     else:
                         await message.answer(f"<pre>{rt_str}</pre>", parse_mode="HTML")
+                        
+                    await state.update_data(symbol=symbol)
+                    await state.set_state(TGStates.waiting_for_edit_json)
                 except Exception as e:
-                    await message.answer(f"Ошибка чтения рантайм кэша: {e}")
+                    await message.answer(f"❌ Ошибка чтения конфига: {e}", reply_markup=self._get_set_coins_keyboard())
+                    await state.clear()
             else:
-                await message.answer("<i>Рантайм кэш для этой монеты еще не создан (будет создан при старте).</i>", parse_mode="HTML")
+                await message.answer("❌ Файл конфигурации не найден.", reply_markup=self._get_set_coins_keyboard())
+                await state.clear()
 
-            await message.answer("Теперь отправьте отредактированный JSON с новыми настройками (он обновит конфигурацию, не трогая рантайм поля):")
-            await state.update_data(symbol=symbol)
-            await state.set_state(TGStates.waiting_for_json)
-
-        @self.dp.message(TGStates.waiting_for_json)
-        async def process_json(message: Message, state: FSMContext):
+        @self.dp.message(TGStates.waiting_for_edit_json)
+        async def process_edit_json(message: Message, state: FSMContext):
+            if message.text == "🔙 Cancel":
+                return await on_set_coins(message, state)
+                
             json_str = message.text.strip()
-            
-            import json
-            symbol = ""
-            try:
-                data = json.loads(json_str)
-                symbol = data.get("symbol", "").upper()
-            except Exception:
-                pass
             
             async with self._lock:
                 success, msg = self.template_manager.apply_tg_template(json_str)
             
             if success:
-                if symbol and symbol not in self.bot_core.symbols:
-                    await self.bot_core.add_symbol(symbol)
-                else:
-                    # Trigger RuntimeManager to reload caches for existing symbols
-                    self.bot_core.runtime_manager.load_initial_caches(self.bot_core.symbols)
-                    self.bot_core.runtime_configs = self.bot_core.runtime_manager.caches
-                    # MUST sync the in-memory PositionState with the updated cache so price=None takes effect
-                    self.bot_core.runtime_manager.populate_fsm_from_cache(self.bot_core.fsm_states)
+                # Reload runtime caches for the bot
+                self.bot_core.runtime_manager.load_initial_caches(self.bot_core.symbols)
+                self.bot_core.runtime_configs = self.bot_core.runtime_manager.caches
+                self.bot_core.runtime_manager.populate_fsm_from_cache(self.bot_core.fsm_states)
                 
-                if self.bot_core.is_paused:
-                    msg += "\n\n⚠️ Бот сейчас на паузе. Нажмите '▶️ Start' -> '✅ Confirm Start', чтобы начать торговлю."
-                else:
-                    msg += "\n\n🚀 Монета добавлена в запущенный цикл и начнет торговаться со следующей 5-минутной свечи!"
-                
-                await message.answer(f"✅ {msg}", reply_markup=self._get_main_keyboard())
+                await message.answer("✅ Настройки успешно обновлены и применены на лету!", reply_markup=self._get_set_coins_keyboard())
                 await state.clear()
             else:
-                await message.answer(f"❌ {msg}\nПопробуйте отправить исправленный JSON еще раз.")
+                await message.answer(f"❌ Ошибка: {msg}\nИсправьте JSON и отправьте снова.")
+
+        # =========================================================
+        # EDIT _BASE TEMPLATE
+        # =========================================================
+        @self.dp.message(F.text == "📄 _base")
+        async def on_base_btn(message: Message, state: FSMContext):
+            from c_utils import Utils
+            base_data = Utils.read_json_file(self.template_manager.base_file)
+            import json
+            base_str = json.dumps(base_data, indent=4)
+            await message.answer("<b>Текущий базовый шаблон _base.json (отредактируйте и отправьте обратно):</b>", reply_markup=self._get_cancel_keyboard(), parse_mode="HTML")
+            await message.answer(f"<pre>{base_str}</pre>", parse_mode="HTML")
+            await state.set_state(TGStates.waiting_for_base_json)
+
+        @self.dp.message(TGStates.waiting_for_base_json)
+        async def process_base_json(message: Message, state: FSMContext):
+            if message.text == "🔙 Cancel":
+                return await on_set_coins(message, state)
+                
+            json_str = message.text.strip()
+            import json
+            try:
+                new_base = json.loads(json_str)
+                from c_utils import Utils
+                Utils.write_json_file(self.template_manager.base_file, new_base)
+                await message.answer("✅ Базовый шаблон успешно обновлен!", reply_markup=self._get_set_coins_keyboard())
+                await state.clear()
+            except Exception as e:
+                await message.answer(f"❌ Ошибка JSON: {e}\nИсправьте и отправьте снова.")
 
     async def start(self):
         logger.info("Starting Telegram Receiver...")

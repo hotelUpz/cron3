@@ -2,3 +2,5 @@ python-dotenv
 aiohttp
 aiohttp-socks
 pytz
+aiogram
+matplotlib

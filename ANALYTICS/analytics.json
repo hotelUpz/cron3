@@ -1,43 +1,55 @@
 {
-    "total_positions_LONG": 13,
-    "total_positions_SHORT": 37,
-    "total_trades": 130,
-    "winning_trades": 94,
-    "winrate_pct": 72.31,
+    "total_trades": 199,
+    "winning_trades": 166,
+    "winrate_pct": 83.42,
     "per_coin": {
         "WIFUSDT": {
-            "total_trades": 51,
-            "winning_trades": 36,
-            "winrate_pct": 70.59,
-            "total_pnl_usdt": 6.4179,
-            "current_drawdown": -10.7389
+            "total_trades": 64,
+            "winning_trades": 51,
+            "winrate_pct": 79.69,
+            "commission_usdt": -1.55,
+            "funding_usdt": 0.0102,
+            "net_profit_usdt": 7.5128,
+            "current_drawdown": -11.232
         },
         "STABLEUSDT": {
-            "total_trades": 37,
-            "winning_trades": 24,
-            "winrate_pct": 64.86,
-            "total_pnl_usdt": 9.6177,
-            "current_drawdown": -2.1505
+            "total_trades": 77,
+            "winning_trades": 58,
+            "winrate_pct": 75.32,
+            "commission_usdt": -1.5166,
+            "funding_usdt": -0.0056,
+            "net_profit_usdt": 3.5005,
+            "current_drawdown": -1.5385
         },
         "DASHUSDT": {
-            "total_trades": 25,
-            "winning_trades": 23,
-            "winrate_pct": 92.0,
-            "total_pnl_usdt": 2.8872,
-            "current_drawdown": -5.3762
+            "total_trades": 35,
+            "winning_trades": 34,
+            "winrate_pct": 97.14,
+            "commission_usdt": -0.5736,
+            "funding_usdt": 0.0053,
+            "net_profit_usdt": 5.7566,
+            "current_drawdown": -0.3378
         },
         "ALGOUSDT": {
-            "total_trades": 17,
-            "winning_trades": 11,
-            "winrate_pct": 64.71,
-            "total_pnl_usdt": 1.2661,
-            "current_drawdown": -3.3994
+            "total_trades": 23,
+            "winning_trades": 23,
+            "winrate_pct": 100.0,
+            "commission_usdt": -0.3473,
+            "funding_usdt": -0.0013,
+            "net_profit_usdt": 2.5027,
+            "current_drawdown": -4.2504
         }
     },
-    "total_drawdown_usdt": -21.6649,
-    "initial_balance_usdt": 82.0,
-    "current_balance_usdt": 74.3715,
-    "total_trading_pnl_usdt": 20.1889,
-    "total_pnl_usdt": -7.6285,
-    "last_updated_ts": 1782328746316
+    "unrealized_pnl_usdt": -17.3588,
+    "start_balance_usdt": 82.0,
+    "gross_profit_usdt": 19.2726,
+    "net_profit_usdt": 1.9138,
+    "last_updated_ts": 1782404825283,
+    "peak_balance_usdt": 84.8688,
+    "min_balance_usdt": 83.843,
+    "max_drawdown_usdt": -7.3202,
+    "performance_usdt": 2.8688,
+    "cur_balance_usdt": 83.9138,
+    "total_commission_usdt": -3.9875,
+    "total_funding_usdt": 0.0086
 }

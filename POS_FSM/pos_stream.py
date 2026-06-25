@@ -266,6 +266,11 @@ class PositionStream:
 
                 except asyncio.CancelledError:
                     raise
+                except RuntimeError as e:
+                    if str(e) == "ws_closed":
+                        logger.info(f"[MASTER WS] Stream disconnected, initiating automatic reconnect...")
+                    else:
+                        logger.error(f"[MASTER WS] cycle failed: {type(e).__name__} - {e}", exc_info=True)
                 except Exception as e:
                     logger.error(f"[MASTER WS] cycle failed: {type(e).__name__} - {e}", exc_info=True)
 
