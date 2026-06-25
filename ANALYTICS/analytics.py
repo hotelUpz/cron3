@@ -135,7 +135,18 @@ class AnalyticsManager:
             data["net_profit_usdt"] = round(bot_gross_profit + bot_unrealized, 4)
             
             initial = float(data.get("start_balance_usdt", 0.0))
-            data["cur_balance_usdt"] = round(initial + data["net_profit_usdt"], 4)
+            bot_cur_balance = round(initial + data["net_profit_usdt"], 4)
+            data["cur_balance_usdt"] = bot_cur_balance
+            
+            if initial > 0:
+                data["roi_pct"] = round(((bot_cur_balance - initial) / initial) * 100, 2)
+            else:
+                data["roi_pct"] = 0.0
+                
+            if bot_gross_profit > 0:
+                data["load_ratio"] = round(abs(bot_unrealized) / bot_gross_profit, 2)
+            else:
+                data["load_ratio"] = 0.0
                     
             # Isolate unrealized PnL to ONLY the coins this bot tracks in analytics
             data["unrealized_pnl_usdt"] = round(bot_unrealized, 4)
@@ -190,6 +201,16 @@ class AnalyticsManager:
                     bot_cur_balance = round(initial + data["net_profit_usdt"], 4)
                     data["cur_balance_usdt"] = bot_cur_balance
                     
+                    if initial > 0:
+                        data["roi_pct"] = round(((bot_cur_balance - initial) / initial) * 100, 2)
+                    else:
+                        data["roi_pct"] = 0.0
+                        
+                    if bot_gross_profit > 0:
+                        data["load_ratio"] = round(abs(bot_unrealized) / bot_gross_profit, 2)
+                    else:
+                        data["load_ratio"] = 0.0
+                    
                     peak = data.get("peak_balance_usdt", initial)
                     trough = data.get("min_balance_usdt", peak)
                     
@@ -212,6 +233,11 @@ class AnalyticsManager:
                     
                     max_perf = peak - initial
                     data["performance_usdt"] = round(max(data.get("performance_usdt", 0.0), max_perf), 4)
+                    
+                    if data["max_drawdown_usdt"] < 0:
+                        data["recovery_factor"] = round(bot_gross_profit / abs(data["max_drawdown_usdt"]), 2)
+                    else:
+                        data["recovery_factor"] = 0.0
                     
                     import time
                     data["last_updated_ts"] = int(time.time() * 1000)
@@ -292,9 +318,7 @@ class AnalyticsManager:
             # Update CSV with new balance
             await self._append_to_csv(symbol, side, open_time, close_time, net_pnl, current_balance)
             
-            # Cashflow Tracking
-            await self._append_to_cashflow(close_time, symbol, net_pnl, current_balance)
-            
+            # Cashflow tracking is now merged into trades_ledger via _append_to_csv
             # Max Performance & Drawdown
             initial = data.get("start_balance_usdt", 0.0)
             peak = data.get("peak_balance_usdt", initial)
@@ -315,6 +339,12 @@ class AnalyticsManager:
             
             max_perf = peak - initial
             data["performance_usdt"] = round(max(data.get("performance_usdt", 0.0), max_perf), 4)
+            
+            gross_pnl = data.get("gross_profit_usdt", 0.0)
+            if data["max_drawdown_usdt"] < 0:
+                data["recovery_factor"] = round(gross_pnl / abs(data["max_drawdown_usdt"]), 2)
+            else:
+                data["recovery_factor"] = 0.0
             
             import time
             data["last_updated_ts"] = int(time.time() * 1000)

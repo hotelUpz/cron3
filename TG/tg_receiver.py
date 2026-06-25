@@ -278,7 +278,19 @@ class TelegramReceiver:
                         except Exception:
                             dt = datetime.fromtimestamp(ts / 1000.0, tz=timezone.utc)
                         time_str = dt.strftime('%Y-%m-%d %H:%M:%S %Z')
-                        header = f"<b>ℹ️ Аналитика рассчитана по состоянию на: {time_str}</b>\n\n"
+                        
+                        help_str = (
+                            "<b>📚 Analytics Cheat Sheet</b>\n"
+                            "▪️ <b>roi_pct</b>: Return on Investment (%) → <i>(Cur_Balance - Start_Balance) / Start_Balance * 100</i>\n"
+                            "▪️ <b>load_ratio</b>: Grid Load Ratio → <i>|Unrealized PnL| / Gross Profit</i> (Floating risk taken per 1 USDT of closed profit)\n"
+                            "▪️ <b>recovery_factor</b>: Recovery Factor → <i>Gross Profit / |Max Drawdown|</i> (Can profit cover max drawdowns?)\n"
+                            "▪️ <b>gross_profit_usdt</b>: Total realized profit from all closed trades (incl. commissions/funding)\n"
+                            "▪️ <b>net_profit_usdt</b>: True mathematical growth → <i>Gross Profit + Unrealized PnL</i>\n"
+                            "▪️ <b>unrealized_pnl_usdt</b>: Current floating drawdown of all open positions\n"
+                            "▪️ <b>cur_balance_usdt</b>: Current mathematical margin balance → <i>Start Balance + Net Profit</i>\n"
+                        )
+                        
+                        header = f"{help_str}\n<b>ℹ️ Расчет по состоянию на: {time_str}</b>\n\n"
                     else:
                         header = "<b>ℹ️ Аналитика рассчитана по состоянию на: [неизвестно]</b>\n\n"
                 except Exception as e:
@@ -375,7 +387,10 @@ class TelegramReceiver:
         # =========================================================
         @self.dp.message(F.text == "🗑️ Del")
         async def on_del_btn(message: Message, state: FSMContext):
-            await message.answer("Введите символ монеты для УДАЛЕНИЯ (например: WIFUSDT):", reply_markup=self._get_cancel_keyboard())
+            active_coins = ", ".join(self.bot_core.symbols)
+            if not active_coins:
+                active_coins = "Нет активных монет"
+            await message.answer(f"Активные монеты: <b>{active_coins}</b>\n\nВведите символ монеты для УДАЛЕНИЯ (например: WIFUSDT):", parse_mode="HTML", reply_markup=self._get_cancel_keyboard())
             await state.set_state(TGStates.waiting_for_del_symbol)
 
         @self.dp.message(TGStates.waiting_for_del_symbol)
@@ -398,7 +413,10 @@ class TelegramReceiver:
         # =========================================================
         @self.dp.message(F.text == "✏️ Edit")
         async def on_edit_btn(message: Message, state: FSMContext):
-            await message.answer("Введите символ монеты для редактирования (например: WIFUSDT):", reply_markup=self._get_cancel_keyboard())
+            active_coins = ", ".join(self.bot_core.symbols)
+            if not active_coins:
+                active_coins = "Нет активных монет"
+            await message.answer(f"Активные монеты: <b>{active_coins}</b>\n\nВведите символ монеты для редактирования (например: WIFUSDT):", parse_mode="HTML", reply_markup=self._get_cancel_keyboard())
             await state.set_state(TGStates.waiting_for_edit_symbol)
 
         @self.dp.message(TGStates.waiting_for_edit_symbol)

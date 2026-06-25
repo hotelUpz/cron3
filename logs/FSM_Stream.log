@@ -202,3 +202,12 @@ RuntimeError: ws_closed
 2026-06-25 18:37:55 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ot4QC... (length: 64)
 2026-06-25 19:02:55 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
 2026-06-25 19:27:11 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-25 19:28:09 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ot4QC... (length: 64)
+2026-06-25 19:50:49 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-25 19:51:01 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ot4QC... (length: 64)
+2026-06-25 19:55:00 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-25 19:55:09 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ot4QC... (length: 64)
+2026-06-25 20:01:49 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-25 20:01:59 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ot4QC... (length: 64)
+2026-06-25 20:27:00 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-25 20:42:06 | INFO | FSM_Stream | PositionStream: WS disconnected
