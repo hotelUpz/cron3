@@ -1,20 +1,39 @@
 {
     "start_balance_usdt": 0.0,
-    "cur_balance_usdt": 0.0,
-    "total_trades": 0,
+    "cur_balance_usdt": -0.0488,
+    "total_trades": 8,
     "winning_trades": 0,
     "winrate_pct": 0.0,
-    "gross_profit_usdt": 0,
-    "net_profit_usdt": 0.0,
-    "unrealized_pnl_usdt": 0.0,
-    "per_coin": {},
+    "gross_profit_usdt": -0.0418,
+    "net_profit_usdt": -0.0488,
+    "unrealized_pnl_usdt": -0.007,
+    "per_coin": {
+        "STABLEUSDT": {
+            "total_trades": 8,
+            "winning_trades": 0,
+            "winrate_pct": 0.0,
+            "net_profit_usdt": -0.0662,
+            "commission_usdt": -0.0001,
+            "funding_usdt": 0.0,
+            "current_drawdown": -0.007,
+            "max_net_profit": 0.0,
+            "min_net_profit": -0.0662,
+            "max_drawdown": -0.007,
+            "min_drawdown": 0.0,
+            "avg_daily_profit": -0.0662,
+            "risk_reward_ratio": 0.0,
+            "max_position_size": 2.5952,
+            "DRME": -0.0255,
+            "MDME": 0.0027
+        }
+    },
     "roi_pct": 0.0,
     "load_ratio": 0.0,
-    "_current_trough_usdt": 0.0,
-    "max_drawdown_usdt": 0.0,
+    "_current_trough_usdt": -0.0488,
+    "max_drawdown_usdt": -0.0488,
     "performance_usdt": 0.0,
-    "recovery_factor": 0.0,
-    "last_updated_ts": 1782498375841,
+    "recovery_factor": -0.86,
+    "last_updated_ts": 1782504727170,
     "_help": {
         "roi_pct": "Return on Investment (%). (cur_balance_usdt - start_balance_usdt) / start_balance_usdt * 100",
         "load_ratio": "Grid Load Ratio. abs(unrealized_pnl_usdt) / gross_profit_usdt. Shows how much floating risk is taken per 1 USDT of closed profit.",
@@ -37,5 +56,9 @@
         "min_net_profit": "[Per-Coin] Historical minimum of the coin's fixed net profit.",
         "max_drawdown": "[Per-Coin] Historical maximum floating drawdown for this coin.",
         "min_drawdown": "[Per-Coin] Historical minimum floating drawdown for this coin."
-    }
+    },
+    "total_commission_usdt": -0.0001,
+    "total_funding_usdt": 0.0,
+    "peak_balance_usdt": 0.0,
+    "min_balance_usdt": -0.0488
 }

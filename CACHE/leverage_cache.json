@@ -1,9 +1,3 @@
 {
-    "STABLEUSDT_CROSSED_10": true,
-    "WIFUSDT_CROSSED_10": true,
-    "DASHUSDT_CROSSED_10": true,
-    "ALGOUSDT_CROSSED_10": true,
-    "XAGUSDT_CROSSED_10": true,
-    "SOLUSDT_CROSSED_10": true,
-    "BNBUSDT_CROSSED_10": true
+    "STABLEUSDT_CROSSED_10": true
 }

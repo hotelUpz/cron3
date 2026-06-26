@@ -193,65 +193,69 @@ class BotCore:
 
     async def _process_signal(self, symbol: str, side: str, side_cfg: dict, current_price: float, concurrent_mode: bool = False):
         """Обработка сигнала входа для символа и стороны."""
-        logger.info(f"[{symbol}] Signal triggered for {side}.")
-        
-        # 1. Установка плеча и маржи
-        await self.leverage_manager.set_leverage_and_margin(self.client, symbol, side_cfg)
-
-        # 1.5. Открытие позиции по маркету
-        invest_size = side_cfg["invest_size"]
-        grid_0 = side_cfg["grid"]["0"]
-        volume_pct = grid_0["volume"]
-        from CORE._utils import TradeMath
-        volume = TradeMath.calculate_order_volume(invest_size, volume_pct, current_price, self.spec_data, symbol)
-        
-        order_side = "BUY" if side == "LONG" else "SELL"
-        
-        logger.info(f"[{symbol}] Opening {side} market order. Volume: {volume}")
-        res = await self.client.make_order(
-            symbol=symbol,
-            qty=volume,
-            side=order_side,
-            position_side=side,
-            market_type="MARKET",
-            concurrent_mode=concurrent_mode
-        )
-        if not res.success:
-            logger.error(f"[{symbol}] Failed to open {side} position: {res.error_msg}")
-            return
-            
-        current_time_ms = int(time.time() * 1000)
         state = self.fsm_states[symbol][side]
-        state.open_time = current_time_ms
-        side_cfg["open_time"] = current_time_ms
+        try:
+            logger.info(f"[{symbol}] Signal triggered for {side}.")
+            
+            # 1. Установка плеча и маржи
+            await self.leverage_manager.set_leverage_and_margin(self.client, symbol, side_cfg)
 
-        # Дожидаемся обновления avg_entry_price от вебсокета после входа
-        state.pre_avg_price = 0.0
-        sync_success = await Utils.wait_for_fsm_sync(state, timeout_sec=3.0, poll_interval=0.01)
-        
-        if not sync_success:
-            logger.warning(f"[{symbol}] {side} WS did not update avg_entry_price in time at start! Forcing REST fallback...")
-            try:
-                positions = await self.client.fetch_positions(symbol)
-                for p in positions:
-                    if p.get("positionSide") == side:
-                        new_avg = float(p.get("entryPrice", 0.0))
-                        new_vol = float(p.get("positionAmt", 0.0))
-                        if new_avg > 0:
-                            state.avg_entry_price = new_avg
-                            state.total_volume = new_vol
-                            state.set_in_position(True)
-                logger.info(f"[{symbol}] {side} REST fallback applied! New avg_entry_price: {state.avg_entry_price}")
-            except Exception as e:
-                logger.error(f"[{symbol}] {side} REST fallback failed: {e}")
-        else:
-            logger.info(f"[{symbol}] {side} FSM synced at start! New avg_entry_price: {state.avg_entry_price}")
+            # 1.5. Открытие позиции по маркету
+            invest_size = side_cfg["invest_size"]
+            grid_0 = side_cfg["grid"]["0"]
+            volume_pct = grid_0["volume"]
+            from CORE._utils import TradeMath
+            volume = TradeMath.calculate_order_volume(invest_size, volume_pct, current_price, self.spec_data, symbol)
+            
+            order_side = "BUY" if side == "LONG" else "SELL"
+            
+            logger.info(f"[{symbol}] Opening {side} market order. Volume: {volume}")
+            res = await self.client.make_order(
+                symbol=symbol,
+                qty=volume,
+                side=order_side,
+                position_side=side,
+                market_type="MARKET",
+                concurrent_mode=concurrent_mode
+            )
+            if not res.success:
+                logger.error(f"[{symbol}] Failed to open {side} position: {res.error_msg}")
+                return
+                
+            current_time_ms = int(time.time() * 1000)
+            state.open_time = current_time_ms
+            side_cfg["open_time"] = current_time_ms
 
-        # 2. Математика расчета объема и TP (Используем реальный объем из стрима)
-        await self.tp_manager.place_take_profit(self.client, symbol, side, current_price, self.spec_data, self.fsm_states[symbol][side])
-        
-        # 3. Сохраняем стейт в рантайм кэш
-        await self.runtime_manager.save_cache(symbol)
+            # Дожидаемся обновления avg_entry_price от вебсокета после входа
+            state.pre_avg_price = 0.0
+            sync_success = await Utils.wait_for_fsm_sync(state, timeout_sec=3.0, poll_interval=0.01)
+            
+            if not sync_success:
+                logger.warning(f"[{symbol}] {side} WS did not update avg_entry_price in time at start! Forcing REST fallback...")
+                try:
+                    positions = await self.client.fetch_positions(symbol)
+                    for p in positions:
+                        if p.get("positionSide") == side:
+                            new_avg = float(p.get("entryPrice", 0.0))
+                            new_vol = float(p.get("positionAmt", 0.0))
+                            if new_avg > 0:
+                                state.avg_entry_price = new_avg
+                                state.total_volume = new_vol
+                                state.set_in_position(True)
+                    logger.info(f"[{symbol}] {side} REST fallback applied! New avg_entry_price: {state.avg_entry_price}")
+                except Exception as e:
+                    logger.error(f"[{symbol}] {side} REST fallback failed: {e}")
+            else:
+                logger.info(f"[{symbol}] {side} FSM synced at start! New avg_entry_price: {state.avg_entry_price}")
+
+            # 2. Математика расчета объема и TP (Используем реальный объем из стрима)
+            await self.tp_manager.place_take_profit(self.client, symbol, side, current_price, self.spec_data, state)
+            
+        finally:
+            # ВСЕГДА сбрасываем временный флаг защиты от двойного входа
+            state.in_position_papper = False
+            # 3. Сохраняем стейт в рантайм кэш
+            await self.runtime_manager.save_cache(symbol)
 
     async def _check_and_reset_finished_positions(self, symbol: str, states: dict, runtime_cfg: dict):
         """Проверяет флаги is_finished, пишет аналитику, отменяет ордера и сбрасывает рантайм.""" 
@@ -326,6 +330,7 @@ class BotCore:
             
             if not state.in_position and not state.in_position_papper:
                 if is_signal:
+                    logger.info(f"[{symbol}] {side}: Signal is TRUE! Entering position...")
                     # Ставим временный флаг идемпотентности
                     state.in_position_papper = True
                     signal_tasks.append(self._process_signal(symbol, side, side_cfg, current_price, concurrent_mode=is_concurrent))

@@ -29,8 +29,7 @@ class PositionState:
     
     def set_in_position(self, status: bool):
         self.in_position = status
-        if status:
-            self.in_position_papper = False
+        self.in_position_papper = False
             
     def reset(self):
         """Сброс до дефолта: обнуление всех метрик и флагов."""
