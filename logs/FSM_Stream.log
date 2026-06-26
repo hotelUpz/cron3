@@ -68,3 +68,9 @@ Traceback (most recent call last):
 KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}"
 2026-06-26 20:01:24 | INFO | FSM_Stream | PositionStream: WS disconnected
 2026-06-26 20:01:25 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 20:43:41 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: W8ek3... (length: 64)
+2026-06-26 20:44:20 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 20:44:57 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: W8ek3... (length: 64)
+2026-06-26 20:45:03 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 20:48:30 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: W8ek3... (length: 64)
+2026-06-26 20:48:50 | INFO | FSM_Stream | PositionStream: WS disconnected

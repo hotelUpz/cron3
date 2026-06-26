@@ -319,6 +319,17 @@ class TelegramReceiver:
                     
                     data["start_balance_usdt"] = round(new_balance, 4)
                     
+                    # При сбросе баланса также сбрасываем пики и просадки, 
+                    # чтобы не было искусственной просадки на разницу балансов
+                    data["peak_balance_usdt"] = round(new_balance, 4)
+                    data["_current_trough_usdt"] = round(new_balance, 4)
+                    data["min_balance_usdt"] = round(new_balance, 4)
+                    data["max_drawdown_usdt"] = 0.0
+                    data["performance_usdt"] = 0.0
+                    data["recovery_factor"] = 0.0
+                    data["roi_pct"] = 0.0
+                    
+
                     with open(analytics_path, "w", encoding="utf-8") as f:
                         json.dump(data, f, indent=4)
                         

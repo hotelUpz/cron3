@@ -78,7 +78,7 @@
         "next_avg_price": null,
         "fallback_price": null,
         "in_position": false,
-        "in_position_papper": false,
+        "in_position_papper": true,
         "is_finished": false,
         "pending_avg": false,
         "pending_rolling_tp": false
@@ -162,7 +162,7 @@
         "next_avg_price": null,
         "fallback_price": null,
         "in_position": false,
-        "in_position_papper": false,
+        "in_position_papper": true,
         "is_finished": false,
         "pending_avg": false,
         "pending_rolling_tp": false

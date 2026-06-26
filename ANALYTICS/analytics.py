@@ -28,8 +28,8 @@ class AnalyticsManager:
     def _ensure_files(self):
         if not self.log_file.exists():
             default_data = {
-                "start_balance_usdt": 82.0,
-                "cur_balance_usdt": 82.0,
+                "start_balance_usdt": 0.0,
+                "cur_balance_usdt": 0.0,
                 "total_trades": 0,
                 "winning_trades": 0,
                 "winrate_pct": 0.0,

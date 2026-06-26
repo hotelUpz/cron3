@@ -161,3 +161,33 @@ KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP
 2026-06-26 20:01:24 | INFO | FSM_Stream | PositionStream: WS disconnected
 2026-06-26 20:01:25 | INFO | FSM_Stream | PositionStream: WS disconnected
 2026-06-26 20:01:25 | INFO | App | Ctrl+C detected. Shutting down...
+2026-06-26 20:43:40 | INFO | App | Starting BotCore...
+2026-06-26 20:43:41 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: W8ek3... (length: 64)
+2026-06-26 20:44:20 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 20:44:21 | INFO | App | Ctrl+C detected. Shutting down...
+2026-06-26 20:44:56 | INFO | App | Starting BotCore...
+2026-06-26 20:44:57 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: W8ek3... (length: 64)
+2026-06-26 20:45:00 | DEBUG | LeverageManager | [XAGUSDT] Margin type CROSSED is already set on exchange.
+2026-06-26 20:45:00 | DEBUG | LeverageManager | [XAGUSDT] Margin type CROSSED is already set on exchange.
+2026-06-26 20:45:00 | DEBUG | LeverageManager | [SOLUSDT] Margin type CROSSED is already set on exchange.
+2026-06-26 20:45:00 | DEBUG | LeverageManager | [SOLUSDT] Margin type CROSSED is already set on exchange.
+2026-06-26 20:45:00 | DEBUG | LeverageManager | [BNBUSDT] Margin type CROSSED is already set on exchange.
+2026-06-26 20:45:01 | DEBUG | LeverageManager | [BNBUSDT] Margin type CROSSED is already set on exchange.
+2026-06-26 20:45:01 | INFO | LeverageManager | [XAGUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-26 20:45:01 | INFO | LeverageManager | [XAGUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-26 20:45:01 | INFO | LeverageManager | [SOLUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-26 20:45:01 | INFO | LeverageManager | [SOLUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-26 20:45:01 | INFO | LeverageManager | [BNBUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-26 20:45:01 | INFO | LeverageManager | [BNBUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-26 20:45:01 | ERROR | BINANCE_API | ❌ Binance error code=-4411 msg=Please sign TradFi-Perps agreement contract fapi.
+2026-06-26 20:45:01 | ERROR | BINANCE_API | ❌ Binance error code=-4411 msg=Please sign TradFi-Perps agreement contract fapi.
+2026-06-26 20:45:01 | ERROR | BINANCE_API | ❌ Binance error code=-2019 msg=Margin is insufficient.
+2026-06-26 20:45:01 | ERROR | BINANCE_API | ❌ Binance error code=-2019 msg=Margin is insufficient.
+2026-06-26 20:45:02 | ERROR | BINANCE_API | ❌ Binance error code=-2019 msg=Margin is insufficient.
+2026-06-26 20:45:02 | ERROR | BINANCE_API | ❌ Binance error code=-2019 msg=Margin is insufficient.
+2026-06-26 20:45:03 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 20:45:04 | INFO | App | Ctrl+C detected. Shutting down...
+2026-06-26 20:48:29 | INFO | App | Starting BotCore...
+2026-06-26 20:48:30 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: W8ek3... (length: 64)
+2026-06-26 20:48:50 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 20:48:51 | INFO | App | Ctrl+C detected. Shutting down...
