@@ -63,8 +63,6 @@ class BinanceHotPriceStream:
         throttle_ms: int = 0,
     ):
         self.symbols = [s.upper().strip() for s in symbols if isinstance(s, str) and s.strip()]
-        if not self.symbols:
-            raise ValueError("symbols must be non-empty")
 
         self.chunk_size = max(1, int(chunk_size))
         self.ping_sec = float(ping_sec)

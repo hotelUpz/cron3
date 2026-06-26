@@ -24,6 +24,7 @@ class TGStates(StatesGroup):
     waiting_for_edit_json = State()
     waiting_for_base_json = State()
     waiting_for_initial_balance = State()
+    waiting_for_reset_confirm = State()
 
 class TelegramReceiver:
     def __init__(self, bot_core):
@@ -262,16 +263,32 @@ class TelegramReceiver:
         @self.dp.message(F.text == "🗑️ Сбросить аналитику")
         async def on_reset_analytics(message: Message, state: FSMContext):
             await state.clear()
-            analytics_path = ANALYTICS_DIR / "analytics.json"
-            if analytics_path.exists():
-                try:
-                    os.remove(analytics_path)
-                    await message.answer("✅ Файл аналитики успешно удален. Он будет создан заново при следующем обновлении.")
-                except Exception as e:
-                    await message.answer(f"❌ Ошибка при удалении файла аналитики: {e}")
-            else:
-                await message.answer("⚠️ Файл аналитики не найден.")
+            await message.answer("⚠️ Вы уверены, что хотите полностью удалить историю аналитики?\n\nВведите слово <b>СБРОС</b> для подтверждения или нажмите Cancel для отмены.", reply_markup=self._get_cancel_keyboard(), parse_mode="HTML")
+            await state.set_state(TGStates.waiting_for_reset_confirm)
 
+        @self.dp.message(TGStates.waiting_for_reset_confirm)
+        async def process_reset_analytics_confirm(message: Message, state: FSMContext):
+            if message.text == "🔙 Cancel":
+                await state.clear()
+                await message.answer("Сброс аналитики отменен.", reply_markup=self._get_main_keyboard())
+                return
+                
+            if message.text.strip().upper() == "СБРОС":
+                await state.clear()
+                analytics_path = ANALYTICS_DIR / "analytics.json"
+                if analytics_path.exists():
+                    try:
+                        os.remove(analytics_path)
+                        csv_path = ANALYTICS_DIR / "trades_ledger.csv"
+                        if csv_path.exists():
+                            os.remove(csv_path)
+                        await message.answer("✅ Файл аналитики успешно удален. Он будет создан заново при следующем обновлении.", reply_markup=self._get_main_keyboard())
+                    except Exception as e:
+                        await message.answer(f"❌ Ошибка при удалении файла аналитики: {e}", reply_markup=self._get_main_keyboard())
+                else:
+                    await message.answer("⚠️ Файл аналитики не найден.", reply_markup=self._get_main_keyboard())
+            else:
+                await message.answer("❌ Неверное слово подтверждения. Введите <b>СБРОС</b> или нажмите Cancel.", parse_mode="HTML")
         @self.dp.message(F.text == "💰 Задать нач. баланс")
         async def on_set_initial_balance(message: Message, state: FSMContext):
             await state.clear()
@@ -391,11 +408,15 @@ class TelegramReceiver:
                     msg += "<b>📈 Performance:</b>\n"
                     msg += f"▪️ Net Profit: <b>{data.get('net_profit_usdt', 0)}</b> USDT\n"
                     msg += f"▪️ Gross Profit: <b>{data.get('gross_profit_usdt', 0)}</b> USDT\n"
+                    msg += f"▪️ Total Commission: <b>{data.get('total_commission_usdt', 0)}</b> USDT\n"
+                    msg += f"▪️ Total Funding: <b>{data.get('total_funding_usdt', 0)}</b> USDT\n"
                     msg += f"▪️ Unrealized PnL: <b>{data.get('unrealized_pnl_usdt', 0)}</b> USDT\n"
                     msg += f"▪️ Max Drawdown: <b>{data.get('max_drawdown_usdt', 0)}</b> USDT\n"
+                    msg += f"▪️ Performance (Peak-Start): <b>{data.get('performance_usdt', 0)}</b> USDT\n"
                     msg += f"▪️ ROI: <b>{data.get('roi_pct', 0)}%</b>\n"
+                    msg += f"▪️ Load Ratio: <b>{data.get('load_ratio', 0)}</b>\n"
                     msg += f"▪️ Recovery Factor: <b>{data.get('recovery_factor', 0)}</b>\n"
-                    msg += f"▪️ Trades: <b>{data.get('total_trades', 0)}</b> (Winrate: <b>{data.get('winrate_pct', 0)}%</b>)\n\n"
+                    msg += f"▪️ Trades: <b>{data.get('total_trades', 0)}</b> (Wins: <b>{data.get('winning_trades', 0)}</b> | <b>{data.get('winrate_pct', 0)}%</b>)\n\n"
                     
                     # Send formatted text in chunks if needed
                     await message.answer(msg, parse_mode="HTML")
@@ -405,10 +426,11 @@ class TelegramReceiver:
                         msg_coins = "<b>🪙 PER-COIN METRICS</b>\n\n"
                         for coin, cdata in data["per_coin"].items():
                             msg_coins += f"🔹 <b>{coin}</b>\n"
-                            msg_coins += f"  • Trades: <b>{cdata.get('total_trades', 0)}</b> (Winrate: <b>{cdata.get('winrate_pct', 0)}%</b>)\n"
+                            msg_coins += f"  • Trades: <b>{cdata.get('total_trades', 0)}</b> (Wins: <b>{cdata.get('winning_trades', 0)}</b> | <b>{cdata.get('winrate_pct', 0)}%</b>)\n"
                             msg_coins += f"  • Net Profit: <b>{cdata.get('net_profit_usdt', 0)}</b> USDT\n"
                             msg_coins += f"  • Profit Range: Max <b>{cdata.get('max_net_profit', 0)}</b> / Min <b>{cdata.get('min_net_profit', 0)}</b>\n"
-                            msg_coins += f"  • Drawdown: Cur <b>{cdata.get('current_drawdown', 0)}</b> / Max <b>{cdata.get('max_drawdown', 0)}</b>\n"
+                            msg_coins += f"  • Fees: Comm <b>{cdata.get('commission_usdt', 0)}</b> / Fund <b>{cdata.get('funding_usdt', 0)}</b>\n"
+                            msg_coins += f"  • Drawdown: Cur <b>{cdata.get('current_drawdown', 0)}</b> / Max <b>{cdata.get('max_drawdown', 0)}</b> / Min <b>{cdata.get('min_drawdown', 0)}</b>\n"
                             msg_coins += f"  • Avg Daily Profit: <b>{cdata.get('avg_daily_profit', 0)}</b> USDT\n"
                             msg_coins += f"  • Max Position Size: <b>{cdata.get('max_position_size', 0)}</b> USDT\n"
                             msg_coins += f"  • Risk/Reward: <b>{cdata.get('risk_reward_ratio', 0)}</b>\n"
@@ -595,13 +617,14 @@ class TelegramReceiver:
                             editable[side] = rt_data[side]
                     
                     rt_str = json.dumps(editable, indent=4)
-                    await message.answer("<b>Текущие настройки монеты (скопируйте, измените и отправьте обратно):</b>", parse_mode="HTML")
                     
-                    if len(rt_str) > 4000:
-                        await message.answer(f"<pre>{rt_str[:4000]}</pre>", parse_mode="HTML")
-                        await message.answer(f"<pre>{rt_str[4000:]}</pre>", parse_mode="HTML")
-                    else:
-                        await message.answer(f"<pre>{rt_str}</pre>", parse_mode="HTML")
+                    dump_path = os.path.join("logs", f"{symbol.lower()}_edit.json")
+                    os.makedirs("logs", exist_ok=True)
+                    with open(dump_path, "w", encoding="utf-8") as f:
+                        f.write(rt_str)
+                        
+                    await message.answer("<b>Текущие настройки монеты:</b>\nОтредактируйте этот файл в любом редакторе и отправьте его обратно мне документом (либо скиньте текст).", reply_markup=self._get_cancel_keyboard(), parse_mode="HTML")
+                    await message.answer_document(FSInputFile(dump_path))
                         
                     await state.update_data(symbol=symbol)
                     await state.set_state(TGStates.waiting_for_edit_json)
@@ -614,10 +637,21 @@ class TelegramReceiver:
 
         @self.dp.message(TGStates.waiting_for_edit_json)
         async def process_edit_json(message: Message, state: FSMContext):
-            if message.text == "🔙 Cancel":
+            if message.text and message.text == "🔙 Cancel":
                 return await on_set_coins(message, state)
                 
-            json_str = message.text.strip()
+            json_str = ""
+            if message.document:
+                import io
+                file = await self.bot.get_file(message.document.file_id)
+                out = io.BytesIO()
+                await self.bot.download_file(file.file_path, out)
+                json_str = out.getvalue().decode('utf-8')
+            elif message.text:
+                json_str = message.text.strip()
+            else:
+                await message.answer("❌ Пожалуйста, отправьте текстовое сообщение или .json файл.")
+                return
             
             async with self._lock:
                 success, msg = self.template_manager.apply_tg_template(json_str)
@@ -642,16 +676,34 @@ class TelegramReceiver:
             base_data = Utils.read_json_file(self.template_manager.base_file)
             import json
             base_str = json.dumps(base_data, indent=4)
-            await message.answer("<b>Текущий базовый шаблон _base.json (отредактируйте и отправьте обратно):</b>", reply_markup=self._get_cancel_keyboard(), parse_mode="HTML")
-            await message.answer(f"<pre>{base_str}</pre>", parse_mode="HTML")
+            
+            dump_path = os.path.join("logs", "_base_edit.json")
+            os.makedirs("logs", exist_ok=True)
+            with open(dump_path, "w", encoding="utf-8") as f:
+                f.write(base_str)
+                
+            await message.answer("<b>Текущий базовый шаблон _base.json:</b>\nОтредактируйте файл и отправьте обратно документом (или текстом).", reply_markup=self._get_cancel_keyboard(), parse_mode="HTML")
+            await message.answer_document(FSInputFile(dump_path))
             await state.set_state(TGStates.waiting_for_base_json)
 
         @self.dp.message(TGStates.waiting_for_base_json)
         async def process_base_json(message: Message, state: FSMContext):
-            if message.text == "🔙 Cancel":
+            if message.text and message.text == "🔙 Cancel":
                 return await on_set_coins(message, state)
                 
-            json_str = message.text.strip()
+            json_str = ""
+            if message.document:
+                import io
+                file = await self.bot.get_file(message.document.file_id)
+                out = io.BytesIO()
+                await self.bot.download_file(file.file_path, out)
+                json_str = out.getvalue().decode('utf-8')
+            elif message.text:
+                json_str = message.text.strip()
+            else:
+                await message.answer("❌ Пожалуйста, отправьте текстовое сообщение или .json файл.")
+                return
+                
             import json
             try:
                 new_base = json.loads(json_str)

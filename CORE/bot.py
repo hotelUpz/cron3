@@ -290,6 +290,17 @@ class BotCore:
         states = self.fsm_states[symbol]
         current_price = self.prices.get(symbol)
         
+        if not current_price:
+            try:
+                from API.BINANCE.public import BinancePublic
+                price = await BinancePublic.get_last_price(symbol)
+                if price:
+                    current_price = price
+                    self.prices[symbol] = price
+            except Exception:
+                pass
+
+        
         signal_tasks = []
         
         # Предварительно определяем, будут ли открыты обе стороны
@@ -307,6 +318,9 @@ class BotCore:
             side_cfg = runtime_cfg.get(side)
             
             if not side_cfg or not side_cfg.get("enable"):
+                continue
+            
+            if not current_price:
                 continue
             
             if not state.in_position and not state.in_position_papper:
@@ -379,13 +393,21 @@ class BotCore:
         
         logger.info("Main _game_loop started. Specifications and price streams are running.")
         
-        # Ожидание готовности прайс-стримов
-        logger.info("Waiting for price streams to sync...")
+        # Ожидание готовности прайс-стримов и первоначальная загрузка по REST
+        logger.info("Prefetching initial prices via REST...")
+        from API.BINANCE.public import BinancePublic
+        if self.symbols:
+            initial_prices = await BinancePublic.get_prices_bulk(self.symbols)
+            for sym, p in initial_prices.items():
+                self.prices[sym] = p
+                
+        logger.info("Waiting for price streams to connect...")
         try:
-            await asyncio.wait_for(self.price_stream_synced.wait(), timeout=5.0)
-            logger.info("Price streams synced successfully.")
+            await asyncio.wait_for(self.price_stream_synced.wait(), timeout=3.0)
+            logger.info("Price streams connected successfully.")
         except asyncio.TimeoutError:
-            logger.warning("Timeout waiting for price streams to sync! Proceeding with available prices...")
+            logger.warning("Timeout waiting for price streams! Relying on REST prefetch.")
+
         
         # Строгая гарантия: забираем начальный стейт позиций по REST
         await self.pos_monitor.sync_from_rest(self.client, self.symbols)

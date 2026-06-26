@@ -46,6 +46,9 @@ class AnalyticsManager:
                 writer.writerow(["Symbol", "Side", "Open Time", "Close Time", "PnL (USDT)", "Balance"])
 
     def _read_data(self) -> dict:
+        if not self.log_file.exists():
+            self._ensure_files()
+            
         try:
             return json.loads(self.log_file.read_text(encoding="utf-8"))
         except Exception as e:
@@ -158,7 +161,7 @@ class AnalyticsManager:
                 # Append the new row
                 with open(self.csv_file, mode="a", newline="", encoding="utf-8") as f:
                     writer = csv.writer(f, delimiter=';')
-                    writer.writerow([symbol, side, open_str, close_str, pnl, balance])
+                    writer.writerow([symbol, side, open_str, close_str, round(pnl, 4), round(balance, 4)])
                 
                 # Truncate if necessary
                 with open(self.csv_file, mode="r", encoding="utf-8") as f:

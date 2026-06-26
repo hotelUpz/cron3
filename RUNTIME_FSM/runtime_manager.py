@@ -21,6 +21,7 @@ class RuntimeFsmManager:
     def __init__(self):
         self.caches: Dict[str, Dict[str, Any]] = {}
         self.locks: Dict[str, asyncio.Lock] = {}
+        self.runtime_dir = RUNTIME_DIR
 
     def load_initial_caches(self, symbols: List[str]):
         """

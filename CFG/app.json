@@ -27,10 +27,7 @@
         "log_to_file": true
     },
     "symbols": [
-        "STABLEUSDT",
-        "WIFUSDT",
-        "DASHUSDT",
-        "ALGOUSDT"
+        "WIFUSDT"
     ],
     "telegram": {
         "enabled": true,
