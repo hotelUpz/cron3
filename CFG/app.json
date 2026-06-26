@@ -27,10 +27,6 @@
     "log_to_file": true
   },
   "symbols": [
-    "XAGUSDT",
-    "SOLUSDT",
-    "DASHUSDT",
-    "BNBUSDT",
     "STABLEUSDT"
   ],
   "telegram": {

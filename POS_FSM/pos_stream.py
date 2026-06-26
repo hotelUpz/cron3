@@ -35,8 +35,9 @@ class BinanceListenKeyManager:
         ) as r:
             data = await r.json()
             if "listenKey" not in data:
-                logger.error(f"[BINANCE] Failed to get listenKey. Response: {data}")
-                raise KeyError(f"No listenKey in response: {data}")
+                error_msg = data.get('msg', str(data))
+                logger.error(f"[BINANCE] API-Key rejected: {error_msg}")
+                raise ValueError(f"Binance API Error: {error_msg}")
             self.listen_key = data["listenKey"]
 
         await self.session.put(
@@ -270,7 +271,9 @@ class PositionStream:
                     if str(e) == "ws_closed":
                         logger.info(f"[MASTER WS] Stream disconnected, initiating automatic reconnect...")
                     else:
-                        logger.error(f"[MASTER WS] cycle failed: {type(e).__name__} - {e}", exc_info=True)
+                        logger.error(f"[MASTER WS] cycle failed: {type(e).__name__} - {e}")
+                except ValueError as e:
+                    logger.error(f"[MASTER WS] {e}")
                 except Exception as e:
                     logger.error(f"[MASTER WS] cycle failed: {type(e).__name__} - {e}", exc_info=True)
 
