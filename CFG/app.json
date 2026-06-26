@@ -27,7 +27,11 @@
     "log_to_file": true
   },
   "symbols": [
-    "STABLEUSDT"
+    "BNBUSDT",
+    "DASHUSDT",
+    "SOLUSDT",
+    "STABLEUSDT",
+    "XAGUSDT"
   ],
   "telegram": {
     "enabled": true,
