@@ -34,7 +34,7 @@
     "STABLEUSDT"
   ],
   "telegram": {
-    "enabled": false,
+    "enabled": true,
     "allowed_users": [
       1059524161,
       610822492
