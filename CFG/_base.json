@@ -1,81 +1,89 @@
 {
     "LONG": {
         "enable": true,
-        "invest_size": 100,
+        "invest_size": 2000,
         "leverage": 10,
         "margin_type": "CROSSED",
         "_comment_margin_type": "Valid values: CROSSED | ISOLATED",
         "grid": {
             "0": {
                 "indent": 0,
-                "volume": 20
+                "volume": 12.96
             },
             "1": {
-                "indent": -5.0,
-                "volume": 20
+                "indent": -4.0,
+                "volume": 14.26
             },
             "2": {
                 "indent": -8.0,
-                "volume": 20
+                "volume": 15.68
             },
             "3": {
                 "indent": -13.0,
-                "volume": 20
+                "volume": 17.25
             },
             "4": {
-                "indent": -21.0,
-                "volume": 20
+                "indent": -19.0,
+                "volume": 18.98
+            },
+            "5": {
+                "indent": -26.0,
+                "volume": 20.87
             }
         },
         "tp_map": {
             "0": {
-                "indent": 0.6,
+                "indent": 0.5,
                 "fallback_indent": 1.0
             },
             "1": {
-                "indent": 1.2,
+                "indent": 0.7,
                 "fallback_indent": 1.6
             },
             "2": {
-                "indent": 1.8,
+                "indent": 1.0,
                 "fallback_indent": 2.3
             },
             "3": {
-                "indent": 2.4,
+                "indent": 1.4,
                 "fallback_indent": 3.0
             },
             "4": {
-                "indent": 3.0,
+                "indent": 1.9,
                 "fallback_indent": 3.6
             }
         }
     },
     "SHORT": {
         "enable": true,
-        "invest_size": 100,
+        "invest_size": 2000,
         "leverage": 10,
         "margin_type": "CROSSED",
         "_comment_margin_type": "Valid values: CROSSED | ISOLATED",
         "grid": {
             "0": {
                 "indent": 0,
-                "volume": 20
+                "volume": 12.96
             },
             "1": {
-                "indent": -5.0,
-                "volume": 20
+                "indent": -4.0,
+                "volume": 14.26
             },
             "2": {
                 "indent": -8.0,
-                "volume": 20
+                "volume": 15.68
             },
             "3": {
                 "indent": -13.0,
-                "volume": 20
+                "volume": 17.25
             },
             "4": {
-                "indent": -21.0,
-                "volume": 20
+                "indent": -19.0,
+                "volume": 18.98
+            },
+            "5": {
+                "indent": -26.0,
+                "volume": 20.87
             }
         },
         "tp_map": {

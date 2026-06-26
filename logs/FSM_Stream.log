@@ -4,3 +4,67 @@
 2026-06-26 18:05:29 | INFO | FSM_Stream | PositionStream: WS disconnected
 2026-06-26 18:27:44 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ot4QC... (length: 64)
 2026-06-26 18:32:04 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 19:30:30 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: W8ek3... (length: 64)
+2026-06-26 19:55:30 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-26 19:56:16 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 20:01:17 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}
+2026-06-26 20:01:17 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}"
+Traceback (most recent call last):
+  File "c:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 247, in start
+    listen_key = await self.listen_mgr.create()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
+    raise KeyError(f"No listenKey in response: {data}")
+KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}"
+2026-06-26 20:01:17 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 20:01:19 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}
+2026-06-26 20:01:19 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}"
+Traceback (most recent call last):
+  File "c:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 247, in start
+    listen_key = await self.listen_mgr.create()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
+    raise KeyError(f"No listenKey in response: {data}")
+KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}"
+2026-06-26 20:01:19 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 20:01:20 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}
+2026-06-26 20:01:20 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}"
+Traceback (most recent call last):
+  File "c:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 247, in start
+    listen_key = await self.listen_mgr.create()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
+    raise KeyError(f"No listenKey in response: {data}")
+KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}"
+2026-06-26 20:01:20 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 20:01:21 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}
+2026-06-26 20:01:21 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}"
+Traceback (most recent call last):
+  File "c:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 247, in start
+    listen_key = await self.listen_mgr.create()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
+    raise KeyError(f"No listenKey in response: {data}")
+KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}"
+2026-06-26 20:01:21 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 20:01:23 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}
+2026-06-26 20:01:23 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}"
+Traceback (most recent call last):
+  File "c:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 247, in start
+    listen_key = await self.listen_mgr.create()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
+    raise KeyError(f"No listenKey in response: {data}")
+KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}"
+2026-06-26 20:01:23 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 20:01:24 | ERROR | FSM_Stream | [BINANCE] Failed to get listenKey. Response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}
+2026-06-26 20:01:24 | ERROR | FSM_Stream | [MASTER WS] cycle failed: KeyError - "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}"
+Traceback (most recent call last):
+  File "c:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 247, in start
+    listen_key = await self.listen_mgr.create()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\POS_FSM\pos_stream.py", line 39, in create
+    raise KeyError(f"No listenKey in response: {data}")
+KeyError: "No listenKey in response: {'code': -2015, 'msg': 'Invalid API-key, IP, or permissions for action, request ip: 31.128.190.90'}"
+2026-06-26 20:01:24 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-26 20:01:25 | INFO | FSM_Stream | PositionStream: WS disconnected
