@@ -19,7 +19,8 @@ from API.BINANCE.client import BinanceClient
 from POS_FSM.models import PositionState
 from c_utils import Utils
 
-logger = logging.getLogger(__name__)
+from c_log import UnifiedLogger
+logger = UnifiedLogger("BotCore")
 
 class BotCore:
     def __init__(self):
