@@ -432,8 +432,6 @@ class BotCore:
                 # Источник сигнала для позиции, которая не в позиции
                 is_signal = self.time_control.is_new_interval()
 
-                is_signal = self.time_control.is_new_interval()
-
                 tasks = [self._process_symbol_loop(symbol, is_signal) for symbol in self.symbols]
                 await asyncio.gather(*tasks)
                 
