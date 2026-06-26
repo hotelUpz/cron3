@@ -1,7 +1,7 @@
 {
     "LONG": {
         "enable": true,
-        "invest_size": 1000,
+        "invest_size": 2000,
         "leverage": 10,
         "margin_type": "CROSSED",
         "_comment_margin_type": "Valid values: CROSSED | ISOLATED",
@@ -74,7 +74,7 @@
         "avg_entry_price": 0.0,
         "pre_avg_price": 0.0,
         "initial_entry_price": 0.0,
-        "open_time": 1782495901679,
+        "open_time": 0,
         "next_avg_price": null,
         "fallback_price": null,
         "in_position": false,
@@ -85,7 +85,7 @@
     },
     "SHORT": {
         "enable": true,
-        "invest_size": 1000,
+        "invest_size": 2000,
         "leverage": 10,
         "margin_type": "CROSSED",
         "_comment_margin_type": "Valid values: CROSSED | ISOLATED",
@@ -158,7 +158,7 @@
         "avg_entry_price": 0.0,
         "pre_avg_price": 0.0,
         "initial_entry_price": 0.0,
-        "open_time": 1782495901083,
+        "open_time": 0,
         "next_avg_price": null,
         "fallback_price": null,
         "in_position": false,
