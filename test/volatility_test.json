@@ -1,0 +1,26 @@
+{
+    "DASHUSDT": {
+        "is_advanced": true,
+        "timeframe": "1w",
+        "window": 8,
+        "candles_fetched": 8,
+        "volatility_pct": 27.29,
+        "ratio": 0.9097
+    },
+    "SOLUSDT": {
+        "is_advanced": true,
+        "timeframe": "1w",
+        "window": 8,
+        "candles_fetched": 8,
+        "volatility_pct": 16.62,
+        "ratio": 0.554
+    },
+    "STABLEUSDT": {
+        "is_advanced": true,
+        "timeframe": "1w",
+        "window": 8,
+        "candles_fetched": 8,
+        "volatility_pct": 23.43,
+        "ratio": 0.9013
+    }
+}

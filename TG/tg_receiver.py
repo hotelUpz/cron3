@@ -23,6 +23,7 @@ class TGStates(StatesGroup):
     waiting_for_edit_symbol = State()
     waiting_for_edit_json = State()
     waiting_for_base_json = State()
+    waiting_for_advanced_json = State()
     waiting_for_initial_balance = State()
     waiting_for_reset_confirm = State()
 
@@ -67,10 +68,11 @@ class TelegramReceiver:
             ],
             [
                 KeyboardButton(text="📂 Get CFG"),
-                KeyboardButton(text="🗑️ Сбросить аналитику")
+                KeyboardButton(text="🔧 Advanced")
             ],
             [
-                KeyboardButton(text="💰 Задать нач. баланс")
+                KeyboardButton(text="💰 Задать нач. баланс"),
+                KeyboardButton(text="🗑️ Сбросить аналитику")
             ]
         ]
         return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
@@ -154,9 +156,17 @@ class TelegramReceiver:
                                 
                                 grid = cfg.get("grid", {})
                                 indents = []
+                                super_indents = []
                                 for k in sorted(grid.keys(), key=lambda x: int(x)):
                                     indents.append(str(grid[k].get("indent", 0)))
+                                    si = grid[k].get("super_indent")
+                                    super_indents.append(str(si) if si is not None else "-")
                                 lines.append(f"    ├ Grid: [{', '.join(indents)}]")
+                                
+                                from consts import _CFG
+                                if _CFG.get("advanced", {}).get("enabled", False) and any(si != "-" for si in super_indents):
+                                    lines.append(f"    ├ Super: [{', '.join(super_indents)}]")
+                                    
                                 
                                 tp_map = cfg.get("tp_map", {})
                                 tps = []
@@ -215,7 +225,10 @@ class TelegramReceiver:
         async def on_status(message: Message, state: FSMContext):
             await state.clear()
             status = "⏸️ Paused" if self.bot_core.is_paused else "▶️ Running"
-            text = f"<b>Control Panel</b>\nCurrent Status: {status}"
+            from consts import _CFG
+            adv_enabled = _CFG.get("advanced", {}).get("enabled", False)
+            adv_status = "✅ On" if adv_enabled else "❌ Off"
+            text = f"<b>Control Panel</b>\nCurrent Status: {status}\nAdvanced (Volatility): {adv_status}"
             await message.answer(text, reply_markup=self._get_main_keyboard(), parse_mode="HTML")
 
         @self.dp.message(F.text == "📜 Get Logs")
@@ -347,7 +360,8 @@ class TelegramReceiver:
             
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
                 [InlineKeyboardButton(text="🌍 Общая аналитика", callback_data="analytics_global")],
-                [InlineKeyboardButton(text="🪙 Аналитика по монете", callback_data="analytics_coin_menu")]
+                [InlineKeyboardButton(text="🪙 Аналитика по монете", callback_data="analytics_coin_menu")],
+                [InlineKeyboardButton(text="📈 График баланса", callback_data="analytics_balance_chart")]
             ])
             await message.answer("Выберите режим аналитики:", reply_markup=keyboard)
 
@@ -466,14 +480,29 @@ class TelegramReceiver:
             else:
                 await message.answer("Trades ledger CSV not found.")
                 
-            # Send Equity Curve
+                # Send Equity Curve
+                try:
+                    from ANALYTICS.plotter import generate_equity_curve
+                    plot_path = generate_equity_curve()
+                    if plot_path and os.path.exists(plot_path):
+                        await message.answer_photo(FSInputFile(plot_path), caption="📈 График движения баланса (Equity Curve)")
+                except Exception as e:
+                    logger.error(f"Error generating or sending equity curve: {e}")
+
+        @self.dp.callback_query(F.data == "analytics_balance_chart")
+        async def process_analytics_balance_chart(callback: CallbackQuery, state: FSMContext):
+            await callback.answer()
+            message = callback.message
             try:
                 from ANALYTICS.plotter import generate_equity_curve
                 plot_path = generate_equity_curve()
                 if plot_path and os.path.exists(plot_path):
                     await message.answer_photo(FSInputFile(plot_path), caption="📈 График движения баланса (Equity Curve)")
+                else:
+                    await message.answer("❌ Не удалось сгенерировать график баланса.")
             except Exception as e:
-                logger.error(f"Error generating or sending equity curve: {e}")
+                logger.error(f"Error generating balance chart: {e}")
+                await message.answer(f"❌ Ошибка генерации графика: {e}")
 
         @self.dp.callback_query(F.data == "analytics_coin_menu")
         async def process_analytics_coin_menu(callback: CallbackQuery, state: FSMContext):
@@ -721,6 +750,82 @@ class TelegramReceiver:
                 from c_utils import Utils
                 Utils.write_json_file(self.template_manager.base_file, new_base)
                 await message.answer("✅ Базовый шаблон успешно обновлен!", reply_markup=self._get_set_coins_keyboard())
+                await state.clear()
+            except Exception as e:
+                await message.answer(f"❌ Ошибка JSON: {e}\nИсправьте и отправьте снова.")
+
+        # =========================================================
+        # EDIT ADVANCED
+        # =========================================================
+        @self.dp.message(F.text == "🔧 Advanced")
+        async def on_advanced_btn(message: Message, state: FSMContext):
+            from consts import DATA_DIR
+            from c_utils import Utils
+            import json
+            app_json_path = DATA_DIR / "app.json"
+            app_data = Utils.read_json_file(app_json_path)
+            
+            # Если нет секции advanced, создадим базовую
+            if "advanced" not in app_data:
+                app_data["advanced"] = {
+                    "enabled": True,
+                    "_comment_timeframe": "Valid values: 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 8h, 12h, 1d, 3d, 1w, 1M",
+                    "timeframe": "1d",
+                    "window": 14,
+                    "multiplier": 1.0,
+                    "min_volatility_pct": 5.0,
+                    "update_interval_hours": 12
+                }
+            
+            adv_str = json.dumps(app_data["advanced"], indent=4)
+            dump_path = os.path.join("logs", "advanced_edit.json")
+            os.makedirs("logs", exist_ok=True)
+            with open(dump_path, "w", encoding="utf-8") as f:
+                f.write(adv_str)
+                
+            await message.answer("<b>Текущие настройки Advanced (Volatility):</b>\nОтредактируйте файл и отправьте обратно документом (или текстом).", reply_markup=self._get_cancel_keyboard(), parse_mode="HTML")
+            await message.answer_document(FSInputFile(dump_path))
+            await state.set_state(TGStates.waiting_for_advanced_json)
+
+        @self.dp.message(TGStates.waiting_for_advanced_json)
+        async def process_advanced_json(message: Message, state: FSMContext):
+            if message.text and message.text == "🔙 Cancel":
+                await state.clear()
+                status = "⏸️ Paused" if self.bot_core.is_paused else "▶️ Running"
+                await message.answer(f"<b>Control Panel</b>\nCurrent Status: {status}", reply_markup=self._get_main_keyboard(), parse_mode="HTML")
+                return
+                
+            json_str = ""
+            if message.document:
+                import io
+                file = await self.bot.get_file(message.document.file_id)
+                out = io.BytesIO()
+                await self.bot.download_file(file.file_path, out)
+                json_str = out.getvalue().decode('utf-8')
+            elif message.text:
+                json_str = message.text.strip()
+            else:
+                await message.answer("❌ Пожалуйста, отправьте текстовое сообщение или .json файл.")
+                return
+                
+            import json
+            try:
+                new_adv = json.loads(json_str)
+                from c_utils import Utils
+                from consts import DATA_DIR, _CFG
+                app_json_path = DATA_DIR / "app.json"
+                app_data = Utils.read_json_file(app_json_path)
+                app_data["advanced"] = new_adv
+                Utils.write_json_file(app_json_path, app_data)
+                
+                # Обновляем в памяти _CFG
+                _CFG["advanced"] = new_adv
+                
+                # Заставляем пересчитаться
+                if hasattr(self.bot_core, 'volatility_manager') and self.bot_core.volatility_manager.is_running:
+                    asyncio.create_task(self.bot_core.volatility_manager.process_all())
+                    
+                await message.answer("✅ Настройки Advanced успешно обновлены! Перерасчет запущен.", reply_markup=self._get_main_keyboard())
                 await state.clear()
             except Exception as e:
                 await message.answer(f"❌ Ошибка JSON: {e}\nИсправьте и отправьте снова.")

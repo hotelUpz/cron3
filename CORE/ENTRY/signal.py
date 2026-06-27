@@ -8,7 +8,8 @@
 from datetime import datetime, timezone
 import pytz
 
-GRACE_PERIOD_SEC = 60.0 # Буфер времени от начала свечи, в пределах которого происходит проверка новых сигналов
+GRACE_PERIOD_SEC = 70.0 # Буфер времени от начала свечи, в пределах которого происходит проверка новых сигналов
+SHIFT_INTERVAL = 10
 
 class TimeControl:    
     def __init__(self, interval="5m"):
@@ -54,7 +55,26 @@ class TimeControl:
             
         now = datetime.now(timezone.utc)
         current_timestamp = int(now.timestamp())
-        nearest_timestamp = (current_timestamp // self.interval_seconds) * self.interval_seconds
+        
+        # Вычитаем SHIFT_INTERVAL (т.к. он отрицательный, это прибавит время), 
+        # чтобы виртуально "опередить" время и вызвать сигнал раньше.
+        virtual_time = current_timestamp + SHIFT_INTERVAL
+        nearest_timestamp = (virtual_time // self.interval_seconds) * self.interval_seconds
 
         # Если с момента начала свечи прошло меньше 60 секунд — окно открыто
-        return (current_timestamp - nearest_timestamp) < GRACE_PERIOD_SEC
+        return (virtual_time - nearest_timestamp) < GRACE_PERIOD_SEC
+
+if __name__ == "__main__":
+    import time
+    
+    print(f"Запуск тестового цикла (интервал 5m, SHIFT_INTERVAL={SHIFT_INTERVAL}, GRACE_PERIOD_SEC={GRACE_PERIOD_SEC})...")
+    tc = TimeControl(interval="5m")
+    
+    try:
+        while True:
+            if tc.is_new_interval():
+                now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+                print(f"СИГНАЛ! Точное время (UTC): {now_utc}")
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("Тест завершен.")

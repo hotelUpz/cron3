@@ -1,0 +1,17 @@
+2026-06-28 00:35:18 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 00:35:19 | INFO | VolatilityManager | [VolatilityManager] Processing 5 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 00:35:19 | INFO | VolatilityManager | [VolatilityManager] [BNBUSDT] Игнор: Расчитанная волатильность 12.50% ниже минимума 15.0%. Возвращаемся к использованию стандартных (старых) настроек индента.
+2026-06-28 00:35:19 | DEBUG | VolatilityManager | [VolatilityManager] [BNBUSDT] Сетка сброшена на стандартные настройки (super_indent удален).
+2026-06-28 00:35:19 | INFO | VolatilityManager | [VolatilityManager] [XAGUSDT] Игнор: Расчитанная волатильность 14.16% ниже минимума 15.0%. Возвращаемся к использованию стандартных (старых) настроек индента.
+2026-06-28 00:35:19 | DEBUG | VolatilityManager | [VolatilityManager] [XAGUSDT] Сетка сброшена на стандартные настройки (super_indent удален).
+2026-06-28 00:35:19 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] Переход на Advanced настройки. Волатильность=27.29%. Коэффициент=0.9097. Сетка обновлена (super_indent).
+2026-06-28 00:35:20 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Переход на Advanced настройки. Волатильность=16.62%. Коэффициент=0.5540. Сетка обновлена (super_indent).
+2026-06-28 00:35:20 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Advanced настройки. Волатильность=23.43%. Коэффициент=0.9013. Сетка обновлена (super_indent).
+2026-06-28 00:38:29 | INFO | VolatilityManager | [VolatilityManager] Processing 5 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 00:38:29 | INFO | VolatilityManager | [VolatilityManager] [BNBUSDT] Игнор: Расчитанная волатильность 12.50% ниже минимума 15.0%. Возвращаемся к использованию стандартных (старых) настроек индента.
+2026-06-28 00:38:29 | DEBUG | VolatilityManager | [VolatilityManager] [BNBUSDT] Сетка сброшена на стандартные настройки (super_indent удален).
+2026-06-28 00:38:30 | INFO | VolatilityManager | [VolatilityManager] [XAGUSDT] Игнор: Расчитанная волатильность 14.16% ниже минимума 15.0%. Возвращаемся к использованию стандартных (старых) настроек индента.
+2026-06-28 00:38:30 | DEBUG | VolatilityManager | [VolatilityManager] [XAGUSDT] Сетка сброшена на стандартные настройки (super_indent удален).
+2026-06-28 00:38:30 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] Переход на Advanced настройки. Волатильность=27.29%. Коэффициент=0.9097. Сетка обновлена (super_indent).
+2026-06-28 00:38:30 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Переход на Advanced настройки. Волатильность=16.62%. Коэффициент=0.5540. Сетка обновлена (super_indent).
+2026-06-28 00:38:30 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Advanced настройки. Волатильность=23.43%. Коэффициент=0.9013. Сетка обновлена (super_indent).

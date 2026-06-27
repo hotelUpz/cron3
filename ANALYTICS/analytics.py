@@ -210,10 +210,17 @@ class AnalyticsManager:
             # unrealized_pnl_usdt = Сум по current_drawdown
             data["unrealized_pnl_usdt"] = round(bot_unrealized, 4)
             
-            # gross_profit_usdt = Сум по net_profit_usdt пер символ
+            # gross_profit_usdt = Сум по gross_profit_usdt пер символ
             bot_gross_profit = 0.0
             if "per_coin" in data:
-                bot_gross_profit = sum(c.get("net_profit_usdt", 0.0) for c in data["per_coin"].values())
+                # Пересчет net_profit_usdt для каждой монеты: gross_profit_usdt + current_drawdown
+                for sym, cdata in data["per_coin"].items():
+                    c_gross = cdata.get("gross_profit_usdt", cdata.get("net_profit_usdt", 0.0))
+                    cdata["gross_profit_usdt"] = round(c_gross, 4)
+                    c_drawdown = cdata.get("current_drawdown", 0.0)
+                    cdata["net_profit_usdt"] = round(c_gross + c_drawdown, 4)
+                    
+                    bot_gross_profit += c_gross
             data["gross_profit_usdt"] = round(bot_gross_profit, 4)
             
             # net_profit_usdt = gross_profit_usdt + unrealized_pnl_usdt (так как unrealized отрицательный, мы прибавляем его, чтобы вычесть просадку из профита)
@@ -281,7 +288,12 @@ class AnalyticsManager:
                     
                     bot_gross_profit = 0.0
                     if "per_coin" in data:
-                        bot_gross_profit = sum(c.get("net_profit_usdt", 0.0) for c in data["per_coin"].values())
+                        for sym, cdata in data["per_coin"].items():
+                            c_gross = cdata.get("gross_profit_usdt", cdata.get("net_profit_usdt", 0.0))
+                            cdata["gross_profit_usdt"] = round(c_gross, 4)
+                            c_drawdown = cdata.get("current_drawdown", 0.0)
+                            cdata["net_profit_usdt"] = round(c_gross + c_drawdown, 4)
+                            bot_gross_profit += c_gross
                     data["gross_profit_usdt"] = round(bot_gross_profit, 4)
                     data["net_profit_usdt"] = round(bot_gross_profit + bot_unrealized, 4)
                     
@@ -352,7 +364,7 @@ class AnalyticsManager:
         funding_fee = 0.0
         net_pnl = 0.0
         try:
-            fetched_data = await client.get_income_pnl(symbol, start_time_param, close_time)
+            fetched_data = await client.get_income_pnl(symbol, side, start_time_param, close_time)
             if fetched_data is not None:
                 gross_pnl = fetched_data.get("gross_pnl", 0.0)
                 commission = fetched_data.get("commission", 0.0)
@@ -387,10 +399,11 @@ class AnalyticsManager:
                     "total_trades": 0, 
                     "winning_trades": 0, 
                     "winrate_pct": 0.0, 
-                    "net_profit_usdt": 0.0,
-                    "commission_usdt": 0.0,
-                    "funding_usdt": 0.0,
-                    "current_drawdown": 0.0
+                "gross_profit_usdt": 0.0,
+                "net_profit_usdt": 0.0,
+                "commission_usdt": 0.0,
+                "funding_usdt": 0.0,
+                "current_drawdown": 0.0
                 }
             
             coin_stat = data["per_coin"][symbol]
@@ -398,7 +411,14 @@ class AnalyticsManager:
             coin_stat["winning_trades"] += is_win
             coin_stat["commission_usdt"] = round(coin_stat.get("commission_usdt", 0.0) + commission, 4)
             coin_stat["funding_usdt"] = round(coin_stat.get("funding_usdt", 0.0) + funding_fee, 4)
-            coin_stat["net_profit_usdt"] = round(coin_stat.get("net_profit_usdt", 0.0) + net_pnl, 4)
+            
+            # Gross profit накапливается от закрытых сделок (net_pnl уже включает комиссию и фондирование)
+            current_gross = coin_stat.get("gross_profit_usdt", coin_stat.get("net_profit_usdt", 0.0))
+            coin_stat["gross_profit_usdt"] = round(current_gross + net_pnl, 4)
+            
+            # net_profit_usdt вычисляется в _update_drawdowns, здесь временно присвоим
+            coin_stat["net_profit_usdt"] = round(coin_stat["gross_profit_usdt"] + coin_stat.get("current_drawdown", 0.0), 4)
+            
             coin_stat["max_net_profit"] = round(max(coin_stat.get("max_net_profit", coin_stat["net_profit_usdt"]), coin_stat["net_profit_usdt"]), 4)
             coin_stat["min_net_profit"] = round(min(coin_stat.get("min_net_profit", coin_stat["net_profit_usdt"]), coin_stat["net_profit_usdt"]), 4)
             coin_stat["winrate_pct"] = round((coin_stat["winning_trades"] / coin_stat["total_trades"]) * 100, 2)

@@ -39,6 +39,12 @@ class AverageManager:
                     needs_save = True
             elif level_data.get("price") is None:
                 indent_pct = level_data["indent"]
+                
+                from consts import _CFG
+                app_adv = _CFG.get("advanced", {})
+                if app_adv.get("enabled", False) and level_data.get("super_indent") is not None:
+                    indent_pct = level_data["super_indent"]
+                    
                 price = TradeMath.calculate_grid_price(initial_price, indent_pct, side, spec_data, symbol)
                 level_data["price"] = price
                 needs_save = True

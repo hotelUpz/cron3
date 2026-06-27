@@ -304,7 +304,6 @@ class BotCore:
                     self.prices[symbol] = price
             except Exception:
                 pass
-
         
         signal_tasks = []
         
@@ -329,6 +328,7 @@ class BotCore:
                 continue
             
             if not state.in_position and not state.in_position_papper:
+                # pass
                 if is_signal:
                     logger.info(f"[{symbol}] {side}: Signal is TRUE! Entering position...")
                     # Ставим временный флаг идемпотентности
@@ -470,13 +470,19 @@ class BotCore:
             logger.info("BotCore started in PAUSED state (waiting for TG Start).")
         else:
             logger.info("BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.")
-        
         self.analytics.start_realtime_tracker(self.client)
+        
+        from CORE.ADVANCED.volatility_manager import VolatilityManager
+        self.volatility_manager = VolatilityManager(self)
+        self.volatility_manager.start()
+        
         await self._game_loop()
 
     def stop(self):
         """Остановка бота."""
         self.is_running = False
+        if hasattr(self, 'volatility_manager'):
+            self.volatility_manager.stop()
 
     async def shutdown(self):
         """Гарантированное сохранение рантайма (последний чих) и закрытие сессий."""

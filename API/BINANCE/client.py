@@ -49,6 +49,10 @@ class BinanceClient:
         self._api_lock = asyncio.Lock()
         self._last_send_time = 0.0
 
+        # ===== KLINE RATE LIMITER =====
+        self._kline_lock = asyncio.Lock()
+        self._kline_last_send = 0.0
+
     # ==================================================
     # SESSION MANAGER
     # ==================================================
@@ -434,64 +438,159 @@ class BinanceClient:
     async def get_income_pnl(
         self,
         symbol: str,
+        side: str,
         start_time: Optional[int] = None,
         end_time: Optional[int] = None,
     ) -> Optional[dict]:
         """
-        Fetches all income events (REALIZED_PNL, COMMISSION, FUNDING_FEE)
-        for a specific symbol within the given time window.
+        Fetches REALIZED_PNL and COMMISSION from /fapi/v1/userTrades for a specific side.
+        Fetches FUNDING_FEE from /fapi/v1/income.
         """
-        params = {
+        # 1. Fetch user trades for exact realized PnL and commissions filtered by position side
+        trade_params = {
             "symbol": symbol,
             "recvWindow": 20000,
             "limit": 1000,
         }
-
         if start_time:
-            params["startTime"] = start_time
+            trade_params["startTime"] = start_time - 5000
         if end_time:
-            params["endTime"] = end_time
+            trade_params["endTime"] = end_time + 5000
 
-        res = await self._request(
+        trade_res = await self._request(
             "GET",
-            "https://fapi.binance.com/fapi/v1/income",
-            params=params,
+            "https://fapi.binance.com/fapi/v1/userTrades",
+            params=trade_params,
             signed=True,
         )
 
-        if not res.success or not isinstance(res.data, list):
-            return None
-
-        rows = res.data
-
         gross_pnl = 0.0
         commission = 0.0
-        funding_fee = 0.0
-        matched = False
-
-        for r in rows:
-            ts = int(r.get("time", 0))
-            if start_time and ts < (start_time - int(TIME_SLACK_SEC * 1000)):
-                continue
-
-            inc_type = r.get("incomeType", "")
-            income_val = float(r.get("income", 0.0))
-
-            if inc_type == "REALIZED_PNL":
-                gross_pnl += income_val
-            elif inc_type == "COMMISSION":
-                commission += income_val
-            elif inc_type == "FUNDING_FEE":
-                funding_fee += income_val
+        bnb_price = 0.0
+        
+        if trade_res.success and isinstance(trade_res.data, list):
+            for t in trade_res.data:
+                if t.get("positionSide") != side:
+                    continue
                 
-            matched = True
+                ts = int(t.get("time", 0))
+                if start_time and ts < (start_time - 5000):
+                    continue
+                
+                gross_pnl += float(t.get("realizedPnl", 0.0))
+                commission_val = float(t.get("commission", 0.0))
+                asset = t.get("commissionAsset", "")
+                
+                if asset == "BNB":
+                    if bnb_price == 0.0:
+                        p_res = await self._request("GET", "https://fapi.binance.com/fapi/v1/ticker/price", params={"symbol": "BNBUSDT"})
+                        if p_res.success:
+                            bnb_price = float(p_res.data.get("price", 0.0))
+                    commission -= (commission_val * bnb_price) if bnb_price > 0 else commission_val
+                else:
+                    # Assumes USDT or ignores conversion if unknown
+                    commission -= commission_val
 
-        if not matched:
-            return None
+        # 2. Fetch funding fees
+        inc_params = {
+            "symbol": symbol,
+            "incomeType": "FUNDING_FEE",
+            "recvWindow": 20000,
+            "limit": 1000,
+        }
+        if start_time:
+            inc_params["startTime"] = start_time - 5000
+        if end_time:
+            inc_params["endTime"] = end_time + 5000
+
+        inc_res = await self._request(
+            "GET",
+            "https://fapi.binance.com/fapi/v1/income",
+            params=inc_params,
+            signed=True,
+        )
+
+        funding_fee = 0.0
+        if inc_res.success and isinstance(inc_res.data, list):
+            for r in inc_res.data:
+                ts = int(r.get("time", 0))
+                if start_time and ts < (start_time - 5000):
+                    continue
+                
+                funding_fee += float(r.get("income", 0.0))
+
+        net_pnl = gross_pnl + commission + funding_fee
 
         return {
             "gross_pnl": gross_pnl,
             "commission": commission,
             "funding_fee": funding_fee,
-            "net_pnl": gross_pnl + commission + funding_fee
+            "net_pnl": net_pnl,
         }
+
+    # ==================================================
+    # KLINES (CANDLES)
+    # ==================================================
+    async def get_klines(
+        self,
+        symbol: str,
+        interval: str,
+        limit: int = 100
+    ) -> Optional[List[dict]]:
+        """
+        Получение свечей без pandas, сортировка по времени.
+        Возвращает список словарей: [{"open_time": int, "high": float, "low": float, ...}, ...]
+        """
+        # Лимит для свечей (Binance API позволяет до 1500, обычно Rate Limit 10-20ms)
+        limit_sec = 0.1
+        async with self._kline_lock:
+            elapsed = time.monotonic() - self._kline_last_send
+            if elapsed < limit_sec:
+                await asyncio.sleep(limit_sec - elapsed)
+            self._kline_last_send = time.monotonic()
+            
+        params = {
+            "symbol": symbol,
+            "interval": interval,
+            "limit": limit
+        }
+
+        try:
+            async with self._session_lock:
+                session = await self._get_session()
+                
+            async with session.get(
+                url="https://fapi.binance.com/fapi/v1/klines",
+                params=params,
+                timeout=REQ_TIMEOUT_SEC
+            ) as resp:
+                if resp.status != 200:
+                    logger.error(f"[{symbol}] get_klines error HTTP {resp.status}")
+                    return None
+                    
+                data = await resp.json()
+                if not isinstance(data, list):
+                    return None
+                    
+                # Индексы Binance kline:
+                # 0: Open time, 1: Open, 2: High, 3: Low, 4: Close, 5: Volume, 6: Close time
+                
+                # Сортируем на всякий случай по Open time
+                data.sort(key=lambda x: int(x[0]))
+                
+                result = []
+                for k in data:
+                    result.append({
+                        "open_time": int(k[0]),
+                        "open": float(k[1]),
+                        "high": float(k[2]),
+                        "low": float(k[3]),
+                        "close": float(k[4]),
+                        "volume": float(k[5]),
+                        "close_time": int(k[6])
+                    })
+                return result
+                
+        except Exception as e:
+            logger.error(f"[{symbol}] Exception in get_klines: {e}")
+            return None

@@ -10,37 +10,43 @@
                 "indent": 0,
                 "volume": 12.96,
                 "is_active": false,
-                "price": null
+                "price": null,
+                "super_indent": 0.0
             },
             "1": {
                 "indent": -4.0,
                 "volume": 14.26,
                 "is_active": false,
-                "price": null
+                "price": null,
+                "super_indent": -3.6052
             },
             "2": {
                 "indent": -8.0,
                 "volume": 15.68,
                 "is_active": false,
-                "price": null
+                "price": null,
+                "super_indent": -7.2105
             },
             "3": {
                 "indent": -13.0,
                 "volume": 17.25,
                 "is_active": false,
-                "price": null
+                "price": null,
+                "super_indent": -11.717
             },
             "4": {
                 "indent": -19.0,
                 "volume": 18.98,
                 "is_active": false,
-                "price": null
+                "price": null,
+                "super_indent": -17.1249
             },
             "5": {
                 "indent": -26.0,
                 "volume": 20.87,
                 "is_active": false,
-                "price": null
+                "price": null,
+                "super_indent": -23.434
             }
         },
         "tp_map": {
@@ -94,37 +100,43 @@
                 "indent": 0,
                 "volume": 12.96,
                 "is_active": false,
-                "price": null
+                "price": null,
+                "super_indent": 0.0
             },
             "1": {
                 "indent": -4.0,
                 "volume": 14.26,
                 "is_active": false,
-                "price": null
+                "price": null,
+                "super_indent": -3.6052
             },
             "2": {
                 "indent": -8.0,
                 "volume": 15.68,
                 "is_active": false,
-                "price": null
+                "price": null,
+                "super_indent": -7.2105
             },
             "3": {
                 "indent": -13.0,
                 "volume": 17.25,
                 "is_active": false,
-                "price": null
+                "price": null,
+                "super_indent": -11.717
             },
             "4": {
                 "indent": -19.0,
                 "volume": 18.98,
                 "is_active": false,
-                "price": null
+                "price": null,
+                "super_indent": -17.1249
             },
             "5": {
                 "indent": -26.0,
                 "volume": 20.87,
                 "is_active": false,
-                "price": null
+                "price": null,
+                "super_indent": -23.434
             }
         },
         "tp_map": {

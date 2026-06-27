@@ -1,0 +1,14 @@
+2026-06-28 00:35:18 | INFO | BotCore | BotCore started in PAUSED state (waiting for TG Start).
+2026-06-28 00:35:18 | INFO | BotCore | Main _game_loop started. Specifications and price streams are running.
+2026-06-28 00:35:18 | INFO | BotCore | Prefetching initial prices via REST...
+2026-06-28 00:35:19 | INFO | BotCore | Waiting for price streams to connect...
+2026-06-28 00:35:19 | DEBUG | BotCore | Specification updated.
+2026-06-28 00:35:20 | INFO | BotCore | Price streams connected successfully.
+2026-06-28 00:35:20 | INFO | BotCore | Streams and REST synced! Running initial RuntimeFSM Sync...
+2026-06-28 00:36:19 | DEBUG | BotCore | Specification updated.
+2026-06-28 00:37:20 | DEBUG | BotCore | Specification updated.
+2026-06-28 00:38:20 | DEBUG | BotCore | Specification updated.
+2026-06-28 00:39:20 | DEBUG | BotCore | Specification updated.
+2026-06-28 00:40:01 | INFO | BotCore | _game_loop cancelled.
+2026-06-28 00:40:02 | INFO | BotCore | Executing graceful BotCore shutdown...
+2026-06-28 00:40:02 | INFO | BotCore | Final FSM snapshot saved to runtime cache.
