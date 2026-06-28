@@ -355,7 +355,7 @@ class AnalyticsManager:
             start_time_param = open_time
 
         # Ждем немного, чтобы биржа успела рассчитать PnL (иногда есть задержка)
-        await asyncio.sleep(2.0)
+        await asyncio.sleep(5.0)
         
         gross_pnl = 0.0
         commission = 0.0
