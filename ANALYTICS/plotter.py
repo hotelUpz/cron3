@@ -30,7 +30,7 @@ def generate_equity_curve() -> str:
     # We add the initial point
     try:
         with open(CSV_FILE, mode="r", encoding="utf-8") as f:
-            reader = csv.reader(f)
+            reader = csv.reader(f, delimiter=";")
             header = next(reader, None)
             if not header:
                 return ""

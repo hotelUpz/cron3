@@ -26,12 +26,23 @@ class RuntimeFsmManager:
     def load_initial_caches(self, symbols: List[str]):
         """
         Изначально грузим и фиксируем кеш рантайма "как есть" (as is).
+        Здесь же проводим базовую валидацию конфигурации.
         """
         for sym in symbols:
             sym_lower = sym.lower()
             path = RUNTIME_DIR / f"{sym_lower}.json"
             if path.exists():
-                self.caches[sym] = Utils.read_json_file(path)
+                data = Utils.read_json_file(path)
+                
+                # Валидация на совпадение количества усреднений и тейков
+                for side in ["LONG", "SHORT"]:
+                    if side in data:
+                        grid = data[side].get("grid", {})
+                        tp_map = data[side].get("tp_map", {})
+                        if grid and tp_map and len(grid) != len(tp_map):
+                            raise ValueError(f"[{sym}] {side} ОШИБКА КОНФИГУРАЦИИ: Количество уровней grid ({len(grid)}) не совпадает с количеством уровней tp_map ({len(tp_map)}). Проверьте настройки!")
+                            
+                self.caches[sym] = data
             else:
                 self.caches[sym] = {}
             

@@ -747,6 +747,16 @@ class TelegramReceiver:
             import json
             try:
                 new_base = json.loads(json_str)
+                
+                # Валидация шаблона
+                for side in ("LONG", "SHORT"):
+                    if side in new_base:
+                        grid = new_base[side].get("grid", {})
+                        tp_map = new_base[side].get("tp_map", {})
+                        if grid and tp_map and len(grid) != len(tp_map):
+                            await message.answer(f"❌ ОШИБКА КОНФИГУРАЦИИ ({side}): Количество уровней grid ({len(grid)}) не совпадает с tp_map ({len(tp_map)}).\nШаблон НЕ сохранен!")
+                            return
+                            
                 from c_utils import Utils
                 Utils.write_json_file(self.template_manager.base_file, new_base)
                 await message.answer("✅ Базовый шаблон успешно обновлен!", reply_markup=self._get_set_coins_keyboard())

@@ -29,6 +29,18 @@ async def run_app(bot, logger):
             
     await asyncio.gather(*tasks)
 
+def send_telegram_fatal(msg: str):
+    import requests
+    from consts import TG_TOKEN, TG_ALLOWED_USERS
+    if not TG_TOKEN or not TG_ALLOWED_USERS:
+        return
+    url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
+    for user_id in TG_ALLOWED_USERS:
+        try:
+            requests.post(url, json={"chat_id": user_id, "text": f"🚨 СТАРТОВАЯ ОШИБКА!\nБот упал при запуске:\n\n{msg}"}, timeout=5)
+        except Exception:
+            pass
+
 def main():
     import logging
     from c_log import UnifiedLogger
@@ -47,8 +59,16 @@ def main():
             asyncio.run(bot.shutdown())
         except Exception:
             pass
+    except ValueError as e:
+        logger.error(f"FATAL CONFIG ERROR: {e}")
+        send_telegram_fatal(str(e))
+        try:
+            asyncio.run(bot.shutdown())
+        except Exception:
+            pass
     except Exception as e:
         logger.exception("Fatal error: %s", e)
+        send_telegram_fatal(str(e))
         try:
             asyncio.run(bot.shutdown())
         except Exception:

@@ -161,22 +161,24 @@ class VolatilityManager:
                     # Пробрасываем изменения прямо в запущенную FSM (сбрасываем price у неактивных уровней)
                     if hasattr(self.bot_core, "fsm_states") and symbol in self.bot_core.fsm_states:
                         for side, state in self.bot_core.fsm_states[symbol].items():
-                            if state.in_position and hasattr(state, "grid"):
+                            if hasattr(state, "grid"):
                                 # Находим свежий grid в rt_data
                                 fresh_grid = rt_data.get(side, {}).get("grid", {})
                                 
                                 # Обновляем in-memory state.grid
                                 for lvl_str, lvl_data in state.grid.items():
-                                    if not lvl_data.get("is_active"):
+                                    # Подтягиваем новый super_indent всегда
+                                    if lvl_str in fresh_grid:
+                                        lvl_data["super_indent"] = fresh_grid[lvl_str].get("super_indent")
+                                        
+                                    if state.in_position and not lvl_data.get("is_active"):
                                         # Если ордер еще не исполнен, сбрасываем цену, чтобы avg_manager пересчитал
                                         lvl_data["price"] = None
-                                        # Подтягиваем новый super_indent
-                                        if lvl_str in fresh_grid:
-                                            lvl_data["super_indent"] = fresh_grid[lvl_str].get("super_indent")
                                 
-                                # Сбрасываем кэш следующей цели
-                                state.next_avg_price = None
-                                logger.info(f"[VolatilityManager] [{symbol}] {side} Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.")
+                                if state.in_position:
+                                    # Сбрасываем кэш следующей цели
+                                    state.next_avg_price = None
+                                    logger.info(f"[VolatilityManager] [{symbol}] {side} Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.")
                     
             except Exception as e:
                 logger.error(f"[VolatilityManager] [{symbol}] Error updating config: {e}")

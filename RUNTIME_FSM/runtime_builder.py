@@ -27,6 +27,13 @@ def build_runtime_caches():
     if not base_data:
         logger.error(f"Base template not found or empty at {base_file}")
         return False
+        
+    for side in ("LONG", "SHORT"):
+        if side in base_data:
+            grid = base_data[side].get("grid", {})
+            tp_map = base_data[side].get("tp_map", {})
+            if grid and tp_map and len(grid) != len(tp_map):
+                raise ValueError(f"[_base.json] {side} ОШИБКА КОНФИГУРАЦИИ БАЗОВОГО ШАБЛОНА: Количество уровней grid ({len(grid)}) не совпадает с количеством уровней tp_map ({len(tp_map)}). Проверьте файл _base.json!")
 
     created_new = False
     symbols = _CFG.get("symbols", [])
