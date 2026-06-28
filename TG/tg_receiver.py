@@ -380,7 +380,7 @@ class TelegramReceiver:
                 "▪️ <b>cur_balance_usdt</b>: Current margin balance → <i>Start Balance + Net Profit</i>\n\n"
                 "<b>🪙 Per-Coin Metrics</b>\n"
                 "▪️ <b>avg_daily_profit</b>: Average profit per active day of trading\n"
-                "▪️ <b>max_position_size</b>: Max historical margin size actually reached (real size)\n"
+                "▪️ <b>max_position_size</b>: Max historical notional size actually reached (real volume * price)\n"
                 "▪️ <b>reward_risk_surplus_pct</b>: <i>((Avg Daily Profit / |Max Drawdown|) - 1) * 100</i>\n"
                 "▪️ <b>DRME</b> (Daily Return on Max Exposure): <i>Avg Daily Profit / Max Position Size</i>\n"
                 "▪️ <b>MDME</b> (Max Drawdown on Max Exposure): <i>|Max Drawdown| / Max Position Size</i>\n"

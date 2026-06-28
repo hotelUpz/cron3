@@ -126,7 +126,6 @@ def generate_coin_analytics(symbol: str) -> str:
     
     # Extract metrics
     avg_daily = cdata.get("avg_daily_profit", 0.0)
-    reward_risk_surplus = cdata.get("reward_risk_surplus_pct", 0.0)
     drme = cdata.get("DRME", 0.0)
     mdme = cdata.get("MDME", 0.0)
     max_dd = cdata.get("max_drawdown", 0.0)
@@ -139,17 +138,16 @@ def generate_coin_analytics(symbol: str) -> str:
     min_np = cdata.get("min_net_profit", net_profit)
     
     metrics = {
-        "Gross Profit": gross_profit,
-        "Net Profit": net_profit,
-        "Avg Daily Profit (Net)": avg_daily,
-        "R/R Surplus (%)": reward_risk_surplus,
-        "DRME": drme,
-        "MDME": mdme,
-        "Min Hist. Drawdown": min_dd,
-        "Unrealized PnL": cur_dd,
         "Max Hist. Drawdown": max_dd,
+        "Unrealized PnL": cur_dd,
+        "Min Hist. Drawdown": min_dd,
+        "MDME": mdme,
+        "DRME": drme,
         "Min Net Profit": min_np,
-        "Max Net Profit": max_np
+        "Avg Daily Profit (Net)": avg_daily,
+        "Net Profit": net_profit,
+        "Max Net Profit": max_np,
+        "Gross Profit": gross_profit
     }
     
     labels = list(metrics.keys())

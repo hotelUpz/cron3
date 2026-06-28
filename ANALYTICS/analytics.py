@@ -71,7 +71,7 @@ class AnalyticsManager:
             "max_drawdown_usdt": "Maximum historical drawdown (trough - peak).",
             "performance_usdt": "Maximum historical growth from start balance (peak - start_balance).",
             "avg_daily_profit": "[Per-Coin] Average profit per active day of trading for this coin.",
-            "max_position_size": "[Per-Coin] Max historical margin size actually reached (real deployed margin).",
+            "max_position_size": "[Per-Coin] Max historical notional size actually reached (total volume * price).",
             "reward_risk_surplus_pct": "[Per-Coin] ((avg_daily_profit / abs(max_drawdown)) - 1) * 100.",
             "DRME": "[Per-Coin] Daily Return on Max Exposure: avg_daily_profit / max_position_size.",
             "MDME": "[Per-Coin] Max Drawdown on Max Exposure: abs(max_drawdown) / max_position_size.",
@@ -120,9 +120,7 @@ class AnalyticsManager:
                         if side in rt_data and rt_data[side].get("enable"):
                             vol = float(rt_data[side].get("total_volume", 0.0))
                             price = float(rt_data[side].get("avg_entry_price", 0.0))
-                            lev = float(rt_data[side].get("leverage", 1.0))
-                            if lev <= 0: lev = 1.0
-                            current_margin += (abs(vol) * price) / lev
+                            current_margin += abs(vol) * price
                 except Exception:
                     pass
                     
