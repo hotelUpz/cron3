@@ -56,7 +56,7 @@ class BinanceListenKeyManager:
                     "https://fapi.binance.com/fapi/v1/listenKey",
                     headers={"X-MBX-APIKEY": self.api_key},
                 )
-                logger.debug("[BINANCE] listenKey keepalive")
+                # logger.debug("[BINANCE] listenKey keepalive")
             except Exception as e:
                 logger.warning(f"[BINANCE] listenKey keepalive failed: {e}")
 
