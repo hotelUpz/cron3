@@ -328,12 +328,12 @@ class BotCore:
                 continue
             
             if not state.in_position and not state.in_position_papper:
-                # pass
-                if is_signal:
-                    logger.info(f"[{symbol}] {side}: Signal is TRUE! Entering position...")
-                    # Ставим временный флаг идемпотентности
-                    state.in_position_papper = True
-                    signal_tasks.append(self._process_signal(symbol, side, side_cfg, current_price, concurrent_mode=is_concurrent))
+                pass
+                # if is_signal:
+                #     logger.info(f"[{symbol}] {side}: Signal is TRUE! Entering position...")
+                #     # Ставим временный флаг идемпотентности
+                #     state.in_position_papper = True
+                #     signal_tasks.append(self._process_signal(symbol, side, side_cfg, current_price, concurrent_mode=is_concurrent))
             else:
                 # Позиция уже открыта (или в процессе in_position_papper)
                 await self.avg_manager.process(self.client, self.runtime_manager, symbol, side, state, current_price, self.spec_data, self.tp_manager)
