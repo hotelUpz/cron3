@@ -1,40 +1,20 @@
 {
     "start_balance_usdt": 85.0,
-    "cur_balance_usdt": 84.9207,
-    "total_trades": 2,
+    "cur_balance_usdt": 85.0,
+    "total_trades": 0,
     "winning_trades": 0,
     "winrate_pct": 0.0,
-    "gross_profit_usdt": -0.0724,
-    "net_profit_usdt": -0.0793,
-    "unrealized_pnl_usdt": -0.0069,
-    "per_coin": {
-        "STABLEUSDT": {
-            "total_trades": 2,
-            "winning_trades": 0,
-            "winrate_pct": 0.0,
-            "gross_profit_usdt": -0.0724,
-            "net_profit_usdt": -0.0793,
-            "commission_usdt": -0.0518,
-            "funding_usdt": 0.0,
-            "current_drawdown": -0.0069,
-            "max_net_profit": -0.0259,
-            "min_net_profit": -0.0923,
-            "max_drawdown": -0.0199,
-            "min_drawdown": 0.0,
-            "avg_daily_profit": -0.0793,
-            "risk_reward_ratio": 0.0,
-            "max_position_size": 5.1833,
-            "DRME": -0.0153,
-            "MDME": 0.0038
-        }
-    },
-    "roi_pct": -0.09,
+    "gross_profit_usdt": 0.0,
+    "net_profit_usdt": 0.0,
+    "unrealized_pnl_usdt": 0.0,
+    "per_coin": {},
+    "roi_pct": 0.0,
     "load_ratio": 0.0,
-    "_current_trough_usdt": 84.9207,
-    "max_drawdown_usdt": -0.0793,
+    "_current_trough_usdt": 85.0,
+    "max_drawdown_usdt": 0.0,
     "performance_usdt": 0.0,
-    "recovery_factor": -0.91,
-    "last_updated_ts": 1782605172092,
+    "recovery_factor": 0.0,
+    "last_updated_ts": 1782605612528,
     "_help": {
         "roi_pct": "Return on Investment (%). (cur_balance_usdt - start_balance_usdt) / start_balance_usdt * 100",
         "load_ratio": "Grid Load Ratio. abs(unrealized_pnl_usdt) / gross_profit_usdt. Shows how much floating risk is taken per 1 USDT of closed profit.",
@@ -59,7 +39,5 @@
         "min_drawdown": "[Per-Coin] Historical minimum floating drawdown for this coin."
     },
     "peak_balance_usdt": 85.0,
-    "min_balance_usdt": 84.9207,
-    "total_commission_usdt": -0.0518,
-    "total_funding_usdt": 0.0
+    "min_balance_usdt": 85.0
 }

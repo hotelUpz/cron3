@@ -180,7 +180,7 @@ class BotCore:
                 data = await BinancePublic.get_instruments()
                 if data:
                     self.spec_data = {"symbols": data}
-                    logger.debug("Specification updated.")
+                    # logger.debug("Specification updated.")
                 await asyncio.sleep(SPEC_TTL_SEC) 
         except asyncio.CancelledError:
             pass

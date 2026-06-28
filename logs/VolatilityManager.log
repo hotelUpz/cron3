@@ -53,3 +53,11 @@
 2026-06-28 03:03:08 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Advanced настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
 2026-06-28 03:03:08 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
 2026-06-28 03:03:08 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 03:07:24 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 03:07:24 | INFO | VolatilityManager | [VolatilityManager] Processing 2 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 03:07:24 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] Переход на Advanced настройки. Волатильность=27.29%. Коэффициент=0.8026. Сетка обновлена (super_indent).
+2026-06-28 03:07:24 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 03:07:24 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 03:07:24 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Advanced настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
+2026-06-28 03:07:24 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 03:07:24 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
