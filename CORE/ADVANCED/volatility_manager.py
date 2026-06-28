@@ -40,7 +40,7 @@ class VolatilityManager:
             # Wait for next update interval
             from c_utils import Utils
             app_data = Utils.read_json_file(DATA_DIR / "app.json")
-            app_cfg = app_data.get("advanced", {})
+            app_cfg = app_data.get("super_grid", {})
             interval_hours = app_cfg.get("update_interval_hours", 12)
             wait_sec = interval_hours * 3600
             if wait_sec <= 0:
@@ -51,10 +51,9 @@ class VolatilityManager:
     async def process_all(self):
         from c_utils import Utils
         app_data = Utils.read_json_file(DATA_DIR / "app.json")
-        app_cfg = app_data.get("advanced", {})
+        app_cfg = app_data.get("super_grid", {})
         
-        if not app_cfg.get("enabled", False):
-            return
+        is_enabled = app_cfg.get("enabled", False)
 
         symbols = list(self.bot_core.symbols)
         if not symbols:
@@ -98,8 +97,8 @@ class VolatilityManager:
             avg_vol = total_vol / count
             adjusted_vol = avg_vol * multiplier
             
-            is_advanced = True
-            if adjusted_vol <= min_volatility_pct:
+            is_advanced = is_enabled
+            if is_advanced and adjusted_vol <= min_volatility_pct:
                 logger.info(f"[VolatilityManager] [{symbol}] Игнор: Расчитанная волатильность {adjusted_vol:.2f}% ниже минимума {min_volatility_pct}%. Возвращаемся к использованию стандартных (старых) настроек индента.")
                 is_advanced = False
                 # We will still process the file to erase super_indent
@@ -136,8 +135,11 @@ class VolatilityManager:
                                 new_indent = orig_indent * ratio
                                 el["super_indent"] = round(new_indent, 4)
                             else:
-                                el["super_indent"] = None
-                            
+                                if el.get("super_indent") is not None:
+                                    el["super_indent"] = None
+                                    if not el.get("is_active", False):
+                                        el["price"] = None
+                                        
                         modified = True
                         
                 if modified:
@@ -145,7 +147,7 @@ class VolatilityManager:
                         json.dump(rt_data, f, indent=4)
                         
                     if is_advanced:
-                        logger.info(f"[VolatilityManager] [{symbol}] Переход на Advanced настройки. Волатильность={adjusted_vol:.2f}%. Коэффициент={ratio:.4f}. Сетка обновлена (super_indent).")
+                        logger.info(f"[VolatilityManager] [{symbol}] Переход на Super Grid настройки. Волатильность={adjusted_vol:.2f}%. Коэффициент={ratio:.4f}. Сетка обновлена (super_indent).")
                     else:
                         logger.debug(f"[VolatilityManager] [{symbol}] Сетка сброшена на стандартные настройки (super_indent удален).")
                         

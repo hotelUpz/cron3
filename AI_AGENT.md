@@ -38,3 +38,9 @@
 ## 4. CRITICAL RULE:
 - "NEVER run main.py, tests, or any mutating commands without EXPLICIT permission from the user." -- status: DESABLED
 
+
+## 5. Recent Changes (28.06.2026)
+- **Analytics Refactor**: TG menu modularized. Added Gross Profit & Net explicitly. Retained historical deleted coins in analytics menu with status flags.
+- **Super Grid**: Renamed from Advanced. Toggling off via TG now instantly drops inactive grid prices and forces recalculation to standard indent in BotCore.
+- **Validation**: Strict length parity checks added for grid and 	p_map on startup and TG JSON upload.
+

@@ -14,15 +14,6 @@
     "signal": {
         "timeframe": "5m"
     },
-    "advanced": {
-        "enabled": true,
-        "_comment_timeframe": "Valid values: 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 8h, 12h, 1d, 3d, 1w, 1M",
-        "timeframe": "1w",
-        "window": 8,
-        "multiplier": 1.0,
-        "min_volatility_pct": 15.0,
-        "update_interval_hours": 24
-    },
     "analytics": {
         "csv_max_rows": 1000
     },
@@ -36,8 +27,8 @@
         "log_to_file": true
     },
     "symbols": [
-        "DASHUSDT",
-        "STABLEUSDT"
+        "STABLEUSDT",
+        "SOLUSDT"
     ],
     "telegram": {
         "enabled": true,
@@ -45,5 +36,14 @@
             1059524161,
             610822492
         ]
+    },
+    "super_grid": {
+        "enabled": true,
+        "_comment_timeframe": "Valid values: 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 8h, 12h, 1d, 3d, 1w, 1M",
+        "timeframe": "1w",
+        "window": 8,
+        "multiplier": 1.0,
+        "min_volatility_pct": 15.0,
+        "update_interval_hours": 24
     }
 }

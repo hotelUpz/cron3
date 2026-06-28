@@ -23,7 +23,7 @@ class TGStates(StatesGroup):
     waiting_for_edit_symbol = State()
     waiting_for_edit_json = State()
     waiting_for_base_json = State()
-    waiting_for_advanced_json = State()
+    waiting_for_super_grid_json = State()
     waiting_for_initial_balance = State()
     waiting_for_reset_confirm = State()
 
@@ -68,7 +68,7 @@ class TelegramReceiver:
             ],
             [
                 KeyboardButton(text="📂 Get CFG"),
-                KeyboardButton(text="🔧 Advanced")
+                KeyboardButton(text="🔧 Super Grid")
             ],
             [
                 KeyboardButton(text="💰 Задать нач. баланс"),
@@ -164,7 +164,7 @@ class TelegramReceiver:
                                 lines.append(f"    ├ Grid: [{', '.join(indents)}]")
                                 
                                 from consts import _CFG
-                                if _CFG.get("advanced", {}).get("enabled", False) and any(si != "-" for si in super_indents):
+                                if _CFG.get("super_grid", {}).get("enabled", False) and any(si != "-" for si in super_indents):
                                     lines.append(f"    ├ Super: [{', '.join(super_indents)}]")
                                     
                                 
@@ -226,9 +226,9 @@ class TelegramReceiver:
             await state.clear()
             status = "⏸️ Paused" if self.bot_core.is_paused else "▶️ Running"
             from consts import _CFG
-            adv_enabled = _CFG.get("advanced", {}).get("enabled", False)
-            adv_status = "✅ On" if adv_enabled else "❌ Off"
-            text = f"<b>Control Panel</b>\nCurrent Status: {status}\nAdvanced (Volatility): {adv_status}"
+            super_grid_enabled = _CFG.get("super_grid", {}).get("enabled", False)
+            super_grid_status = "✅ On" if super_grid_enabled else "❌ Off"
+            text = f"<b>Control Panel</b>\nCurrent Status: {status}\nSuper Grid (Volatility): {super_grid_status}"
             await message.answer(text, reply_markup=self._get_main_keyboard(), parse_mode="HTML")
 
         @self.dp.message(F.text == "📜 Get Logs")
@@ -359,11 +359,43 @@ class TelegramReceiver:
             await state.clear()
             
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="🌍 Общая аналитика", callback_data="analytics_global")],
-                [InlineKeyboardButton(text="🪙 Аналитика по монете", callback_data="analytics_coin_menu")],
-                [InlineKeyboardButton(text="📈 График баланса", callback_data="analytics_balance_chart")]
+                [InlineKeyboardButton(text="🌍 Global Analytics", callback_data="analytics_global")],
+                [InlineKeyboardButton(text="🪙 Аналитика по монетам", callback_data="analytics_coin_menu")],
+                [InlineKeyboardButton(text="📉 График баланса", callback_data="analytics_balance_chart")],
+                [InlineKeyboardButton(text="📝 Лента сделок (CSV)", callback_data="analytics_csv")],
+                [InlineKeyboardButton(text="📚 Шпаргалка (Cheat Sheet)", callback_data="analytics_cheat_sheet")]
             ])
-            await message.answer("Выберите режим аналитики:", reply_markup=keyboard)
+            await message.answer("Выберите раздел аналитики:", reply_markup=keyboard)
+
+        @self.dp.callback_query(F.data == "analytics_cheat_sheet")
+        async def process_analytics_cheat_sheet(callback: CallbackQuery, state: FSMContext):
+            await callback.answer()
+            help_str = (
+                "<b>📚 Analytics Cheat Sheet (Global)</b>\n"
+                "▪️ <b>roi_pct</b>: Return on Investment (%) → <i>(Cur_Balance - Start_Balance) / Start_Balance * 100</i>\n"
+                "▪️ <b>load_ratio</b>: Grid Load Ratio → <i>|Unrealized PnL| / Gross Profit</i>\n"
+                "▪️ <b>recovery_factor</b>: Recovery Factor → <i>Gross Profit / |Max Drawdown|</i>\n"
+                "▪️ <b>gross_profit_usdt</b>: Total realized profit from all closed trades\n"
+                "▪️ <b>net_profit_usdt</b>: True mathematical growth → <i>Gross Profit + Unrealized PnL</i>\n"
+                "▪️ <b>cur_balance_usdt</b>: Current margin balance → <i>Start Balance + Net Profit</i>\n\n"
+                "<b>🪙 Per-Coin Metrics</b>\n"
+                "▪️ <b>avg_daily_profit</b>: Average profit per active day of trading\n"
+                "▪️ <b>max_position_size</b>: Max historical margin size actually reached (real size)\n"
+                "▪️ <b>reward_risk_surplus_pct</b>: <i>((Avg Daily Profit / |Max Drawdown|) - 1) * 100</i>\n"
+                "▪️ <b>DRME</b> (Daily Return on Max Exposure): <i>Avg Daily Profit / Max Position Size</i>\n"
+                "▪️ <b>MDME</b> (Max Drawdown on Max Exposure): <i>|Max Drawdown| / Max Position Size</i>\n"
+                "▪️ <b>max_drawdown</b> / <b>min_drawdown</b>: Max/Min historical floating drawdowns\n"
+            )
+            await callback.message.answer(help_str, parse_mode="HTML")
+
+        @self.dp.callback_query(F.data == "analytics_csv")
+        async def process_analytics_csv(callback: CallbackQuery, state: FSMContext):
+            await callback.answer()
+            csv_path = ANALYTICS_DIR / "trades_ledger.csv"
+            if csv_path.exists():
+                await callback.message.answer_document(FSInputFile(str(csv_path)))
+            else:
+                await callback.message.answer("Trades ledger CSV not found.")
 
         @self.dp.callback_query(F.data == "analytics_global")
         async def process_analytics_global(callback: CallbackQuery, state: FSMContext):
@@ -379,7 +411,6 @@ class TelegramReceiver:
             if analytics_path.exists():
                 text = analytics_path.read_text(encoding="utf-8")
                 
-                header = ""
                 try:
                     data = json.loads(text)
                     ts = data.get("last_updated_ts")
@@ -391,37 +422,26 @@ class TelegramReceiver:
                             dt = datetime.fromtimestamp(ts / 1000.0, tz=timezone.utc)
                         time_str = dt.strftime('%Y-%m-%d %H:%M:%S %Z')
                         
-                        help_str = (
-                            "<b>📚 Analytics Cheat Sheet (Global)</b>\n"
-                            "▪️ <b>roi_pct</b>: Return on Investment (%) → <i>(Cur_Balance - Start_Balance) / Start_Balance * 100</i>\n"
-                            "▪️ <b>load_ratio</b>: Grid Load Ratio → <i>|Unrealized PnL| / Gross Profit</i>\n"
-                            "▪️ <b>recovery_factor</b>: Recovery Factor → <i>Gross Profit / |Max Drawdown|</i>\n"
-                            "▪️ <b>gross_profit_usdt</b>: Total realized profit from all closed trades\n"
-                            "▪️ <b>net_profit_usdt</b>: True mathematical growth → <i>Gross Profit + Unrealized PnL</i>\n"
-                            "▪️ <b>cur_balance_usdt</b>: Current margin balance → <i>Start Balance + Net Profit</i>\n\n"
-                            "<b>🪙 Per-Coin Metrics</b>\n"
-                            "▪️ <b>avg_daily_profit</b>: Average profit per active day of trading\n"
-                            "▪️ <b>max_position_size</b>: Max historical margin size actually reached (real size)\n"
-                            "▪️ <b>risk_reward_ratio</b>: <i>|Max Drawdown| / Avg Daily Profit</i>\n"
-                            "▪️ <b>DRME</b> (Daily Return on Max Exposure): <i>Avg Daily Profit / Max Position Size</i>\n"
-                            "▪️ <b>MDME</b> (Max Drawdown on Max Exposure): <i>|Max Drawdown| / Max Position Size</i>\n"
-                            "▪️ <b>max_drawdown</b> / <b>min_drawdown</b>: Max/Min historical floating drawdowns\n"
-                        )
-                        
-                        header = f"{help_str}\n<b>ℹ️ Расчет по состоянию на: {time_str}</b>\n\n"
+                        last_trade_time = "Нет сделок"
+                        csv_path = ANALYTICS_DIR / "trades_ledger.csv"
+                        if csv_path.exists():
+                            import csv
+                            try:
+                                with open(csv_path, 'r', encoding='utf-8') as f:
+                                    reader = csv.reader(f, delimiter=';')
+                                    lines = list(reader)
+                                    if len(lines) > 1:
+                                        csv_header = lines[0]
+                                        close_idx = csv_header.index('Close Time') if 'Close Time' in csv_header else 3
+                                        last_trade_time = lines[-1][close_idx]
+                            except Exception:
+                                pass
+                                
+                        header = f"<b>ℹ️ Расчет по состоянию на: {time_str}</b>\n"
+                        header += f"<b>⏳ Последняя сделка: {last_trade_time}</b>\n\n"
                     else:
                         header = "<b>ℹ️ Аналитика рассчитана по состоянию на: [неизвестно]</b>\n\n"
-                except Exception as e:
-                    logger.error(f"Error parsing analytics JSON for timestamp: {e}")
-
-                # Send header first
-                await message.answer(header, parse_mode="HTML")
-                
-                # Format JSON into beautiful text
-                try:
-                    data = json.loads(text)
-                    
-                    # Global Metrics
+                        
                     msg = "<b>🌍 GLOBAL ANALYTICS</b>\n\n"
                     
                     msg += "<b>💰 Balances:</b>\n"
@@ -443,51 +463,12 @@ class TelegramReceiver:
                     msg += f"▪️ Recovery Factor: <b>{data.get('recovery_factor', 0)}</b>\n"
                     msg += f"▪️ Trades: <b>{data.get('total_trades', 0)}</b> (Wins: <b>{data.get('winning_trades', 0)}</b> | <b>{data.get('winrate_pct', 0)}%</b>)\n\n"
                     
-                    # Send formatted text in chunks if needed
-                    await message.answer(msg, parse_mode="HTML")
-                    
-                    # Per-Coin Metrics
-                    if "per_coin" in data and data["per_coin"]:
-                        msg_coins = "<b>🪙 PER-COIN METRICS</b>\n\n"
-                        for coin, cdata in data["per_coin"].items():
-                            msg_coins += f"🔹 <b>{coin}</b>\n"
-                            msg_coins += f"  • Trades: <b>{cdata.get('total_trades', 0)}</b> (Wins: <b>{cdata.get('winning_trades', 0)}</b> | <b>{cdata.get('winrate_pct', 0)}%</b>)\n"
-                            msg_coins += f"  • Net Profit: <b>{cdata.get('net_profit_usdt', 0)}</b> USDT\n"
-                            msg_coins += f"  • Profit Range: Max <b>{cdata.get('max_net_profit', 0)}</b> / Min <b>{cdata.get('min_net_profit', 0)}</b>\n"
-                            msg_coins += f"  • Fees: Comm <b>{cdata.get('commission_usdt', 0)}</b> / Fund <b>{cdata.get('funding_usdt', 0)}</b>\n"
-                            msg_coins += f"  • Drawdown: Cur <b>{cdata.get('current_drawdown', 0)}</b> / Max <b>{cdata.get('max_drawdown', 0)}</b> / Min <b>{cdata.get('min_drawdown', 0)}</b>\n"
-                            msg_coins += f"  • Avg Daily Profit: <b>{cdata.get('avg_daily_profit', 0)}</b> USDT\n"
-                            msg_coins += f"  • Max Position Size: <b>{cdata.get('max_position_size', 0)}</b> USDT\n"
-                            msg_coins += f"  • Risk/Reward: <b>{cdata.get('risk_reward_ratio', 0)}</b>\n"
-                            msg_coins += f"  • DRME: <b>{cdata.get('DRME', 0)}</b> | MDME: <b>{cdata.get('MDME', 0)}</b>\n\n"
-                            
-                        # Split coins into chunks to avoid length limits
-                        max_chunk = 3900
-                        if len(msg_coins) > max_chunk:
-                            for i in range(0, len(msg_coins), max_chunk):
-                                await message.answer(msg_coins[i:i+max_chunk], parse_mode="HTML")
-                        else:
-                            await message.answer(msg_coins, parse_mode="HTML")
+                    await message.answer(header + msg, parse_mode="HTML")
                 except Exception as e:
                     logger.error(f"Error formatting analytics text: {e}")
                     await message.answer("Error formatting analytics data.")
             else:
                 await message.answer("Analytics JSON not found in ANALYTICS_DIR.")
-
-            csv_path = ANALYTICS_DIR / "trades_ledger.csv"
-            if csv_path.exists():
-                await message.answer_document(FSInputFile(str(csv_path)))
-            else:
-                await message.answer("Trades ledger CSV not found.")
-                
-                # Send Equity Curve
-                try:
-                    from ANALYTICS.plotter import generate_equity_curve
-                    plot_path = generate_equity_curve()
-                    if plot_path and os.path.exists(plot_path):
-                        await message.answer_photo(FSInputFile(plot_path), caption="📈 График движения баланса (Equity Curve)")
-                except Exception as e:
-                    logger.error(f"Error generating or sending equity curve: {e}")
 
         @self.dp.callback_query(F.data == "analytics_balance_chart")
         async def process_analytics_balance_chart(callback: CallbackQuery, state: FSMContext):
@@ -509,14 +490,26 @@ class TelegramReceiver:
             await callback.answer()
             message = callback.message
             
-            coins = list(self.bot_core.symbols)
-            if not coins:
-                await message.answer("❌ Нет активных монет для аналитики.")
+            import json
+            all_coins = set(self.bot_core.symbols)
+            analytics_path = ANALYTICS_DIR / "analytics.json"
+            if analytics_path.exists():
+                try:
+                    data = json.loads(analytics_path.read_text(encoding="utf-8"))
+                    if "per_coin" in data:
+                        all_coins.update(data["per_coin"].keys())
+                except Exception:
+                    pass
+            
+            if not all_coins:
+                await message.answer("❌ Нет данных о монетах для аналитики.")
                 return
                 
             keyboard_buttons = []
-            for coin in coins:
-                keyboard_buttons.append([InlineKeyboardButton(text=f"🪙 {coin}", callback_data=f"analytics_coin_{coin}")])
+            for coin in sorted(all_coins):
+                is_active = coin in self.bot_core.symbols
+                status_icon = "🟢" if is_active else "🔴"
+                keyboard_buttons.append([InlineKeyboardButton(text=f"🪙 {coin} {status_icon}", callback_data=f"analytics_coin_{coin}")])
                 
             keyboard = InlineKeyboardMarkup(inline_keyboard=keyboard_buttons)
             await message.answer("Выберите монету для детальной аналитики:", reply_markup=keyboard)
@@ -526,16 +519,43 @@ class TelegramReceiver:
             await callback.answer()
             symbol = callback.data.replace("analytics_coin_", "")
             
+            is_active = symbol in self.bot_core.symbols
+            status_text = "🟢 Активна" if is_active else "🔴 Отключена"
+            
+            import json
+            analytics_path = ANALYTICS_DIR / "analytics.json"
+            if analytics_path.exists():
+                try:
+                    data = json.loads(analytics_path.read_text(encoding="utf-8"))
+                    if "per_coin" in data and symbol in data["per_coin"]:
+                        cdata = data["per_coin"][symbol]
+                        msg_coins = "<b>🪙 PER-COIN METRICS</b>\n\n"
+                        msg_coins += f"🔹 <b>{symbol}</b> ({status_text})\n"
+                        msg_coins += f"  • Trades: <b>{cdata.get('total_trades', 0)}</b> (Wins: <b>{cdata.get('winning_trades', 0)}</b> | <b>{cdata.get('winrate_pct', 0)}%</b>)\n"
+                        msg_coins += f"  • Net Profit: <b>{cdata.get('net_profit_usdt', 0)}</b> USDT\n"
+                        msg_coins += f"  • Gross Profit: <b>{cdata.get('gross_profit_usdt', 0)}</b> USDT\n"
+                        msg_coins += f"  • Profit Range: Max <b>{cdata.get('max_net_profit', 0)}</b> / Min <b>{cdata.get('min_net_profit', 0)}</b>\n"
+                        msg_coins += f"  • Fees: Comm <b>{cdata.get('commission_usdt', 0)}</b> / Fund <b>{cdata.get('funding_usdt', 0)}</b>\n"
+                        msg_coins += f"  • Unrealized PnL: <b>{cdata.get('current_drawdown', 0)}</b> USDT\n"
+                        msg_coins += f"  • Hist. Drawdown: Max <b>{cdata.get('max_drawdown', 0)}</b> / Min <b>{cdata.get('min_drawdown', 0)}</b>\n"
+                        msg_coins += f"  • Avg Daily Profit (Net): <b>{cdata.get('avg_daily_profit', 0)}</b> USDT\n"
+                        msg_coins += f"  • Max Position Size: <b>{cdata.get('max_position_size', 0)}</b> USDT\n"
+                        msg_coins += f"  • R/R Surplus (%): <b>{cdata.get('reward_risk_surplus_pct', 0)}%</b>\n"
+                        msg_coins += f"  • DRME: <b>{cdata.get('DRME', 0)}</b> | MDME: <b>{cdata.get('MDME', 0)}</b>\n\n"
+                        await callback.message.answer(msg_coins, parse_mode="HTML")
+                except Exception as e:
+                    logger.error(f"Error reading per_coin data for {symbol}: {e}")
+
             from ANALYTICS.plotter import generate_coin_analytics
             try:
                 plot_path = generate_coin_analytics(symbol)
                 if plot_path and os.path.exists(plot_path):
                     await callback.message.answer_photo(FSInputFile(plot_path), caption=f"📈 Analytics: {symbol}")
                 else:
-                    await callback.message.answer(f"❌ Не удалось сгенерировать аналитику для {symbol}.")
+                    await callback.message.answer(f"❌ Не удалось сгенерировать график для {symbol}.")
             except Exception as e:
                 logger.error(f"Error generating coin analytics: {e}")
-                await callback.message.answer(f"❌ Ошибка генерации аналитики для {symbol}: {e}")
+                await callback.message.answer(f"❌ Ошибка генерации графика для {symbol}: {e}")
 
         @self.dp.message(F.text == "⚙️ Set Coins")
         async def on_set_coins(message: Message, state: FSMContext):
@@ -765,19 +785,19 @@ class TelegramReceiver:
                 await message.answer(f"❌ Ошибка JSON: {e}\nИсправьте и отправьте снова.")
 
         # =========================================================
-        # EDIT ADVANCED
+        # EDIT Super Grid
         # =========================================================
-        @self.dp.message(F.text == "🔧 Advanced")
-        async def on_advanced_btn(message: Message, state: FSMContext):
+        @self.dp.message(F.text == "🔧 Super Grid")
+        async def on_super_grid_btn(message: Message, state: FSMContext):
             from consts import DATA_DIR
             from c_utils import Utils
             import json
             app_json_path = DATA_DIR / "app.json"
             app_data = Utils.read_json_file(app_json_path)
             
-            # Если нет секции advanced, создадим базовую
-            if "advanced" not in app_data:
-                app_data["advanced"] = {
+            # Если нет секции Super Grid, создадим базовую
+            if "super_grid" not in app_data:
+                app_data["super_grid"] = {
                     "enabled": True,
                     "_comment_timeframe": "Valid values: 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 8h, 12h, 1d, 3d, 1w, 1M",
                     "timeframe": "1d",
@@ -787,18 +807,18 @@ class TelegramReceiver:
                     "update_interval_hours": 12
                 }
             
-            adv_str = json.dumps(app_data["advanced"], indent=4)
-            dump_path = os.path.join("logs", "advanced_edit.json")
+            super_grid_str = json.dumps(app_data["super_grid"], indent=4)
+            dump_path = os.path.join("logs", "Super Grid_edit.json")
             os.makedirs("logs", exist_ok=True)
             with open(dump_path, "w", encoding="utf-8") as f:
-                f.write(adv_str)
+                f.write(super_grid_str)
                 
-            await message.answer("<b>Текущие настройки Advanced (Volatility):</b>\nОтредактируйте файл и отправьте обратно документом (или текстом).", reply_markup=self._get_cancel_keyboard(), parse_mode="HTML")
+            await message.answer("<b>Текущие настройки Super Grid (Volatility):</b>\nОтредактируйте файл и отправьте обратно документом (или текстом).", reply_markup=self._get_cancel_keyboard(), parse_mode="HTML")
             await message.answer_document(FSInputFile(dump_path))
-            await state.set_state(TGStates.waiting_for_advanced_json)
+            await state.set_state(TGStates.waiting_for_super_grid_json)
 
-        @self.dp.message(TGStates.waiting_for_advanced_json)
-        async def process_advanced_json(message: Message, state: FSMContext):
+        @self.dp.message(TGStates.waiting_for_super_grid_json)
+        async def process_super_grid_json(message: Message, state: FSMContext):
             if message.text and message.text == "🔙 Cancel":
                 await state.clear()
                 status = "⏸️ Paused" if self.bot_core.is_paused else "▶️ Running"
@@ -820,22 +840,22 @@ class TelegramReceiver:
                 
             import json
             try:
-                new_adv = json.loads(json_str)
+                new_super_grid = json.loads(json_str)
                 from c_utils import Utils
                 from consts import DATA_DIR, _CFG
                 app_json_path = DATA_DIR / "app.json"
                 app_data = Utils.read_json_file(app_json_path)
-                app_data["advanced"] = new_adv
+                app_data["super_grid"] = new_super_grid
                 Utils.write_json_file(app_json_path, app_data)
                 
                 # Обновляем в памяти _CFG
-                _CFG["advanced"] = new_adv
+                _CFG["super_grid"] = new_super_grid
                 
                 # Заставляем пересчитаться
                 if hasattr(self.bot_core, 'volatility_manager') and self.bot_core.volatility_manager.is_running:
                     asyncio.create_task(self.bot_core.volatility_manager.process_all())
                     
-                await message.answer("✅ Настройки Advanced успешно обновлены! Перерасчет запущен.", reply_markup=self._get_main_keyboard())
+                await message.answer("✅ Настройки Super Grid успешно обновлены! Перерасчет запущен.", reply_markup=self._get_main_keyboard())
                 await state.clear()
             except Exception as e:
                 await message.answer(f"❌ Ошибка JSON: {e}\nИсправьте и отправьте снова.")

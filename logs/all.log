@@ -2629,3 +2629,340 @@ ValueError: [DASHUSDT] LONG ОШИБКА КОНФИГУРАЦИИ: Количе�
 2026-06-28 03:13:38 | INFO | App | Ctrl+C detected. Shutting down...
 2026-06-28 03:13:38 | INFO | BotCore | Executing graceful BotCore shutdown...
 2026-06-28 03:13:38 | INFO | BotCore | Final FSM snapshot saved to runtime cache.
+2026-06-28 03:15:06 | INFO | App | Starting BotCore...
+2026-06-28 03:15:10 | INFO | App | TGReceiver will be started alongside BotCore.
+2026-06-28 03:15:10 | INFO | BotCore | BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.
+2026-06-28 03:15:10 | INFO | BotCore | Main _game_loop started. Specifications and price streams are running.
+2026-06-28 03:15:10 | INFO | BotCore | Prefetching initial prices via REST...
+2026-06-28 03:15:10 | INFO | TGReceiver | Starting Telegram Receiver...
+2026-06-28 03:15:10 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 03:15:10 | INFO | VolatilityManager | [VolatilityManager] Processing 2 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 03:15:11 | INFO | BotCore | Waiting for price streams to connect...
+2026-06-28 03:15:11 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] Переход на Advanced настройки. Волатильность=27.29%. Коэффициент=0.8026. Сетка обновлена (super_indent).
+2026-06-28 03:15:11 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 03:15:11 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 03:15:11 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Advanced настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
+2026-06-28 03:15:11 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 03:15:11 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 03:15:11 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: uj6w3... (length: 64)
+2026-06-28 03:15:13 | INFO | BotCore | Price streams connected successfully.
+2026-06-28 03:15:13 | INFO | BotCore | Streams and REST synced! Running initial RuntimeFSM Sync...
+2026-06-28 03:25:14 | INFO | BotCore | [STABLEUSDT] SHORT is_finished. Running analytics and resetting runtime cache...
+2026-06-28 03:25:14 | INFO | BotCore | [STABLEUSDT] SHORT Canceling all limit orders for this side
+2026-06-28 03:25:14 | DEBUG | RuntimeManager | [STABLEUSDT] SHORT FSM state reset to default (kept custom config).
+2026-06-28 03:25:14 | INFO | BotCore | [STABLEUSDT] SHORT: Signal is TRUE! Entering position...
+2026-06-28 03:25:14 | INFO | BotCore | [STABLEUSDT] Signal triggered for SHORT.
+2026-06-28 03:25:14 | INFO | BotCore | [STABLEUSDT] Opening SHORT market order. Volume: 694.0
+2026-06-28 03:25:19 | WARNING | BotCore | [STABLEUSDT] SHORT WS did not update avg_entry_price in time at start! Forcing REST fallback...
+2026-06-28 03:25:20 | INFO | BotCore | [STABLEUSDT] SHORT REST fallback applied! New avg_entry_price: 0.03733
+2026-06-28 03:25:20 | INFO | TakeProfitManager | [STABLEUSDT] SHORT Canceling old limit orders before placing new TP...
+2026-06-28 03:25:20 | INFO | TakeProfitManager | [STABLEUSDT] Placing SHORT take profit limit order at 0.03711. Vol: 694.0 (Attempt 1/3)
+2026-06-28 03:25:20 | INFO | TakeProfitManager | [STABLEUSDT] SHORT Take profit LIMIT order placed successfully! ID: 924824799
+2026-06-28 03:25:50 | INFO | BotCore | [STABLEUSDT] SHORT is_finished. Running analytics and resetting runtime cache...
+2026-06-28 03:25:50 | INFO | BotCore | [STABLEUSDT] SHORT Canceling all limit orders for this side
+2026-06-28 03:25:50 | DEBUG | RuntimeManager | [STABLEUSDT] SHORT FSM state reset to default (kept custom config).
+2026-06-28 03:25:51 | INFO | BotCore | [STABLEUSDT] SHORT: Signal is TRUE! Entering position...
+2026-06-28 03:25:51 | INFO | BotCore | [STABLEUSDT] Signal triggered for SHORT.
+2026-06-28 03:25:51 | INFO | BotCore | [STABLEUSDT] Opening SHORT market order. Volume: 698.0
+2026-06-28 03:25:56 | WARNING | BotCore | [STABLEUSDT] SHORT WS did not update avg_entry_price in time at start! Forcing REST fallback...
+2026-06-28 03:25:56 | INFO | BotCore | [STABLEUSDT] SHORT REST fallback applied! New avg_entry_price: 0.03712
+2026-06-28 03:25:56 | INFO | TakeProfitManager | [STABLEUSDT] SHORT Canceling old limit orders before placing new TP...
+2026-06-28 03:25:56 | INFO | TakeProfitManager | [STABLEUSDT] Placing SHORT take profit limit order at 0.0369. Vol: 698.0 (Attempt 1/3)
+2026-06-28 03:25:57 | INFO | TakeProfitManager | [STABLEUSDT] SHORT Take profit LIMIT order placed successfully! ID: 924829001
+2026-06-28 03:40:11 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 04:05:12 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 04:14:09 | INFO | BotCore | [STABLEUSDT] SHORT is_finished. Running analytics and resetting runtime cache...
+2026-06-28 04:14:09 | INFO | BotCore | [STABLEUSDT] SHORT Canceling all limit orders for this side
+2026-06-28 04:14:09 | DEBUG | RuntimeManager | [STABLEUSDT] SHORT FSM state reset to default (kept custom config).
+2026-06-28 04:14:50 | INFO | BotCore | [STABLEUSDT] SHORT: Signal is TRUE! Entering position...
+2026-06-28 04:14:50 | INFO | BotCore | [STABLEUSDT] Signal triggered for SHORT.
+2026-06-28 04:14:50 | INFO | BotCore | [STABLEUSDT] Opening SHORT market order. Volume: 700.0
+2026-06-28 04:14:55 | WARNING | BotCore | [STABLEUSDT] SHORT WS did not update avg_entry_price in time at start! Forcing REST fallback...
+2026-06-28 04:14:55 | INFO | BotCore | [STABLEUSDT] SHORT REST fallback applied! New avg_entry_price: 0.0370034857142
+2026-06-28 04:14:55 | INFO | TakeProfitManager | [STABLEUSDT] SHORT Canceling old limit orders before placing new TP...
+2026-06-28 04:14:55 | INFO | TakeProfitManager | [STABLEUSDT] Placing SHORT take profit limit order at 0.03678. Vol: 700.0 (Attempt 1/3)
+2026-06-28 04:14:56 | INFO | TakeProfitManager | [STABLEUSDT] SHORT Take profit LIMIT order placed successfully! ID: 924860937
+2026-06-28 04:30:12 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 04:55:12 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 05:20:13 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 05:45:13 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 06:10:13 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 06:24:34 | INFO | BotCore | [DASHUSDT] SHORT is_finished. Running analytics and resetting runtime cache...
+2026-06-28 06:24:34 | INFO | BotCore | [DASHUSDT] SHORT Canceling all limit orders for this side
+2026-06-28 06:24:35 | DEBUG | RuntimeManager | [DASHUSDT] SHORT FSM state reset to default (kept custom config).
+2026-06-28 06:24:50 | INFO | BotCore | [DASHUSDT] SHORT: Signal is TRUE! Entering position...
+2026-06-28 06:24:50 | INFO | BotCore | [DASHUSDT] Signal triggered for SHORT.
+2026-06-28 06:24:50 | INFO | BotCore | [DASHUSDT] Opening SHORT market order. Volume: 0.791
+2026-06-28 06:24:55 | WARNING | BotCore | [DASHUSDT] SHORT WS did not update avg_entry_price in time at start! Forcing REST fallback...
+2026-06-28 06:24:55 | INFO | BotCore | [DASHUSDT] SHORT REST fallback applied! New avg_entry_price: 32.77
+2026-06-28 06:24:55 | INFO | TakeProfitManager | [DASHUSDT] SHORT Canceling old limit orders before placing new TP...
+2026-06-28 06:24:55 | INFO | TakeProfitManager | [DASHUSDT] Placing SHORT take profit limit order at 32.57. Vol: 0.791 (Attempt 1/3)
+2026-06-28 06:24:55 | INFO | TakeProfitManager | [DASHUSDT] SHORT Take profit LIMIT order placed successfully! ID: 10414892999
+2026-06-28 06:35:14 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 07:00:14 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 07:25:14 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 07:50:15 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 08:15:15 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 08:24:19 | INFO | BotCore | [DASHUSDT] SHORT is_finished. Running analytics and resetting runtime cache...
+2026-06-28 08:24:19 | INFO | BotCore | [DASHUSDT] SHORT Canceling all limit orders for this side
+2026-06-28 08:24:19 | DEBUG | RuntimeManager | [DASHUSDT] SHORT FSM state reset to default (kept custom config).
+2026-06-28 08:24:50 | INFO | BotCore | [DASHUSDT] SHORT: Signal is TRUE! Entering position...
+2026-06-28 08:24:50 | INFO | BotCore | [DASHUSDT] Signal triggered for SHORT.
+2026-06-28 08:24:50 | INFO | BotCore | [DASHUSDT] Opening SHORT market order. Volume: 0.796
+2026-06-28 08:24:55 | WARNING | BotCore | [DASHUSDT] SHORT WS did not update avg_entry_price in time at start! Forcing REST fallback...
+2026-06-28 08:24:55 | INFO | BotCore | [DASHUSDT] SHORT REST fallback applied! New avg_entry_price: 32.56
+2026-06-28 08:24:55 | INFO | TakeProfitManager | [DASHUSDT] SHORT Canceling old limit orders before placing new TP...
+2026-06-28 08:24:56 | INFO | TakeProfitManager | [DASHUSDT] Placing SHORT take profit limit order at 32.36. Vol: 0.796 (Attempt 1/3)
+2026-06-28 08:24:56 | INFO | TakeProfitManager | [DASHUSDT] SHORT Take profit LIMIT order placed successfully! ID: 10415146261
+2026-06-28 08:40:15 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 09:05:16 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 09:12:19 | INFO | BotCore | [DASHUSDT] SHORT is_finished. Running analytics and resetting runtime cache...
+2026-06-28 09:12:19 | INFO | BotCore | [DASHUSDT] SHORT Canceling all limit orders for this side
+2026-06-28 09:12:19 | DEBUG | RuntimeManager | [DASHUSDT] SHORT FSM state reset to default (kept custom config).
+2026-06-28 09:14:50 | INFO | BotCore | [DASHUSDT] SHORT: Signal is TRUE! Entering position...
+2026-06-28 09:14:50 | INFO | BotCore | [DASHUSDT] Signal triggered for SHORT.
+2026-06-28 09:14:50 | INFO | BotCore | [DASHUSDT] Opening SHORT market order. Volume: 0.801
+2026-06-28 09:14:55 | WARNING | BotCore | [DASHUSDT] SHORT WS did not update avg_entry_price in time at start! Forcing REST fallback...
+2026-06-28 09:14:55 | INFO | BotCore | [DASHUSDT] SHORT REST fallback applied! New avg_entry_price: 32.34
+2026-06-28 09:14:55 | INFO | TakeProfitManager | [DASHUSDT] SHORT Canceling old limit orders before placing new TP...
+2026-06-28 09:14:55 | INFO | TakeProfitManager | [DASHUSDT] Placing SHORT take profit limit order at 32.15. Vol: 0.801 (Attempt 1/3)
+2026-06-28 09:14:55 | INFO | TakeProfitManager | [DASHUSDT] SHORT Take profit LIMIT order placed successfully! ID: 10415269838
+2026-06-28 09:30:16 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 09:47:57 | INFO | BotCore | [STABLEUSDT] SHORT is_finished. Running analytics and resetting runtime cache...
+2026-06-28 09:47:57 | INFO | BotCore | [STABLEUSDT] SHORT Canceling all limit orders for this side
+2026-06-28 09:47:57 | DEBUG | RuntimeManager | [STABLEUSDT] SHORT FSM state reset to default (kept custom config).
+2026-06-28 09:49:50 | INFO | BotCore | [STABLEUSDT] SHORT: Signal is TRUE! Entering position...
+2026-06-28 09:49:50 | INFO | BotCore | [STABLEUSDT] Signal triggered for SHORT.
+2026-06-28 09:49:50 | INFO | BotCore | [STABLEUSDT] Opening SHORT market order. Volume: 695.0
+2026-06-28 09:49:55 | WARNING | BotCore | [STABLEUSDT] SHORT WS did not update avg_entry_price in time at start! Forcing REST fallback...
+2026-06-28 09:49:55 | INFO | BotCore | [STABLEUSDT] SHORT REST fallback applied! New avg_entry_price: 0.03728
+2026-06-28 09:49:55 | INFO | TakeProfitManager | [STABLEUSDT] SHORT Canceling old limit orders before placing new TP...
+2026-06-28 09:49:56 | INFO | TakeProfitManager | [STABLEUSDT] Placing SHORT take profit limit order at 0.03706. Vol: 695.0 (Attempt 1/3)
+2026-06-28 09:49:56 | INFO | TakeProfitManager | [STABLEUSDT] SHORT Take profit LIMIT order placed successfully! ID: 925072446
+2026-06-28 09:55:17 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 10:20:17 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 10:45:17 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 11:10:18 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 11:35:18 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 12:00:18 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 12:25:19 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 12:50:19 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 12:56:12 | INFO | BotCore | _game_loop cancelled.
+2026-06-28 12:56:12 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-28 12:56:12 | INFO | App | Ctrl+C detected. Shutting down...
+2026-06-28 12:56:12 | INFO | BotCore | Executing graceful BotCore shutdown...
+2026-06-28 12:56:12 | INFO | BotCore | Final FSM snapshot saved to runtime cache.
+2026-06-28 12:56:19 | INFO | App | Starting BotCore...
+2026-06-28 12:56:23 | INFO | App | TGReceiver will be started alongside BotCore.
+2026-06-28 12:56:23 | INFO | BotCore | BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.
+2026-06-28 12:56:23 | INFO | BotCore | Main _game_loop started. Specifications and price streams are running.
+2026-06-28 12:56:23 | INFO | BotCore | Prefetching initial prices via REST...
+2026-06-28 12:56:23 | INFO | TGReceiver | Starting Telegram Receiver...
+2026-06-28 12:56:23 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 12:56:23 | INFO | VolatilityManager | [VolatilityManager] Processing 2 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 12:56:24 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] Переход на Advanced настройки. Волатильность=27.29%. Коэффициент=0.8026. Сетка обновлена (super_indent).
+2026-06-28 12:56:24 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 12:56:24 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 12:56:24 | INFO | BotCore | Waiting for price streams to connect...
+2026-06-28 12:56:24 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Advanced настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
+2026-06-28 12:56:24 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 12:56:24 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 12:56:24 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: uj6w3... (length: 64)
+2026-06-28 12:56:24 | INFO | BotCore | Price streams connected successfully.
+2026-06-28 12:56:25 | INFO | BotCore | Streams and REST synced! Running initial RuntimeFSM Sync...
+2026-06-28 13:00:18 | INFO | BotCore | [STABLEUSDT] SHORT is_finished. Running analytics and resetting runtime cache...
+2026-06-28 13:00:18 | INFO | BotCore | [STABLEUSDT] SHORT Canceling all limit orders for this side
+2026-06-28 13:00:18 | DEBUG | RuntimeManager | [STABLEUSDT] SHORT FSM state reset to default (kept custom config).
+2026-06-28 13:00:18 | INFO | BotCore | [STABLEUSDT] SHORT: Signal is TRUE! Entering position...
+2026-06-28 13:00:18 | INFO | BotCore | [STABLEUSDT] Signal triggered for SHORT.
+2026-06-28 13:00:18 | INFO | BotCore | [STABLEUSDT] Opening SHORT market order. Volume: 700.0
+2026-06-28 13:00:23 | WARNING | BotCore | [STABLEUSDT] SHORT WS did not update avg_entry_price in time at start! Forcing REST fallback...
+2026-06-28 13:00:24 | INFO | BotCore | [STABLEUSDT] SHORT REST fallback applied! New avg_entry_price: 0.0370319285714
+2026-06-28 13:00:24 | INFO | TakeProfitManager | [STABLEUSDT] SHORT Canceling old limit orders before placing new TP...
+2026-06-28 13:00:24 | INFO | TakeProfitManager | [STABLEUSDT] Placing SHORT take profit limit order at 0.03681. Vol: 700.0 (Attempt 1/3)
+2026-06-28 13:00:24 | INFO | TakeProfitManager | [STABLEUSDT] SHORT Take profit LIMIT order placed successfully! ID: 925205571
+2026-06-28 13:01:06 | INFO | BotCore | _game_loop cancelled.
+2026-06-28 13:01:06 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-28 13:01:06 | INFO | App | Ctrl+C detected. Shutting down...
+2026-06-28 13:01:06 | INFO | BotCore | Executing graceful BotCore shutdown...
+2026-06-28 13:01:06 | INFO | BotCore | Final FSM snapshot saved to runtime cache.
+2026-06-28 13:01:16 | INFO | App | Starting BotCore...
+2026-06-28 13:01:20 | INFO | App | TGReceiver will be started alongside BotCore.
+2026-06-28 13:01:20 | INFO | BotCore | BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.
+2026-06-28 13:01:20 | INFO | BotCore | Main _game_loop started. Specifications and price streams are running.
+2026-06-28 13:01:20 | INFO | BotCore | Prefetching initial prices via REST...
+2026-06-28 13:01:20 | INFO | TGReceiver | Starting Telegram Receiver...
+2026-06-28 13:01:20 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 13:01:20 | INFO | VolatilityManager | [VolatilityManager] Processing 2 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 13:01:20 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] Переход на Advanced настройки. Волатильность=27.29%. Коэффициент=0.8026. Сетка обновлена (super_indent).
+2026-06-28 13:01:20 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 13:01:20 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 13:01:20 | INFO | BotCore | Waiting for price streams to connect...
+2026-06-28 13:01:21 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Advanced настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
+2026-06-28 13:01:21 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 13:01:21 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 13:01:21 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: uj6w3... (length: 64)
+2026-06-28 13:01:21 | INFO | BotCore | Price streams connected successfully.
+2026-06-28 13:01:21 | INFO | BotCore | Streams and REST synced! Running initial RuntimeFSM Sync...
+2026-06-28 13:07:44 | INFO | BotCore | [DASHUSDT] LONG is_finished. Running analytics and resetting runtime cache...
+2026-06-28 13:07:44 | INFO | BotCore | [DASHUSDT] LONG Canceling all limit orders for this side
+2026-06-28 13:07:44 | DEBUG | RuntimeManager | [DASHUSDT] LONG FSM state reset to default (kept custom config).
+2026-06-28 13:07:47 | INFO | BotCore | [DASHUSDT] SHORT is_finished. Running analytics and resetting runtime cache...
+2026-06-28 13:07:47 | INFO | BotCore | [DASHUSDT] SHORT Canceling all limit orders for this side
+2026-06-28 13:07:47 | DEBUG | RuntimeManager | [DASHUSDT] SHORT FSM state reset to default (kept custom config).
+2026-06-28 13:07:58 | INFO | BotCore | [DASHUSDT] Dynamically deleting symbol from BotCore...
+2026-06-28 13:07:58 | INFO | BotCore | [DASHUSDT] Removed from app.json.
+2026-06-28 13:07:58 | INFO | BotCore | [DASHUSDT] Deleted runtime cache file.
+2026-06-28 13:07:58 | INFO | BotCore | Restarting price stream to exclude deleted symbol: DASHUSDT
+2026-06-28 13:07:58 | INFO | BotCore | [DASHUSDT] Successfully deleted from BotCore.
+2026-06-28 13:08:21 | INFO | TemplateManager | Updated runtime config for SOLUSDT via TG.
+2026-06-28 13:08:21 | INFO | BotCore | [SOLUSDT] Added to app.json.
+2026-06-28 13:08:21 | INFO | BotCore | Restarting price stream to include new symbol: SOLUSDT
+2026-06-28 13:08:21 | INFO | BotCore | [SOLUSDT] Dynamically added to BotCore.
+2026-06-28 13:09:12 | INFO | TemplateManager | Updated runtime config for STABLEUSDT via TG.
+2026-06-28 13:09:50 | INFO | BotCore | [SOLUSDT] LONG: Signal is TRUE! Entering position...
+2026-06-28 13:09:50 | INFO | BotCore | [SOLUSDT] SHORT: Signal is TRUE! Entering position...
+2026-06-28 13:09:50 | INFO | BotCore | [SOLUSDT] Signal triggered for LONG.
+2026-06-28 13:09:50 | INFO | BotCore | [SOLUSDT] Signal triggered for SHORT.
+2026-06-28 13:09:50 | DEBUG | LeverageManager | [SOLUSDT] Margin type CROSSED is already set on exchange.
+2026-06-28 13:09:50 | DEBUG | LeverageManager | [SOLUSDT] Margin type CROSSED is already set on exchange.
+2026-06-28 13:09:50 | INFO | LeverageManager | [SOLUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-28 13:09:50 | INFO | BotCore | [SOLUSDT] Opening LONG market order. Volume: 0.36
+2026-06-28 13:09:50 | INFO | LeverageManager | [SOLUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-28 13:09:50 | INFO | BotCore | [SOLUSDT] Opening SHORT market order. Volume: 0.36
+2026-06-28 13:09:55 | WARNING | BotCore | [SOLUSDT] LONG WS did not update avg_entry_price in time at start! Forcing REST fallback...
+2026-06-28 13:09:55 | WARNING | BotCore | [SOLUSDT] SHORT WS did not update avg_entry_price in time at start! Forcing REST fallback...
+2026-06-28 13:09:56 | INFO | BotCore | [SOLUSDT] LONG REST fallback applied! New avg_entry_price: 71.31
+2026-06-28 13:09:56 | INFO | TakeProfitManager | [SOLUSDT] LONG Canceling old limit orders before placing new TP...
+2026-06-28 13:09:56 | INFO | BotCore | [SOLUSDT] SHORT REST fallback applied! New avg_entry_price: 71.3
+2026-06-28 13:09:56 | INFO | TakeProfitManager | [SOLUSDT] SHORT Canceling old limit orders before placing new TP...
+2026-06-28 13:09:56 | INFO | TakeProfitManager | [SOLUSDT] Placing LONG take profit limit order at 71.74. Vol: 0.36 (Attempt 1/3)
+2026-06-28 13:09:56 | INFO | TakeProfitManager | [SOLUSDT] Placing SHORT take profit limit order at 70.87. Vol: 0.36 (Attempt 1/3)
+2026-06-28 13:09:56 | INFO | TakeProfitManager | [SOLUSDT] LONG Take profit LIMIT order placed successfully! ID: 223445512437
+2026-06-28 13:09:56 | INFO | TakeProfitManager | [SOLUSDT] SHORT Take profit LIMIT order placed successfully! ID: 223445512495
+2026-06-28 13:26:21 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 13:40:38 | INFO | BotCore | [STABLEUSDT] LONG is_finished. Running analytics and resetting runtime cache...
+2026-06-28 13:40:38 | INFO | BotCore | [STABLEUSDT] LONG Canceling all limit orders for this side
+2026-06-28 13:40:39 | DEBUG | RuntimeManager | [STABLEUSDT] LONG FSM state reset to default (kept custom config).
+2026-06-28 13:40:39 | INFO | BotCore | [STABLEUSDT] LONG: Signal is TRUE! Entering position...
+2026-06-28 13:40:39 | INFO | BotCore | [STABLEUSDT] Signal triggered for LONG.
+2026-06-28 13:40:39 | INFO | BotCore | [STABLEUSDT] Opening LONG market order. Volume: 1029.0
+2026-06-28 13:40:44 | WARNING | BotCore | [STABLEUSDT] LONG WS did not update avg_entry_price in time at start! Forcing REST fallback...
+2026-06-28 13:40:44 | INFO | BotCore | [STABLEUSDT] LONG REST fallback applied! New avg_entry_price: 0.03784
+2026-06-28 13:40:44 | INFO | TakeProfitManager | [STABLEUSDT] LONG Canceling old limit orders before placing new TP...
+2026-06-28 13:40:45 | INFO | TakeProfitManager | [STABLEUSDT] Placing LONG take profit limit order at 0.03807. Vol: 1029.0 (Attempt 1/3)
+2026-06-28 13:40:45 | INFO | TakeProfitManager | [STABLEUSDT] LONG Take profit LIMIT order placed successfully! ID: 925245581
+2026-06-28 13:51:21 | DEBUG | FSM_Stream | [BINANCE] listenKey keepalive
+2026-06-28 13:56:35 | INFO | BotCore | [STABLEUSDT] LONG is_finished. Running analytics and resetting runtime cache...
+2026-06-28 13:56:35 | INFO | BotCore | [STABLEUSDT] LONG Canceling all limit orders for this side
+2026-06-28 13:56:35 | DEBUG | RuntimeManager | [STABLEUSDT] LONG FSM state reset to default (kept custom config).
+2026-06-28 13:59:50 | INFO | BotCore | [STABLEUSDT] LONG: Signal is TRUE! Entering position...
+2026-06-28 13:59:50 | INFO | BotCore | [STABLEUSDT] Signal triggered for LONG.
+2026-06-28 13:59:50 | INFO | BotCore | [STABLEUSDT] Opening LONG market order. Volume: 1023.0
+2026-06-28 13:59:55 | WARNING | BotCore | [STABLEUSDT] LONG WS did not update avg_entry_price in time at start! Forcing REST fallback...
+2026-06-28 13:59:55 | INFO | BotCore | [STABLEUSDT] LONG REST fallback applied! New avg_entry_price: 0.03802
+2026-06-28 13:59:55 | INFO | TakeProfitManager | [STABLEUSDT] LONG Canceling old limit orders before placing new TP...
+2026-06-28 13:59:55 | INFO | TakeProfitManager | [STABLEUSDT] Placing LONG take profit limit order at 0.03825. Vol: 1023.0 (Attempt 1/3)
+2026-06-28 13:59:56 | INFO | TakeProfitManager | [STABLEUSDT] LONG Take profit LIMIT order placed successfully! ID: 925294345
+2026-06-28 14:02:23 | INFO | BotCore | [SOLUSDT] LONG is_finished. Running analytics and resetting runtime cache...
+2026-06-28 14:02:23 | INFO | BotCore | [SOLUSDT] LONG Canceling all limit orders for this side
+2026-06-28 14:02:23 | DEBUG | RuntimeManager | [SOLUSDT] LONG FSM state reset to default (kept custom config).
+2026-06-28 14:02:52 | INFO | BotCore | _game_loop cancelled.
+2026-06-28 14:02:52 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-28 14:02:52 | INFO | App | Ctrl+C detected. Shutting down...
+2026-06-28 14:02:52 | INFO | BotCore | Executing graceful BotCore shutdown...
+2026-06-28 14:02:52 | INFO | BotCore | Final FSM snapshot saved to runtime cache.
+2026-06-28 14:03:00 | INFO | App | Starting BotCore...
+2026-06-28 14:03:05 | INFO | App | TGReceiver will be started alongside BotCore.
+2026-06-28 14:03:05 | INFO | BotCore | BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.
+2026-06-28 14:03:05 | INFO | BotCore | Main _game_loop started. Specifications and price streams are running.
+2026-06-28 14:03:05 | INFO | BotCore | Prefetching initial prices via REST...
+2026-06-28 14:03:05 | INFO | TGReceiver | Starting Telegram Receiver...
+2026-06-28 14:03:05 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 14:03:05 | INFO | VolatilityManager | [VolatilityManager] Processing 2 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 14:03:06 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Super Grid настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
+2026-06-28 14:03:06 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:03:06 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:03:06 | INFO | BotCore | Waiting for price streams to connect...
+2026-06-28 14:03:06 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Переход на Super Grid настройки. Волатильность=16.62%. Коэффициент=0.4888. Сетка обновлена (super_indent).
+2026-06-28 14:03:06 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:03:06 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: uj6w3... (length: 64)
+2026-06-28 14:03:06 | INFO | BotCore | Price streams connected successfully.
+2026-06-28 14:03:07 | INFO | BotCore | Streams and REST synced! Running initial RuntimeFSM Sync...
+2026-06-28 14:04:50 | INFO | BotCore | [SOLUSDT] LONG: Signal is TRUE! Entering position...
+2026-06-28 14:04:50 | INFO | BotCore | [SOLUSDT] Signal triggered for LONG.
+2026-06-28 14:04:50 | INFO | BotCore | [SOLUSDT] Opening LONG market order. Volume: 0.36
+2026-06-28 14:04:55 | WARNING | BotCore | [SOLUSDT] LONG WS did not update avg_entry_price in time at start! Forcing REST fallback...
+2026-06-28 14:04:55 | INFO | BotCore | [SOLUSDT] LONG REST fallback applied! New avg_entry_price: 71.71
+2026-06-28 14:04:55 | INFO | TakeProfitManager | [SOLUSDT] LONG Canceling old limit orders before placing new TP...
+2026-06-28 14:04:56 | INFO | TakeProfitManager | [SOLUSDT] Placing LONG take profit limit order at 72.14. Vol: 0.36 (Attempt 1/3)
+2026-06-28 14:04:56 | INFO | TakeProfitManager | [SOLUSDT] LONG Take profit LIMIT order placed successfully! ID: 223452554590
+2026-06-28 14:18:00 | INFO | BotCore | _game_loop cancelled.
+2026-06-28 14:18:00 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-28 14:18:00 | INFO | App | Ctrl+C detected. Shutting down...
+2026-06-28 14:18:00 | INFO | BotCore | Executing graceful BotCore shutdown...
+2026-06-28 14:18:00 | INFO | BotCore | Final FSM snapshot saved to runtime cache.
+2026-06-28 14:18:06 | INFO | App | Starting BotCore...
+2026-06-28 14:18:10 | INFO | App | TGReceiver will be started alongside BotCore.
+2026-06-28 14:18:10 | INFO | BotCore | BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.
+2026-06-28 14:18:10 | INFO | BotCore | Main _game_loop started. Specifications and price streams are running.
+2026-06-28 14:18:10 | INFO | BotCore | Prefetching initial prices via REST...
+2026-06-28 14:18:10 | INFO | TGReceiver | Starting Telegram Receiver...
+2026-06-28 14:18:10 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 14:18:10 | INFO | VolatilityManager | [VolatilityManager] Processing 2 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 14:18:11 | INFO | BotCore | Waiting for price streams to connect...
+2026-06-28 14:18:11 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Super Grid настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
+2026-06-28 14:18:11 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:18:11 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:18:11 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: uj6w3... (length: 64)
+2026-06-28 14:18:11 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Переход на Super Grid настройки. Волатильность=16.62%. Коэффициент=0.4888. Сетка обновлена (super_indent).
+2026-06-28 14:18:11 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:18:11 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:18:12 | INFO | BotCore | Price streams connected successfully.
+2026-06-28 14:18:12 | INFO | BotCore | Streams and REST synced! Running initial RuntimeFSM Sync...
+2026-06-28 14:23:17 | INFO | BotCore | _game_loop cancelled.
+2026-06-28 14:23:17 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-28 14:23:18 | INFO | App | Ctrl+C detected. Shutting down...
+2026-06-28 14:23:18 | INFO | BotCore | Executing graceful BotCore shutdown...
+2026-06-28 14:23:18 | INFO | BotCore | Final FSM snapshot saved to runtime cache.
+2026-06-28 14:23:22 | INFO | App | Starting BotCore...
+2026-06-28 14:23:26 | INFO | App | TGReceiver will be started alongside BotCore.
+2026-06-28 14:23:26 | INFO | BotCore | BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.
+2026-06-28 14:23:26 | INFO | BotCore | Main _game_loop started. Specifications and price streams are running.
+2026-06-28 14:23:26 | INFO | BotCore | Prefetching initial prices via REST...
+2026-06-28 14:23:26 | INFO | TGReceiver | Starting Telegram Receiver...
+2026-06-28 14:23:26 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 14:23:26 | INFO | VolatilityManager | [VolatilityManager] Processing 2 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 14:23:26 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Super Grid настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
+2026-06-28 14:23:26 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:23:26 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:23:26 | INFO | BotCore | Waiting for price streams to connect...
+2026-06-28 14:23:26 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Переход на Super Grid настройки. Волатильность=16.62%. Коэффициент=0.4888. Сетка обновлена (super_indent).
+2026-06-28 14:23:26 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:23:26 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:23:26 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: uj6w3... (length: 64)
+2026-06-28 14:23:27 | INFO | BotCore | Price streams connected successfully.
+2026-06-28 14:23:27 | INFO | BotCore | Streams and REST synced! Running initial RuntimeFSM Sync...
+2026-06-28 14:33:25 | INFO | BotCore | _game_loop cancelled.
+2026-06-28 14:33:25 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-28 14:33:25 | INFO | App | Ctrl+C detected. Shutting down...
+2026-06-28 14:33:25 | INFO | BotCore | Executing graceful BotCore shutdown...
+2026-06-28 14:33:25 | INFO | BotCore | Final FSM snapshot saved to runtime cache.
+2026-06-28 14:33:29 | INFO | App | Starting BotCore...
+2026-06-28 14:33:34 | INFO | App | TGReceiver will be started alongside BotCore.
+2026-06-28 14:33:34 | INFO | BotCore | BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.
+2026-06-28 14:33:34 | INFO | BotCore | Main _game_loop started. Specifications and price streams are running.
+2026-06-28 14:33:34 | INFO | BotCore | Prefetching initial prices via REST...
+2026-06-28 14:33:34 | INFO | TGReceiver | Starting Telegram Receiver...
+2026-06-28 14:33:34 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 14:33:34 | INFO | VolatilityManager | [VolatilityManager] Processing 2 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 14:33:34 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Super Grid настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
+2026-06-28 14:33:34 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:33:34 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:33:34 | INFO | BotCore | Waiting for price streams to connect...
+2026-06-28 14:33:34 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: uj6w3... (length: 64)
+2026-06-28 14:33:34 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Переход на Super Grid настройки. Волатильность=16.62%. Коэффициент=0.4888. Сетка обновлена (super_indent).
+2026-06-28 14:33:34 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:33:34 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:33:35 | INFO | BotCore | Price streams connected successfully.
+2026-06-28 14:33:35 | INFO | BotCore | Streams and REST synced! Running initial RuntimeFSM Sync...

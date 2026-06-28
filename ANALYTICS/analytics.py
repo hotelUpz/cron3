@@ -72,7 +72,7 @@ class AnalyticsManager:
             "performance_usdt": "Maximum historical growth from start balance (peak - start_balance).",
             "avg_daily_profit": "[Per-Coin] Average profit per active day of trading for this coin.",
             "max_position_size": "[Per-Coin] Max historical margin size actually reached (real deployed margin).",
-            "risk_reward_ratio": "[Per-Coin] abs(max_drawdown) / avg_daily_profit.",
+            "reward_risk_surplus_pct": "[Per-Coin] ((avg_daily_profit / abs(max_drawdown)) - 1) * 100.",
             "DRME": "[Per-Coin] Daily Return on Max Exposure: avg_daily_profit / max_position_size.",
             "MDME": "[Per-Coin] Max Drawdown on Max Exposure: abs(max_drawdown) / max_position_size.",
             "max_net_profit": "[Per-Coin] Historical maximum of the coin's fixed net profit.",
@@ -105,10 +105,10 @@ class AnalyticsManager:
             cdata["avg_daily_profit"] = avg_daily_profit
             
             max_dd = abs(cdata.get("max_drawdown", 0.0))
-            if avg_daily_profit > 0:
-                cdata["risk_reward_ratio"] = round(max_dd / avg_daily_profit, 2)
+            if max_dd > 0:
+                cdata["reward_risk_surplus_pct"] = round(((avg_daily_profit / max_dd) - 1) * 100, 2)
             else:
-                cdata["risk_reward_ratio"] = 0.0
+                cdata["reward_risk_surplus_pct"] = round(avg_daily_profit * 100, 2)
                 
             # Calculate actual historical Max Position Size from runtime config
             runtime_path = DATA_DIR / "runtime" / f"{sym.lower()}.json"
