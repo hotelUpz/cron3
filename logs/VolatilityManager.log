@@ -140,3 +140,39 @@
 2026-06-28 14:43:42 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Переход на Super Grid настройки. Волатильность=16.62%. Коэффициент=0.4888. Сетка обновлена (super_indent).
 2026-06-28 14:43:42 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
 2026-06-28 14:43:42 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:54:23 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 14:54:23 | INFO | VolatilityManager | [VolatilityManager] Processing 2 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 14:54:24 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Super Grid настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
+2026-06-28 14:54:24 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:54:24 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:54:24 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Переход на Super Grid настройки. Волатильность=16.62%. Коэффициент=0.4888. Сетка обновлена (super_indent).
+2026-06-28 14:54:24 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 14:54:24 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 15:14:04 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 15:14:04 | INFO | VolatilityManager | [VolatilityManager] Processing 2 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 15:14:04 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Super Grid настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
+2026-06-28 15:14:04 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 15:14:04 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 15:14:05 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Переход на Super Grid настройки. Волатильность=16.62%. Коэффициент=0.4888. Сетка обновлена (super_indent).
+2026-06-28 15:14:05 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 15:14:05 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 15:16:47 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 15:16:47 | INFO | VolatilityManager | [VolatilityManager] Processing 2 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 15:16:48 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Super Grid настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
+2026-06-28 15:16:48 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 15:16:48 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 15:16:48 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Переход на Super Grid настройки. Волатильность=16.62%. Коэффициент=0.4888. Сетка обновлена (super_indent).
+2026-06-28 15:16:48 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 15:16:48 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 15:19:27 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 15:19:27 | INFO | VolatilityManager | [VolatilityManager] Processing 2 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 15:19:28 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Super Grid настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
+2026-06-28 15:19:28 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 15:19:28 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 15:19:28 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Переход на Super Grid настройки. Волатильность=16.62%. Коэффициент=0.4888. Сетка обновлена (super_indent).
+2026-06-28 15:19:28 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 15:19:28 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-06-28 15:48:11 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-28 15:48:11 | INFO | VolatilityManager | [VolatilityManager] Processing 2 symbols. TF=1w, window=8, min_vol=15.0%
+2026-06-28 15:48:12 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Super Grid настройки. Волатильность=23.43%. Коэффициент=0.6892. Сетка обновлена (super_indent).
+2026-06-28 15:48:13 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Переход на Super Grid настройки. Волатильность=16.62%. Коэффициент=0.4888. Сетка обновлена (super_indent).
