@@ -23,6 +23,7 @@ class AnalyticsManager:
         self._lock = asyncio.Lock()
         self._csv_lock = asyncio.Lock()
         self._background_tasks = set()
+        self._sync_locks = set()
         self._ensure_files()
 
     def _ensure_files(self):
@@ -72,7 +73,7 @@ class AnalyticsManager:
             "performance_usdt": "Maximum historical growth from start balance (peak - start_balance).",
             "avg_daily_profit": "[Per-Coin] Average profit per active day of trading for this coin.",
             "max_position_size": "[Per-Coin] Max historical notional size actually reached (total volume * price).",
-            "reward_risk_surplus_pct": "[Per-Coin] ((avg_daily_profit / abs(max_drawdown)) - 1) * 100.",
+            "risk_reward_ratio": "[Per-Coin] abs(max_drawdown) / avg_daily_profit.",
             "DRME": "[Per-Coin] Daily Return on Max Exposure: avg_daily_profit / max_position_size.",
             "MDME": "[Per-Coin] Max Drawdown on Max Exposure: abs(max_drawdown) / max_position_size.",
             "max_net_profit": "[Per-Coin] Historical maximum of the coin's fixed net profit.",
@@ -97,18 +98,25 @@ class AnalyticsManager:
             else:
                 days_active = max(1.0, (current_ts - first_trade_ts) / 86400000.0)
             
+            # USE gross_profit_usdt as requested to avoid double counting drawdown
+            gross_profit = cdata.get("gross_profit_usdt", 0.0)
             net_profit = cdata.get("net_profit_usdt", 0.0)
+            
             cdata["max_net_profit"] = round(max(cdata.get("max_net_profit", net_profit), net_profit), 4)
             cdata["min_net_profit"] = round(min(cdata.get("min_net_profit", net_profit), net_profit), 4)
             
-            avg_daily_profit = round(net_profit / days_active, 4)
+            avg_daily_profit = round(gross_profit / days_active, 4)
             cdata["avg_daily_profit"] = avg_daily_profit
             
             max_dd = abs(cdata.get("max_drawdown", 0.0))
-            if max_dd > 0:
-                cdata["reward_risk_surplus_pct"] = round(((avg_daily_profit / max_dd) - 1) * 100, 2)
+            if avg_daily_profit > 0:
+                cdata["risk_reward_ratio"] = round(max_dd / avg_daily_profit, 2)
             else:
-                cdata["reward_risk_surplus_pct"] = round(avg_daily_profit * 100, 2)
+                cdata["risk_reward_ratio"] = 0.0
+                
+            # If the old key exists, remove it
+            if "reward_risk_surplus_pct" in cdata:
+                del cdata["reward_risk_surplus_pct"]
                 
             # Calculate actual historical Max Position Size from runtime config
             runtime_path = DATA_DIR / "runtime" / f"{sym.lower()}.json"
@@ -176,6 +184,7 @@ class AnalyticsManager:
 
     def record_finished_position(self, client, symbol: str, side: str, open_time: int, close_time: int):
         """Запускает фоновую задачу для подтягивания PnL и записи в лог."""
+        self._sync_locks.add(symbol)
         task = asyncio.create_task(self._fetch_and_record(client, symbol, side, open_time, close_time))
         self._background_tasks.add(task)
         task.add_done_callback(self._background_tasks.discard)
@@ -256,6 +265,12 @@ class AnalyticsManager:
         while True:
             await asyncio.sleep(15.0)
             try:
+                # Если хотя бы один символ сейчас ждет подтягивания PnL (5 секунд),
+                # мы пропускаем такт трекера. Иначе трекер увидит unrealized=0, но
+                # gross_profit еще не обновился, что приведет к "виражу" на графике и искажению peak/trough.
+                if self._sync_locks:
+                    continue
+                    
                 async with self._lock:
                     data = self._read_data()
                     if not data:
@@ -346,7 +361,7 @@ class AnalyticsManager:
             except Exception as e:
                 logger.error(f"Realtime tracker error: {e}")
 
-    async def _fetch_and_record(self, client, symbol: str, side: str, open_time: int, close_time: int):
+    async def _do_fetch_and_record(self, client, symbol: str, side: str, open_time: int, close_time: int):
         # Если open_time нет (например, бот запущен с уже открытой позицией)
         if open_time == 0:
             logger.warning(f"[{symbol}] {side} closed, but open_time is 0. Using last 5 minutes for PnL to avoid pulling entire history.")
@@ -464,6 +479,13 @@ class AnalyticsManager:
             import time
             data["last_updated_ts"] = int(time.time() * 1000)
             
+            
             self._write_data(data)
             
         logger.info(f"[ANALYTICS] Position finished: {symbol} {side} NetPnL={net_pnl}")
+
+    async def _fetch_and_record(self, client, symbol: str, side: str, open_time: int, close_time: int):
+        try:
+            await self._do_fetch_and_record(client, symbol, side, open_time, close_time)
+        finally:
+            self._sync_locks.discard(symbol)

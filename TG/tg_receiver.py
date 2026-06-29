@@ -381,7 +381,7 @@ class TelegramReceiver:
                 "<b>🪙 Per-Coin Metrics</b>\n"
                 "▪️ <b>avg_daily_profit</b>: Average profit per active day of trading\n"
                 "▪️ <b>max_position_size</b>: Max historical notional size actually reached (real volume * price)\n"
-                "▪️ <b>reward_risk_surplus_pct</b>: <i>((Avg Daily Profit / |Max Drawdown|) - 1) * 100</i>\n"
+                "▪️ <b>risk_reward_ratio</b>: <i>|Max Drawdown| / Avg Daily Profit</i>\n"
                 "▪️ <b>DRME</b> (Daily Return on Max Exposure): <i>Avg Daily Profit / Max Position Size</i>\n"
                 "▪️ <b>MDME</b> (Max Drawdown on Max Exposure): <i>|Max Drawdown| / Max Position Size</i>\n"
                 "▪️ <b>max_drawdown</b> / <b>min_drawdown</b>: Max/Min historical floating drawdowns\n"
@@ -540,7 +540,7 @@ class TelegramReceiver:
                         msg_coins += f"  • Hist. Drawdown: Max <b>{cdata.get('max_drawdown', 0)}</b> / Min <b>{cdata.get('min_drawdown', 0)}</b>\n"
                         msg_coins += f"  • Avg Daily Profit (Net): <b>{cdata.get('avg_daily_profit', 0)}</b> USDT\n"
                         msg_coins += f"  • Max Position Size: <b>{cdata.get('max_position_size', 0)}</b> USDT\n"
-                        msg_coins += f"  • R/R Surplus (%): <b>{cdata.get('reward_risk_surplus_pct', 0)}%</b>\n"
+                        msg_coins += f"  • Risk/Reward Ratio: <b>{cdata.get('risk_reward_ratio', 0)}</b>\n"
                         msg_coins += f"  • DRME: <b>{cdata.get('DRME', 0)}</b> | MDME: <b>{cdata.get('MDME', 0)}</b>\n\n"
                         await callback.message.answer(msg_coins, parse_mode="HTML")
                 except Exception as e:
