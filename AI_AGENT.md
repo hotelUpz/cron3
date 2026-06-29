@@ -39,7 +39,8 @@
 - "NEVER run main.py, tests, or any mutating commands without EXPLICIT permission from the user." -- status: DESABLED
 
 
-## 5. Recent Changes (28.06.2026)
+## 5. Recent Changes (30.06.2026)
+- **Project Cleanup**: Moved all utility scripts (analytics fixers, ledger rebuilders, etc.) and test files to the `test/` directory. Excluded `test/` from Git tracking to keep the codebase clean.
 - **Analytics Refactor**: TG menu modularized. Added Gross Profit & Net explicitly. Retained historical deleted coins in analytics menu with status flags.
 - **Super Grid**: Renamed from Advanced. Toggling off via TG now instantly drops inactive grid prices and forces recalculation to standard indent in BotCore.
 - **Validation**: Strict length parity checks added for grid and 	p_map on startup and TG JSON upload.
