@@ -33,6 +33,9 @@ class TakeProfitManager:
         tp_indent = current_tp.get("indent")
         if tp_indent is None:
             logger.info(f"[{symbol}] {side} TP indent is null. Skipping LIMIT order placement to rely on Fallback TP.")
+            if current_level_str not in state.tp_map:
+                state.tp_map[current_level_str] = {}
+            state.tp_map[current_level_str]["is_active"] = True
             return True
         # Расчет цены TP (строго от средней цены входа, а не от плавающего тикера)
         base_price = state.avg_entry_price if state.avg_entry_price > 0 else current_price

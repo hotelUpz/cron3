@@ -33,7 +33,8 @@ class VolatilityManager:
         logger.info("[VolatilityManager] Started background loop.")
         while self.is_running:
             try:
-                await self.process_all()
+                if not getattr(self.bot_core, 'is_paused', False):
+                    await self.process_all()
             except Exception as e:
                 logger.error(f"[VolatilityManager] Error in loop: {e}")
             
@@ -64,7 +65,10 @@ class VolatilityManager:
         multiplier = app_cfg.get("multiplier", 1.0)
         min_volatility_pct = app_cfg.get("min_volatility_pct", 5.0)
 
-        logger.info(f"[VolatilityManager] Processing {len(symbols)} symbols. TF={timeframe}, window={window}, min_vol={min_volatility_pct}%")
+        if is_enabled:
+            logger.info(f"[VolatilityManager] Processing {len(symbols)} symbols. TF={timeframe}, window={window}, min_vol={min_volatility_pct}%")
+        else:
+            logger.info(f"[VolatilityManager] Super Grid is disabled. Resetting any active super_indents for {len(symbols)} symbols.")
 
         stats_output = {}
 
@@ -72,35 +76,38 @@ class VolatilityManager:
             if not self.is_running:
                 break
                 
-            klines = await self.bot_core.client.get_klines(symbol, timeframe, window)
-            if not klines or len(klines) == 0:
-                logger.warning(f"[VolatilityManager] [{symbol}] Failed to fetch klines or empty.")
-                continue
-                
-            # Calculate average volatility
-            total_vol = 0.0
-            count = 0
-            for k in klines:
-                high = k.get("high", 0.0)
-                low = k.get("low", 0.0)
-                if low > 0:
-                    vol = ((high / low) - 1) * 100
-                    total_vol += vol
-                    count += 1
-            
-            if count == 0:
-                continue
-                
-            if count < window:
-                logger.warning(f"[VolatilityManager] [{symbol}] Запрошено {window} свечей, но получено только {count} (монета может быть новой). Расчет идет по доступным {count} свечам.")
-                
-            avg_vol = total_vol / count
-            adjusted_vol = avg_vol * multiplier
-            
             is_advanced = is_enabled
-            if is_advanced and adjusted_vol <= min_volatility_pct:
-                logger.info(f"[VolatilityManager] [{symbol}] Игнор: Расчитанная волатильность {adjusted_vol:.2f}% ниже минимума {min_volatility_pct}%. Возвращаемся к использованию стандартных (старых) настроек индента.")
-                is_advanced = False
+            adjusted_vol = 0.0
+            count = 0
+            
+            if is_advanced:
+                klines = await self.bot_core.client.get_klines(symbol, timeframe, window)
+                if not klines or len(klines) == 0:
+                    logger.warning(f"[VolatilityManager] [{symbol}] Failed to fetch klines or empty.")
+                    continue
+                    
+                # Calculate average volatility
+                total_vol = 0.0
+                for k in klines:
+                    high = k.get("high", 0.0)
+                    low = k.get("low", 0.0)
+                    if low > 0:
+                        vol = ((high / low) - 1) * 100
+                        total_vol += vol
+                        count += 1
+                
+                if count == 0:
+                    continue
+                    
+                if count < window:
+                    logger.warning(f"[VolatilityManager] [{symbol}] Запрошено {window} свечей, но получено только {count} (монета может быть новой). Расчет идет по доступным {count} свечам.")
+                    
+                avg_vol = total_vol / count
+                adjusted_vol = avg_vol * multiplier
+                
+                if adjusted_vol <= min_volatility_pct:
+                    logger.info(f"[VolatilityManager] [{symbol}] Игнор: Расчитанная волатильность {adjusted_vol:.2f}% ниже минимума {min_volatility_pct}%. Возвращаемся к использованию стандартных (старых) настроек индента.")
+                    is_advanced = False
                 # We will still process the file to erase super_indent
                 
             # Need to update runtime configuration
