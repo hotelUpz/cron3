@@ -26,6 +26,7 @@ class TGStates(StatesGroup):
     waiting_for_super_grid_json = State()
     waiting_for_initial_balance = State()
     waiting_for_reset_confirm = State()
+    waiting_for_scanner_json = State()
 
 class TelegramReceiver:
     def __init__(self, bot_core):
@@ -856,6 +857,119 @@ class TelegramReceiver:
                     asyncio.create_task(self.bot_core.volatility_manager.process_all())
                     
                 await message.answer("✅ Настройки Super Grid успешно обновлены! Перерасчет запущен.", reply_markup=self._get_main_keyboard())
+                await state.clear()
+            except Exception as e:
+                await message.answer(f"❌ Ошибка JSON: {e}\nИсправьте и отправьте снова.")
+
+        # =========================================================
+        # /sonnik - VOLATILITY SCANNER
+        # =========================================================
+        @self.dp.message(Command("sonnik"))
+        async def on_sonnik_cmd(message: Message, state: FSMContext):
+            await state.clear()
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="🔍 Запустить фильтр (Run Scanner)", callback_data="cb_run_scanner")],
+                [InlineKeyboardButton(text="⚙️ Изменить настройки фильтра", callback_data="cb_edit_scanner_config")]
+            ])
+            await message.answer("<b>Сонник (Volatility Scanner)</b>\nВыберите действие:", reply_markup=keyboard, parse_mode="HTML")
+
+        @self.dp.callback_query(F.data == "cb_run_scanner")
+        async def process_cb_run_scanner(callback: CallbackQuery, state: FSMContext):
+            await callback.answer("Запускаю сканирование... Это займет некоторое время.")
+            msg = await callback.message.answer("⏳ Сканирование волатильности запущено, пожалуйста подождите...")
+            
+            try:
+                import sys
+                import subprocess
+                from consts import DATA_DIR
+                
+                # Запускаем как отдельный процесс, чтобы не блочить бота
+                script_path = os.path.join(os.getcwd(), "run_scanner.py")
+                process = await asyncio.create_subprocess_exec(
+                    sys.executable, script_path,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE
+                )
+                stdout, stderr = await process.communicate()
+                
+                output_path = DATA_DIR / "volatile_symbols.json"
+                if output_path.exists():
+                    await msg.delete()
+                    await callback.message.answer_document(FSInputFile(output_path), caption="✅ Сканирование завершено. Результаты в файле.")
+                else:
+                    await msg.edit_text(f"❌ Ошибка сканирования (файл не создан).\n\nЛоги:\n{stderr.decode('utf-8')}")
+                    
+            except Exception as e:
+                logger.error(f"Error running scanner: {e}")
+                await msg.edit_text(f"❌ Системная ошибка при запуске сканера: {e}")
+
+        @self.dp.callback_query(F.data == "cb_edit_scanner_config")
+        async def process_cb_edit_scanner_config(callback: CallbackQuery, state: FSMContext):
+            await callback.answer()
+            from c_utils import Utils
+            from consts import DATA_DIR
+            import json
+            
+            config_path = DATA_DIR / "app.json"
+            cfg = {
+                "timeframe": "1w",
+                "window": 8,
+                "multiplier": 1.0,
+                "min_volatility_pct": 15.0,
+                "strict_window": True
+            }
+            if config_path.exists():
+                try:
+                    data = Utils.read_json_file(config_path)
+                    if "volatility_scanner" in data:
+                        cfg.update(data["volatility_scanner"])
+                except:
+                    pass
+                    
+            dump_path = os.path.join("logs", "scanner_app.json")
+            os.makedirs("logs", exist_ok=True)
+            with open(dump_path, "w", encoding="utf-8") as f:
+                json.dump(cfg, f, indent=4)
+                
+            await callback.message.answer("<b>Текущие настройки сканера:</b>\nОтредактируйте файл и отправьте обратно документом (или текстом).", reply_markup=self._get_cancel_keyboard(), parse_mode="HTML")
+            await callback.message.answer_document(FSInputFile(dump_path))
+            await state.set_state(TGStates.waiting_for_scanner_json)
+
+        @self.dp.message(TGStates.waiting_for_scanner_json)
+        async def process_scanner_json(message: Message, state: FSMContext):
+            if message.text and message.text == "🔙 Cancel":
+                await state.clear()
+                await message.answer("Отменено.", reply_markup=self._get_main_keyboard())
+                return
+                
+            json_str = ""
+            if message.document:
+                import io
+                file = await self.bot.get_file(message.document.file_id)
+                out = io.BytesIO()
+                await self.bot.download_file(file.file_path, out)
+                json_str = out.getvalue().decode('utf-8')
+            elif message.text:
+                json_str = message.text.strip()
+            else:
+                await message.answer("❌ Пожалуйста, отправьте текстовое сообщение или .json файл.")
+                return
+                
+            import json
+            try:
+                new_cfg = json.loads(json_str)
+                from c_utils import Utils
+                from consts import DATA_DIR
+                
+                config_path = DATA_DIR / "app.json"
+                app_data = {}
+                if config_path.exists():
+                    app_data = Utils.read_json_file(config_path)
+                
+                app_data["volatility_scanner"] = new_cfg
+                Utils.write_json_file(config_path, app_data)
+                
+                await message.answer("✅ Настройки сканера успешно обновлены!", reply_markup=self._get_main_keyboard())
                 await state.clear()
             except Exception as e:
                 await message.answer(f"❌ Ошибка JSON: {e}\nИсправьте и отправьте снова.")

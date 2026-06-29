@@ -3,8 +3,6 @@
 # Role: Клиент для работы с публичным API Binance Futures
 # ==============================================================================
 
-# API/BINANCE/public.py
-
 from __future__ import annotations
 
 import aiohttp
@@ -50,6 +48,38 @@ class BinancePublic:
             return data["symbols"]
 
         return None
+
+    @staticmethod
+    async def get_perp_symbols(quote: str = "USDT", limit: Optional[int] = None) -> List[str]:
+        """GET /fapi/v1/exchangeInfo (filtered for PERPETUAL + TRADING + quote)"""
+        data = await BinancePublic._get("/fapi/v1/exchangeInfo")
+        if not data or not isinstance(data, dict):
+            return []
+            
+        quote_u = (quote or "USDT").upper()
+        out: List[str] = []
+
+        symbols = data.get("symbols", [])
+        if not isinstance(symbols, list):
+            return []
+
+        for s in symbols:
+            if not isinstance(s, dict):
+                continue
+            if s.get("contractType") != "PERPETUAL":
+                continue
+            if s.get("status") != "TRADING":
+                continue
+            if (s.get("quoteAsset") or "").upper() != quote_u:
+                continue
+            sym = s.get("symbol")
+            if sym:
+                out.append(str(sym).upper())
+
+        out.sort()
+        if limit is not None:
+            return out[: int(limit)]
+        return out
 
     @staticmethod
     async def get_mark_price(symbol: str) -> Optional[float]:

@@ -3,14 +3,6 @@
 # Role: Единая система логирования
 # ==============================================================================
 
-# ============================================================
-# File: c_log.py
-# Role: Глобальная настройка логирования
-# ============================================================
-
-# File: c_log.py
-# Role: Unified logging system with RotatingFileHandler and context-aware adapters.
-
 from __future__ import annotations
 
 import pytz

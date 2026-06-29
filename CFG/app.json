@@ -28,9 +28,7 @@
   },
   "symbols": [
     "STABLEUSDT",
-    "SOLUSDT",
-    "DASHUSDT",
-    "JUPUSDT"
+    "DASHUSDT"
   ],
   "telegram": {
     "enabled": true,
@@ -47,5 +45,12 @@
     "multiplier": 1.0,
     "min_volatility_pct": 15.0,
     "update_interval_hours": 24
+  },
+  "volatility_scanner": {
+    "timeframe": "1w",
+    "window": 8,
+    "multiplier": 1.0,
+    "min_volatility_pct": 15.0,
+    "strict_window": true
   }
 }

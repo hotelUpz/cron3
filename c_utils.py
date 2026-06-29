@@ -3,8 +3,6 @@
 # Role: Утилитарные и вспомогательные функции
 # ==============================================================================
 
-# c_utils.py
-
 from typing import *
 from datetime import datetime
 import asyncio

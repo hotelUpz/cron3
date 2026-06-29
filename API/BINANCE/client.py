@@ -3,8 +3,6 @@
 # Role: Клиент для работы с приватным API Binance Futures
 # ==============================================================================
 
-# API/BINANCE/client.py
-
 from __future__ import annotations
 
 import asyncio

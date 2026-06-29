@@ -1,3 +1,8 @@
+# ==============================================================================
+# Path: ANALYTICS/plotter.py
+# Role: Генератор графиков эквити и метрик
+# ==============================================================================
+
 import csv
 import json
 from pathlib import Path
@@ -5,9 +10,12 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 ANALYTICS_DIR = Path(__file__).parent
+IMAGES_DIR = ANALYTICS_DIR / "images"
+IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+
 CSV_FILE = ANALYTICS_DIR / "trades_ledger.csv"
 JSON_FILE = ANALYTICS_DIR / "analytics.json"
-PLOT_FILE = ANALYTICS_DIR / "equity_curve.png"
+PLOT_FILE = IMAGES_DIR / "equity_curve.png"
 
 def generate_equity_curve() -> str:
     if not CSV_FILE.exists():
@@ -185,7 +193,7 @@ def generate_coin_analytics(symbol: str) -> str:
     plt.grid(axis='x', linestyle='--', alpha=0.7)
     plt.tight_layout()
     
-    out_file = ANALYTICS_DIR / f"coin_analytics_{symbol.lower()}.png"
+    out_file = IMAGES_DIR / f"coin_analytics_{symbol.lower()}.png"
     plt.savefig(out_file)
     plt.close()
     

@@ -1,7 +1,7 @@
 {
     "LONG": {
         "enable": true,
-        "invest_size": 2000,
+        "invest_size": 200,
         "leverage": 10,
         "margin_type": "CROSSED",
         "_comment_margin_type": "Valid values: CROSSED | ISOLATED",
@@ -12,7 +12,7 @@
                 "super_indent": null
             },
             "1": {
-                "indent": -4.0,
+                "indent": -5.0,
                 "volume": 14.26,
                 "super_indent": null
             },
@@ -27,12 +27,12 @@
                 "super_indent": null
             },
             "4": {
-                "indent": -19.0,
+                "indent": -21.0,
                 "volume": 18.98,
                 "super_indent": null
             },
             "5": {
-                "indent": -26.0,
+                "indent": -34.0,
                 "volume": 20.87,
                 "super_indent": null
             }
@@ -66,7 +66,7 @@
     },
     "SHORT": {
         "enable": true,
-        "invest_size": 2000,
+        "invest_size": 200,
         "leverage": 10,
         "margin_type": "CROSSED",
         "_comment_margin_type": "Valid values: CROSSED | ISOLATED",
@@ -77,7 +77,7 @@
                 "super_indent": null
             },
             "1": {
-                "indent": -4.0,
+                "indent": -5.0,
                 "volume": 14.26,
                 "super_indent": null
             },
@@ -92,12 +92,12 @@
                 "super_indent": null
             },
             "4": {
-                "indent": -19.0,
+                "indent": -21.0,
                 "volume": 18.98,
                 "super_indent": null
             },
             "5": {
-                "indent": -26.0,
+                "indent": -34.0,
                 "volume": 20.87,
                 "super_indent": null
             }
