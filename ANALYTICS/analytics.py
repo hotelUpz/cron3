@@ -206,13 +206,12 @@ class AnalyticsManager:
                 coin_drawdowns[sym] = coin_drawdowns.get(sym, 0.0) + unrealized
                 
             bot_unrealized = 0.0
-            for sym, drawdown in coin_drawdowns.items():
-                if sym in data.get("per_coin", {}):
-                    cdata = data["per_coin"][sym]
-                    cdata["current_drawdown"] = round(drawdown, 4)
-                    cdata["max_drawdown"] = round(min(cdata.get("max_drawdown", 0.0), drawdown), 4)
-                    cdata["min_drawdown"] = round(max(cdata.get("min_drawdown", drawdown), drawdown), 4)
-                    bot_unrealized += drawdown
+            for sym, cdata in data.get("per_coin", {}).items():
+                drawdown = coin_drawdowns.get(sym, 0.0)
+                cdata["current_drawdown"] = round(drawdown, 4)
+                cdata["max_drawdown"] = round(min(cdata.get("max_drawdown", 0.0), drawdown), 4)
+                cdata["min_drawdown"] = round(max(cdata.get("min_drawdown", drawdown), drawdown), 4)
+                bot_unrealized += drawdown
                     
             # unrealized_pnl_usdt = Сум по current_drawdown
             data["unrealized_pnl_usdt"] = round(bot_unrealized, 4)
@@ -290,13 +289,12 @@ class AnalyticsManager:
                         unrealized = float(p.get("unrealizedProfit", 0.0))
                         coin_drawdowns[sym] = coin_drawdowns.get(sym, 0.0) + unrealized
                     bot_unrealized = 0.0
-                    for sym, drawdown in coin_drawdowns.items():
-                        if sym in data.get("per_coin", {}):
-                            cdata = data["per_coin"][sym]
-                            cdata["current_drawdown"] = round(drawdown, 4)
-                            cdata["max_drawdown"] = round(min(cdata.get("max_drawdown", 0.0), drawdown), 4)
-                            cdata["min_drawdown"] = round(max(cdata.get("min_drawdown", drawdown), drawdown), 4)
-                            bot_unrealized += drawdown
+                    for sym, cdata in data.get("per_coin", {}).items():
+                        drawdown = coin_drawdowns.get(sym, 0.0)
+                        cdata["current_drawdown"] = round(drawdown, 4)
+                        cdata["max_drawdown"] = round(min(cdata.get("max_drawdown", 0.0), drawdown), 4)
+                        cdata["min_drawdown"] = round(max(cdata.get("min_drawdown", drawdown), drawdown), 4)
+                        bot_unrealized += drawdown
                     data["unrealized_pnl_usdt"] = round(bot_unrealized, 4)
                     
                     bot_gross_profit = 0.0

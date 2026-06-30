@@ -540,6 +540,7 @@ class BinanceClient:
         Возвращает список словарей: [{"open_time": int, "high": float, "low": float, ...}, ...]
         """
         # Лимит для свечей (Binance API позволяет до 1500, обычно Rate Limit 10-20ms)
+        limit = min(limit, 1500)
         limit_sec = 0.1
         async with self._kline_lock:
             elapsed = time.monotonic() - self._kline_last_send

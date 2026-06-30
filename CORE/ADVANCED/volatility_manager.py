@@ -81,7 +81,8 @@ class VolatilityManager:
             count = 0
             
             if is_advanced:
-                klines = await self.bot_core.client.get_klines(symbol, timeframe, window)
+                safe_window = min(window, 1500)
+                klines = await self.bot_core.client.get_klines(symbol, timeframe, safe_window)
                 if not klines or len(klines) == 0:
                     logger.warning(f"[VolatilityManager] [{symbol}] Failed to fetch klines or empty.")
                     continue
@@ -100,7 +101,8 @@ class VolatilityManager:
                     continue
                     
                 if count < window:
-                    logger.warning(f"[VolatilityManager] [{symbol}] Запрошено {window} свечей, но получено только {count} (монета может быть новой). Расчет идет по доступным {count} свечам.")
+                    reason = "Ограничение Binance API 1500 свечей" if window > 1500 and count == 1500 else "монета может быть новой"
+                    logger.warning(f"[VolatilityManager] [{symbol}] Запрошено {window} свечей, но получено только {count} ({reason}). Расчет идет по доступным {count} свечам.")
                     
                 avg_vol = total_vol / count
                 adjusted_vol = avg_vol * multiplier
@@ -199,52 +201,52 @@ class VolatilityManager:
         return stats_output
 
 
-# if __name__ == "__main__":
-#     import asyncio
-#     import sys
-#     from pathlib import Path
+if __name__ == "__main__":
+    import asyncio
+    import sys
+    from pathlib import Path
     
-#     root_dir = Path(__file__).parent.parent.parent
-#     sys.path.insert(0, str(root_dir))
+    root_dir = Path(__file__).parent.parent.parent
+    sys.path.insert(0, str(root_dir))
     
-#     from API.BINANCE.client import BinanceClient
-#     from consts import _CFG
+    from API.BINANCE.client import BinanceClient
+    from consts import _CFG
 
-#     class MockRuntimeManager:
-#         def __init__(self):
-#             self.caches = {}
+    class MockRuntimeManager:
+        def __init__(self):
+            self.caches = {}
             
-#         def load_initial_caches(self, symbols):
-#             pass
+        def load_initial_caches(self, symbols):
+            pass
 
-#     class MockBotCore:
-#         def __init__(self):
-#             self.symbols = _CFG.get("symbols", [])
-#             # Для получения публичных свечей ключи не нужны, но клиент требует их в конструкторе
-#             self.client = BinanceClient("", "")
-#             self.runtime_manager = MockRuntimeManager()
-#             self.runtime_configs = {}
+    class MockBotCore:
+        def __init__(self):
+            self.symbols = _CFG.get("symbols", [])
+            # Для получения публичных свечей ключи не нужны, но клиент требует их в конструкторе
+            self.client = BinanceClient("", "")
+            self.runtime_manager = MockRuntimeManager()
+            self.runtime_configs = {}
     
-#     async def test_volatility():
-#         print("=== ЗАПУСК БЕЗОПАСНОГО ТЕСТА ВОЛАТИЛЬНОСТИ ===")
-#         bot = MockBotCore()
-#         vm = VolatilityManager(bot)
-#         vm.is_running = True
+    async def test_volatility():
+        print("=== ЗАПУСК БЕЗОПАСНОГО ТЕСТА ВОЛАТИЛЬНОСТИ ===")
+        bot = MockBotCore()
+        vm = VolatilityManager(bot)
+        vm.is_running = True
         
-#         print(f"Запуск расчетов для {len(bot.symbols)} монет...")
-#         stats = await vm.process_all()
+        print(f"Запуск расчетов для {len(bot.symbols)} монет...")
+        stats = await vm.process_all()
         
-#         # Save beautifully to test/
-#         test_dir = root_dir / "test"
-#         test_dir.mkdir(exist_ok=True)
-#         dump_path = test_dir / "volatility_test.json"
+        # Save beautifully to test/
+        test_dir = root_dir / "test"
+        test_dir.mkdir(exist_ok=True)
+        dump_path = test_dir / "volatility_test.json"
         
-#         import json
-#         with open(dump_path, "w", encoding="utf-8") as f:
-#             json.dump(stats, f, indent=4, ensure_ascii=False)
+        import json
+        with open(dump_path, "w", encoding="utf-8") as f:
+            json.dump(stats, f, indent=4, ensure_ascii=False)
             
-#         print(f"\n[OK] Результаты расчетов сохранены в файл: {dump_path}")
-#         print("=== ТЕСТ ЗАВЕРШЕН ===")
-#         await bot.client.shutdown()
+        print(f"\n[OK] Результаты расчетов сохранены в файл: {dump_path}")
+        print("=== ТЕСТ ЗАВЕРШЕН ===")
+        await bot.client.shutdown()
         
-#     asyncio.run(test_volatility())
+    asyncio.run(test_volatility())

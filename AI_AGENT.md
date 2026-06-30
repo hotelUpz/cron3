@@ -35,13 +35,13 @@
 ---
 
 
-## 4. CRITICAL RULE:
-- "NEVER run main.py, tests, or any mutating commands without EXPLICIT permission from the user." -- status: DESABLED
+## 4. Architectural Invariants (Methodology)
 
+- **Analytics Integrity**: The bot is isolated from manual Binance withdrawals/deposits. `cur_balance_usdt` is strictly mathematically calculated as `start_balance_usdt + net_profit_usdt`. NEVER sync balance directly from Binance `/fapi/v2/account` to `cur_balance_usdt`.
+- **Binance API Limits**: When fetching klines, `limit` MUST NOT exceed 1500 to prevent HTTP 400.
+- **Volatility Calculations**: `VolatilityManager` calculates the *average* volatility per candle. If computing weekly volatility, `timeframe` must be `1w`, not `3m`.
 
-## 5. Recent Changes (30.06.2026)
-- **Project Cleanup**: Moved all utility scripts (analytics fixers, ledger rebuilders, etc.) and test files to the `test/` directory. Excluded `test/` from Git tracking to keep the codebase clean.
-- **Analytics Refactor**: TG menu modularized. Added Gross Profit & Net explicitly. Retained historical deleted coins in analytics menu with status flags.
-- **Super Grid**: Renamed from Advanced. Toggling off via TG now instantly drops inactive grid prices and forces recalculation to standard indent in BotCore.
-- **Validation**: Strict length parity checks added for grid and 	p_map on startup and TG JSON upload.
+---
 
+## 5. CRITICAL RULE:
+- "NEVER run main.py, tests, or any mutating commands without EXPLICIT permission from the user." -- status: DISABLED
