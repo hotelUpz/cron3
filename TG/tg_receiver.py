@@ -914,8 +914,8 @@ class TelegramReceiver:
             cfg = {
                 "timeframe": "1w",
                 "window": 8,
-                "multiplier": 1.0,
                 "min_volatility_pct": 15.0,
+                "max_volatility_pct": None,
                 "strict_window": True
             }
             if config_path.exists():

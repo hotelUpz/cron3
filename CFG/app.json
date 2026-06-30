@@ -28,7 +28,9 @@
   },
   "symbols": [
     "STABLEUSDT",
-    "DASHUSDT"
+    "DASHUSDT",
+    "VVVUSDT",
+    "XPLUSDT"
   ],
   "telegram": {
     "enabled": true,
@@ -38,19 +40,19 @@
     ]
   },
   "super_grid": {
-    "enabled": false,
+    "enabled": true,
     "_comment_timeframe": "Valid values: 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 8h, 12h, 1d, 3d, 1w, 1M",
     "timeframe": "1w",
     "window": 8,
     "multiplier": 1.0,
-    "min_volatility_pct": 15.0,
+    "min_volatility_pct": 20.0,
     "update_interval_hours": 24
   },
   "volatility_scanner": {
     "timeframe": "1w",
-    "window": 8,
-    "multiplier": 1.0,
-    "min_volatility_pct": 15.0,
+    "window": 12,
+    "min_volatility_pct": 25.0,
+    "max_volatility_pct": 40.0,
     "strict_window": true
   }
 }

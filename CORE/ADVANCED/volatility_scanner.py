@@ -28,8 +28,8 @@ class VolatilityScanner:
         default_cfg = {
             "timeframe": "1w",
             "window": 8,
-            "multiplier": 1.0,
             "min_volatility_pct": 15.0,
+            "max_volatility_pct": None,
             "strict_window": True
         }
         
@@ -43,7 +43,7 @@ class VolatilityScanner:
                 
         return default_cfg
 
-    async def _process_symbol(self, symbol, timeframe, window, multiplier, min_vol, strict_window):
+    async def _process_symbol(self, symbol, timeframe, window, min_vol, max_vol, strict_window):
         async with self.semaphore:
             try:
                 klines = await self.client.get_klines(symbol, timeframe, window)
@@ -67,14 +67,17 @@ class VolatilityScanner:
                     return None
                     
                 avg_vol = total_vol / count
-                adjusted_vol = avg_vol * multiplier
+                if min_vol is not None and avg_vol < min_vol:
+                    return None
+                    
+                if max_vol is not None and avg_vol > max_vol:
+                    return None
                 
-                if adjusted_vol > min_vol:
-                    return {
-                        "symbol": symbol,
-                        "volatility": round(adjusted_vol, 2),
-                        "candles": count
-                    }
+                return {
+                    "symbol": symbol,
+                    "volatility": round(avg_vol, 2),
+                    "candles": count
+                }
                     
             except Exception as e:
                 logger.error(f"[Scanner] Error processing {symbol}: {e}")
@@ -85,11 +88,15 @@ class VolatilityScanner:
         cfg = self._get_config()
         timeframe = cfg.get("timeframe", "1w")
         window = int(cfg.get("window", 8))
-        multiplier = float(cfg.get("multiplier", 1.0))
-        min_vol = float(cfg.get("min_volatility_pct", 15.0))
+        min_vol = cfg.get("min_volatility_pct")
+        if min_vol is not None: min_vol = float(min_vol)
+        
+        max_vol = cfg.get("max_volatility_pct")
+        if max_vol is not None: max_vol = float(max_vol)
+        
         strict_window = cfg.get("strict_window", True)
         
-        logger.info(f"[Scanner] Starting scan. TF={timeframe}, window={window}, min_vol={min_vol}%, strict={strict_window}")
+        logger.info(f"[Scanner] Starting scan. TF={timeframe}, window={window}, min_vol={min_vol}%, max_vol={max_vol}%, strict={strict_window}")
         
         symbols = await BinancePublic.get_perp_symbols()
         if not symbols:
@@ -100,7 +107,7 @@ class VolatilityScanner:
         
         tasks = []
         for symbol in symbols:
-            tasks.append(self._process_symbol(symbol, timeframe, window, multiplier, min_vol, strict_window))
+            tasks.append(self._process_symbol(symbol, timeframe, window, min_vol, max_vol, strict_window))
             
         results = await asyncio.gather(*tasks)
         

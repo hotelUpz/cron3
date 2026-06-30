@@ -1,0 +1,27 @@
+2026-06-30 02:47:00 | INFO | VolatilityScanner | [Scanner] Starting scan. TF=1w, window=8, min_vol=15.0%, strict=True
+2026-06-30 02:47:00 | INFO | VolatilityScanner | [Scanner] Found 529 USDT-M Perpetual symbols.
+2026-06-30 02:47:58 | INFO | VolatilityScanner | [Scanner] Saved 492 matching symbols to C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\CFG\volatile_symbols.json
+2026-06-30 02:53:42 | INFO | VolatilityScanner | [Scanner] Starting scan. TF=1w, window=8, min_vol=25.0%, max_vol=60.0%, strict=True
+2026-06-30 02:53:42 | INFO | VolatilityScanner | [Scanner] Found 529 USDT-M Perpetual symbols.
+2026-06-30 02:54:40 | INFO | VolatilityScanner | [Scanner] Saved 202 matching symbols to C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\CFG\volatile_symbols.json
+2026-06-30 02:58:57 | INFO | App | Starting BotCore...
+2026-06-30 02:59:02 | INFO | App | TGReceiver will be started alongside BotCore.
+2026-06-30 02:59:02 | INFO | BotCore | BotCore started in PAUSED state (waiting for TG Start).
+2026-06-30 02:59:02 | INFO | RuntimeBuilder | Created runtime cache for STABLEUSDT at stableusdt.json
+2026-06-30 02:59:02 | INFO | RuntimeBuilder | Created runtime cache for DASHUSDT at dashusdt.json
+2026-06-30 02:59:02 | INFO | BotCore | Main _game_loop started. Specifications and price streams are running.
+2026-06-30 02:59:02 | INFO | BotCore | Prefetching initial prices via REST...
+2026-06-30 02:59:02 | INFO | TGReceiver | Starting Telegram Receiver...
+2026-06-30 02:59:02 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-06-30 02:59:03 | INFO | BotCore | Waiting for price streams to connect...
+2026-06-30 02:59:03 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ImeYc... (length: 64)
+2026-06-30 02:59:04 | INFO | BotCore | Price streams connected successfully.
+2026-06-30 02:59:04 | INFO | BotCore | Streams and REST synced! Running initial RuntimeFSM Sync...
+2026-06-30 02:59:07 | INFO | BotCore | _game_loop cancelled.
+2026-06-30 02:59:07 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-06-30 02:59:07 | INFO | App | Ctrl+C detected. Shutting down...
+2026-06-30 02:59:07 | INFO | BotCore | Executing graceful BotCore shutdown...
+2026-06-30 02:59:08 | INFO | BotCore | Final FSM snapshot saved to runtime cache.
+2026-06-30 03:00:41 | INFO | VolatilityScanner | [Scanner] Starting scan. TF=1w, window=12, min_vol=25.0%, max_vol=40.0%, strict=True
+2026-06-30 03:00:41 | INFO | VolatilityScanner | [Scanner] Found 529 USDT-M Perpetual symbols.
+2026-06-30 03:01:39 | INFO | VolatilityScanner | [Scanner] Saved 147 matching symbols to C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\CFG\volatile_symbols.json
