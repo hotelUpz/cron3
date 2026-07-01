@@ -1,0 +1,94 @@
+==================================================
+GLOBAL ANALYTICS REPORT
+==================================================
+
+Balances:
+  Start: 84.96 USDT
+  Current: 83.6926 USDT
+  Peak: 85.1156 USDT
+  Min (Bottom): 82.3989 USDT
+
+Performance:
+  Net Profit: -1.2674 USDT
+  Realized PnL (Gross): 5.3211 USDT
+  Realized PnL (Net): 4.4205 USDT
+  Total Commission: -0.8858 USDT
+  Total Funding: -0.0148 USDT
+  Unrealized PnL: -5.6879 USDT
+  Max Drawdown: -2.5611 USDT
+  ROI: -1.49%
+  Trades: 82 (Wins: 81 | 98.78%)
+
+==================================================
+PER-COIN METRICS
+==================================================
+
+--- DASHUSDT ---
+  Trades: 8 (Wins: 8 | 100.0%)
+  Net Profit: 0.0488 USDT
+  Realized (Gross): 0.619 USDT
+  Realized (Net): 0.5336 USDT
+  Fees: Comm -0.0855 / Fund 0.0001
+  Unrealized PnL: -0.4848 USDT
+  Hist. Drawdown: Max -0.4865 / Min -0.2788
+  Avg Daily Profit (Net): 0.5336 USDT
+  Max Position Size: 25.9101 USDT
+  Risk/Reward Ratio: 0.91
+  DRME: 0.0206
+  MDME: 0.0188
+
+--- SOLUSDT ---
+  Trades: 11 (Wins: 11 | 100.0%)
+  Net Profit: 0.1805 USDT
+  Realized (Gross): 0.854 USDT
+  Realized (Net): 0.7475 USDT
+  Fees: Comm -0.1066 / Fund 0.0001
+  Unrealized PnL: -0.567 USDT
+  Hist. Drawdown: Max -0.6325 / Min 0.0484
+  Avg Daily Profit (Net): 0.7475 USDT
+  Max Position Size: 26.5914 USDT
+  Risk/Reward Ratio: 0.85
+  DRME: 0.0281
+  MDME: 0.0238
+
+--- STABLEUSDT ---
+  Trades: 17 (Wins: 17 | 100.0%)
+  Net Profit: 0.2245 USDT
+  Realized (Gross): 1.4808 USDT
+  Realized (Net): 1.2792 USDT
+  Fees: Comm -0.2001 / Fund -0.0015
+  Unrealized PnL: -1.0547 USDT
+  Hist. Drawdown: Max -1.966 / Min -0.4178
+  Avg Daily Profit (Net): 1.2792 USDT
+  Max Position Size: 55.8604 USDT
+  Risk/Reward Ratio: 1.54
+  DRME: 0.0229
+  MDME: 0.0352
+
+--- VVVUSDT ---
+  Trades: 15 (Wins: 14 | 93.33%)
+  Net Profit: -0.3227 USDT
+  Realized (Gross): -0.1556 USDT
+  Realized (Net): -0.3227 USDT
+  Fees: Comm -0.1665 / Fund -0.0006
+  Unrealized PnL: 0.0 USDT
+  Hist. Drawdown: Max 0.0 / Min 0.0
+  Avg Daily Profit (Net): -0.3227 USDT
+  Max Position Size: 0.0 USDT
+  Risk/Reward Ratio: 0.0
+  DRME: -0.3227
+  MDME: 0.0
+
+--- XPLUSDT ---
+  Trades: 31 (Wins: 31 | 100.0%)
+  Net Profit: -1.3986 USDT
+  Realized (Gross): 2.5229 USDT
+  Realized (Net): 2.1829 USDT
+  Fees: Comm -0.3271 / Fund -0.0129
+  Unrealized PnL: -3.5815 USDT
+  Hist. Drawdown: Max -4.6343 / Min -1.9771
+  Avg Daily Profit (Net): 2.1829 USDT
+  Max Position Size: 87.2941 USDT
+  Risk/Reward Ratio: 2.12
+  DRME: 0.025
+  MDME: 0.0531
