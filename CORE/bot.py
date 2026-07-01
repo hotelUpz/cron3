@@ -22,6 +22,8 @@ from c_utils import Utils
 from c_log import UnifiedLogger
 logger = UnifiedLogger("BotCore")
 
+BLOCK_ENTRY = False  # Глобальный флаг блокировки входа в позиции (для отладки)
+
 class BotCore:
     def __init__(self):
         self.is_running = False
@@ -328,7 +330,7 @@ class BotCore:
                 continue
             
             if not state.in_position and not state.in_position_papper:
-                if is_signal:
+                if is_signal and not BLOCK_ENTRY:
                     logger.info(f"[{symbol}] {side}: Signal is TRUE! Entering position...")
                     # Ставим временный флаг идемпотентности
                     state.in_position_papper = True
