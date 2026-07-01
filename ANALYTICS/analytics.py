@@ -153,7 +153,7 @@ class AnalyticsManager:
                 def ts_to_str(ts_ms):
                     if not ts_ms:
                         return "Unknown"
-                    return datetime.fromtimestamp(ts_ms / 1000.0, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+                    return datetime.fromtimestamp(ts_ms / 1000.0).strftime('%Y-%m-%d %H:%M:%S')
 
                 open_str = ts_to_str(open_time)
                 close_str = ts_to_str(close_time)
@@ -217,9 +217,7 @@ class AnalyticsManager:
                             for row in reader:
                                 if len(row) > 3 and "Close Time" not in row[3]:
                                     try:
-                                        from datetime import timezone
                                         dt = datetime.strptime(row[3].strip(), "%Y-%m-%d %H:%M:%S")
-                                        dt = dt.replace(tzinfo=timezone.utc)
                                         csv_ts = int(dt.timestamp() * 1000)
                                         break  # First valid row is our definitive start
                                     except Exception:
@@ -339,8 +337,8 @@ class AnalyticsManager:
                 
                 # Reconstruct Ledger sequentially
                 for (ts, sym), g in sorted(grouped.items(), key=lambda x: x[0][0]):
-                    from datetime import timezone
-                    dt_str = datetime.fromtimestamp(ts / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+                    from datetime import datetime
+                    dt_str = datetime.fromtimestamp(ts / 1000).strftime("%Y-%m-%d %H:%M:%S")
                     
                     # Add to global stats
                     total_pnl += g["pnl"]
