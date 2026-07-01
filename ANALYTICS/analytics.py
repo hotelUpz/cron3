@@ -99,14 +99,14 @@ class AnalyticsManager:
             else:
                 days_active = max(1.0, (current_ts - first_trade_ts) / 86400000.0)
             
-            # USE realized_pnl_usdt as requested to avoid double counting drawdown
-            gross_profit = cdata.get("realized_pnl_usdt", 0.0)
+            # USE realized_pnl_net_usdt as requested to avoid double counting drawdown but include fees
+            realized_net = cdata.get("realized_pnl_net_usdt", 0.0)
             net_profit = cdata.get("net_profit_usdt", 0.0)
             
             cdata["max_net_profit"] = round(max(cdata.get("max_net_profit", net_profit), net_profit), 4)
             cdata["min_net_profit"] = round(min(cdata.get("min_net_profit", net_profit), net_profit), 4)
             
-            avg_daily_profit = round(gross_profit / days_active, 4)
+            avg_daily_profit = round(realized_net / days_active, 4)
             cdata["avg_daily_profit"] = avg_daily_profit
             
             max_dd = abs(cdata.get("max_drawdown", 0.0))
@@ -285,8 +285,10 @@ class AnalyticsManager:
                 # Sort records chronologically
                 income_records.sort(key=lambda x: x.get("time", 0))
                 
-                # Group by exact time and symbol to merge PnL, Comm, Funding
-                grouped = {}
+                # Group by time window and symbol to merge PnL, Comm, Funding
+                grouped_list = []
+                last_group_per_sym = {}
+                
                 for r in income_records:
                     sym = r.get("symbol")
                     if not sym:
@@ -296,20 +298,25 @@ class AnalyticsManager:
                         by_symbol[sym] = {"pnl": 0.0, "comm": 0.0, "fund": 0.0, "trades": 0, "wins": 0}
                         
                     ts = int(r.get("time", 0))
-                    key = (ts, sym)
-                    if key not in grouped:
-                        grouped[key] = {"pnl": 0.0, "comm": 0.0, "fund": 0.0, "has_trade": False}
+                    
+                    if sym in last_group_per_sym and (ts - last_group_per_sym[sym]["ts"] <= 15000):
+                        # Merge into existing group within 15 seconds window
+                        g = last_group_per_sym[sym]
+                    else:
+                        g = {"ts": ts, "sym": sym, "pnl": 0.0, "comm": 0.0, "fund": 0.0, "has_trade": False}
+                        grouped_list.append(g)
+                        last_group_per_sym[sym] = g
                         
                     inc_type = r.get("incomeType")
                     val = float(r.get("income", 0.0))
                     
                     if inc_type == "REALIZED_PNL":
-                        grouped[key]["pnl"] += val
-                        grouped[key]["has_trade"] = True
+                        g["pnl"] += val
+                        g["has_trade"] = True
                     elif inc_type == "COMMISSION":
-                        grouped[key]["comm"] += val
+                        g["comm"] += val
                     elif inc_type == "FUNDING_FEE":
-                        grouped[key]["fund"] += val
+                        g["fund"] += val
 
                 ledger_rows = []
                 current_balance = start_balance
@@ -317,7 +324,9 @@ class AnalyticsManager:
                 trade_id_counter = 1
                 
                 # Reconstruct Ledger sequentially
-                for (ts, sym), g in sorted(grouped.items(), key=lambda x: x[0][0]):
+                for g in grouped_list:
+                    ts = g["ts"]
+                    sym = g["sym"]
                     dt_str = datetime.fromtimestamp(ts / 1000).strftime("%Y-%m-%d %H:%M:%S")
                     
                     # Add to global stats

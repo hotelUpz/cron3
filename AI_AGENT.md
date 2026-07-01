@@ -1,5 +1,7 @@
 # AI_AGENT.md — AI Quick Start
 
+PROJECT_NAME = "hron"
+
 Читается первым. Содержит только навигацию и текущий контекст — всё остальное в первоисточниках ниже.
 
 ---
@@ -40,8 +42,12 @@
 - **Analytics Integrity**: The bot is isolated from manual Binance withdrawals/deposits. `cur_balance_usdt` is strictly mathematically calculated as `start_balance_usdt + net_profit_usdt`. NEVER sync balance directly from Binance `/fapi/v2/account` to `cur_balance_usdt`.
 - **Binance API Limits**: When fetching klines, `limit` MUST NOT exceed 1500 to prevent HTTP 400.
 - **Volatility Calculations**: `VolatilityManager` calculates the *average* volatility per candle. If computing weekly volatility, `timeframe` must be `1w`, not `3m`.
+- **Analytics Ledger Aggregation**: Binance API `/fapi/v1/income` returns `REALIZED_PNL` as fragmented partial fills. The ledger reconstructor (`deep_sync_analytics`) MUST use a time-window aggregation (e.g. 15s) to merge these partial fills into a single logical trade to prevent inflated `total_trades` and `winrate` distortion.
+- **Net Profit Priority**: All reporting and daily metric calculations (like `Avg Daily Profit`, `DRME`) MUST be based on `realized_pnl_net_usdt` (which accounts for commissions and funding), rather than gross `realized_pnl_usdt`.
 
 ---
 
 ## 5. CRITICAL RULE:
 - "NEVER run main.py, tests, or any mutating commands without EXPLICIT permission from the user." -- status: DISABLED
+
+## После каждой правки обновляй WORKSPACE/TRADING_SYSTEM/COMMON/wiki/{PROJECT_NAME}

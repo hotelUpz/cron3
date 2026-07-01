@@ -370,7 +370,9 @@ class TelegramReceiver:
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
                 [InlineKeyboardButton(text="🌍 Global Analytics", callback_data="analytics_global")],
                 [InlineKeyboardButton(text="🪙 Аналитика по монетам", callback_data="analytics_coin_menu")],
-                [InlineKeyboardButton(text="📝 Лента сделок (CSV)", callback_data="analytics_csv")],
+                [InlineKeyboardButton(text="🏆 Рейтинг монет", callback_data="analytics_ranking")],
+                [InlineKeyboardButton(text="📝 Лента сделок (TXT)", callback_data="analytics_txt")],
+                [InlineKeyboardButton(text="📄 Выгрузить весь отчет (TXT)", callback_data="analytics_full_report")],
                 [InlineKeyboardButton(text="📚 Шпаргалка (Cheat Sheet)", callback_data="analytics_cheat_sheet")]
             ])
             await message.answer("Выберите раздел аналитики:", reply_markup=keyboard)
@@ -396,14 +398,126 @@ class TelegramReceiver:
             )
             await callback.message.answer(help_str, parse_mode="HTML")
 
-        @self.dp.callback_query(F.data == "analytics_csv")
-        async def process_analytics_csv(callback: CallbackQuery, state: FSMContext):
+        @self.dp.callback_query(F.data == "analytics_ranking")
+        async def process_analytics_ranking(callback: CallbackQuery, state: FSMContext):
             await callback.answer()
-            csv_path = ANALYTICS_DIR / "trades_ledger.txt"
-            if csv_path.exists():
-                await callback.message.answer_document(FSInputFile(str(csv_path)))
+            import json
+            analytics_path = ANALYTICS_DIR / "analytics.json"
+            if not analytics_path.exists():
+                await callback.message.answer("Analytics JSON not found.")
+                return
+                
+            try:
+                data = json.loads(analytics_path.read_text(encoding="utf-8"))
+                per_coin = data.get("per_coin", {})
+                if not per_coin:
+                    await callback.message.answer("Нет данных по монетам.")
+                    return
+                    
+                sorted_coins = sorted(per_coin.items(), key=lambda x: float(x[1].get("net_profit_usdt", 0)), reverse=True)
+                
+                lines = ["<b>🏆 Рейтинг монет (по Net Profit)</b>\n"]
+                for i, (sym, cdata) in enumerate(sorted_coins, 1):
+                    net_profit = float(cdata.get("net_profit_usdt", 0))
+                    realized_net = float(cdata.get("realized_pnl_net_usdt", 0))
+                    
+                    if i == 1:
+                        medal = "🥇"
+                    elif i == 2:
+                        medal = "🥈"
+                    elif i == 3:
+                        medal = "🥉"
+                    else:
+                        medal = "▪️"
+                        
+                    lines.append(f"{medal} <b>{sym}</b>: {net_profit} USDT <i>(Realized Net: {realized_net} USDT)</i>")
+                    
+                await callback.message.answer("\n".join(lines), parse_mode="HTML")
+            except Exception as e:
+                logger.error(f"Error generating ranking: {e}")
+                await callback.message.answer("Ошибка генерации рейтинга.")
+
+        @self.dp.callback_query(F.data == "analytics_txt")
+        async def process_analytics_txt(callback: CallbackQuery, state: FSMContext):
+            await callback.answer()
+            txt_path = ANALYTICS_DIR / "trades_ledger.txt"
+            if txt_path.exists():
+                await callback.message.answer_document(FSInputFile(str(txt_path)))
             else:
-                await callback.message.answer("Trades ledger CSV not found.")
+                await callback.message.answer("Trades ledger TXT not found.")
+
+        @self.dp.callback_query(F.data == "analytics_full_report")
+        async def process_analytics_full_report(callback: CallbackQuery, state: FSMContext):
+            await callback.answer()
+            import json
+            analytics_path = ANALYTICS_DIR / "analytics.json"
+            if not analytics_path.exists():
+                await callback.message.answer("Analytics JSON not found.")
+                return
+                
+            try:
+                data = json.loads(analytics_path.read_text(encoding="utf-8"))
+                
+                lines = []
+                lines.append("="*50)
+                lines.append("GLOBAL ANALYTICS REPORT")
+                lines.append("="*50 + "\n")
+                
+                lines.append("Balances:")
+                lines.append(f"  Start: {data.get('start_balance_usdt', 0)} USDT")
+                lines.append(f"  Current: {data.get('cur_balance_usdt', 0)} USDT")
+                lines.append(f"  Peak: {data.get('peak_balance_usdt', 0)} USDT")
+                lines.append(f"  Min (Bottom): {data.get('min_balance_usdt', 0)} USDT\n")
+                
+                realized = float(data.get('realized_pnl_usdt', 0))
+                realized_net = float(data.get('realized_pnl_net_usdt', 0))
+                comm = float(data.get('total_commission_usdt', 0))
+                fund = float(data.get('total_funding_usdt', 0))
+                
+                lines.append("Performance:")
+                lines.append(f"  Net Profit: {data.get('net_profit_usdt', 0)} USDT")
+                lines.append(f"  Realized PnL (Gross): {realized} USDT")
+                lines.append(f"  Realized PnL (Net): {realized_net} USDT")
+                lines.append(f"  Total Commission: {comm} USDT")
+                lines.append(f"  Total Funding: {fund} USDT")
+                lines.append(f"  Unrealized PnL: {data.get('unrealized_pnl_usdt', 0)} USDT")
+                lines.append(f"  Max Drawdown: {data.get('max_drawdown_usdt', 0)} USDT")
+                lines.append(f"  ROI: {data.get('roi_pct', 0)}%")
+                lines.append(f"  Trades: {data.get('total_trades', 0)} (Wins: {data.get('winning_trades', 0)} | {data.get('winrate_pct', 0)}%)\n")
+                
+                if "per_coin" in data:
+                    lines.append("="*50)
+                    lines.append("PER-COIN METRICS")
+                    lines.append("="*50 + "\n")
+                    
+                    for sym, cdata in sorted(data["per_coin"].items()):
+                        lines.append(f"--- {sym} ---")
+                        lines.append(f"  Trades: {cdata.get('total_trades', 0)} (Wins: {cdata.get('winning_trades', 0)} | {cdata.get('winrate_pct', 0)}%)")
+                        
+                        crealized = float(cdata.get('realized_pnl_usdt', 0))
+                        crealized_net = float(cdata.get('realized_pnl_net_usdt', 0))
+                        ccomm = float(cdata.get('commission_usdt', 0))
+                        cfund = float(cdata.get('funding_usdt', 0))
+                        
+                        lines.append(f"  Net Profit: {cdata.get('net_profit_usdt', 0)} USDT")
+                        lines.append(f"  Realized (Gross): {crealized} USDT")
+                        lines.append(f"  Realized (Net): {crealized_net} USDT")
+                        lines.append(f"  Fees: Comm {ccomm} / Fund {cfund}")
+                        lines.append(f"  Unrealized PnL: {cdata.get('current_drawdown', 0)} USDT")
+                        lines.append(f"  Hist. Drawdown: Max {cdata.get('max_drawdown', 0)} / Min {cdata.get('min_drawdown', 0)}")
+                        lines.append(f"  Avg Daily Profit (Net): {cdata.get('avg_daily_profit', 0)} USDT")
+                        lines.append(f"  Max Position Size: {cdata.get('max_position_size', 0)} USDT")
+                        lines.append(f"  Risk/Reward Ratio: {cdata.get('risk_reward_ratio', 0)}")
+                        lines.append(f"  DRME: {cdata.get('DRME', 0)}")
+                        lines.append(f"  MDME: {cdata.get('MDME', 0)}\n")
+                
+                report_path = ANALYTICS_DIR / "full_analytics_report.txt"
+                report_path.write_text("\n".join(lines), encoding="utf-8")
+                
+                await callback.message.answer_document(FSInputFile(str(report_path)))
+            except Exception as e:
+                logger.error(f"Error generating full report: {e}")
+                await callback.message.answer("Error generating report.")
 
         @self.dp.callback_query(F.data == "analytics_global")
         async def process_analytics_global(callback: CallbackQuery, state: FSMContext):
