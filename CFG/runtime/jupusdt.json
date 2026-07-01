@@ -9,44 +9,44 @@
             "0": {
                 "indent": 0,
                 "volume": 12.96,
-                "super_indent": null,
+                "super_indent": 0.0,
                 "is_active": false,
                 "price": null
             },
             "1": {
                 "indent": -5.0,
                 "volume": 14.26,
-                "super_indent": null,
-                "price": null,
-                "is_active": false
+                "super_indent": -4.0857,
+                "is_active": false,
+                "price": null
             },
             "2": {
                 "indent": -8.0,
                 "volume": 15.68,
-                "super_indent": null,
-                "price": null,
-                "is_active": false
+                "super_indent": -6.5371,
+                "is_active": false,
+                "price": null
             },
             "3": {
                 "indent": -13.0,
                 "volume": 17.25,
-                "super_indent": null,
-                "price": null,
-                "is_active": false
+                "super_indent": -10.6227,
+                "is_active": false,
+                "price": null
             },
             "4": {
                 "indent": -21.0,
                 "volume": 18.98,
-                "super_indent": null,
-                "price": null,
-                "is_active": false
+                "super_indent": -17.1598,
+                "is_active": false,
+                "price": null
             },
             "5": {
                 "indent": -34.0,
                 "volume": 20.87,
-                "super_indent": null,
-                "price": null,
-                "is_active": false
+                "super_indent": -27.7825,
+                "is_active": false,
+                "price": null
             }
         },
         "tp_map": {
@@ -86,13 +86,13 @@
         "pre_avg_price": 0.0,
         "initial_entry_price": 0.0,
         "open_time": 0,
+        "next_avg_price": null,
+        "fallback_price": null,
         "in_position": false,
         "in_position_papper": false,
         "is_finished": false,
         "pending_avg": false,
-        "pending_rolling_tp": false,
-        "next_avg_price": null,
-        "fallback_price": null
+        "pending_rolling_tp": false
     },
     "SHORT": {
         "enable": true,
@@ -104,44 +104,44 @@
             "0": {
                 "indent": 0,
                 "volume": 12.96,
-                "super_indent": null,
+                "super_indent": 0.0,
                 "is_active": false,
                 "price": null
             },
             "1": {
                 "indent": -5.0,
                 "volume": 14.26,
-                "super_indent": null,
-                "price": null,
-                "is_active": false
+                "super_indent": -4.0857,
+                "is_active": false,
+                "price": null
             },
             "2": {
                 "indent": -8.0,
                 "volume": 15.68,
-                "super_indent": null,
-                "price": null,
-                "is_active": false
+                "super_indent": -6.5371,
+                "is_active": false,
+                "price": null
             },
             "3": {
                 "indent": -13.0,
                 "volume": 17.25,
-                "super_indent": null,
-                "price": null,
-                "is_active": false
+                "super_indent": -10.6227,
+                "is_active": false,
+                "price": null
             },
             "4": {
                 "indent": -21.0,
                 "volume": 18.98,
-                "super_indent": null,
-                "price": null,
-                "is_active": false
+                "super_indent": -17.1598,
+                "is_active": false,
+                "price": null
             },
             "5": {
                 "indent": -34.0,
                 "volume": 20.87,
-                "super_indent": null,
-                "price": null,
-                "is_active": false
+                "super_indent": -27.7825,
+                "is_active": false,
+                "price": null
             }
         },
         "tp_map": {
@@ -181,13 +181,13 @@
         "pre_avg_price": 0.0,
         "initial_entry_price": 0.0,
         "open_time": 0,
+        "next_avg_price": null,
+        "fallback_price": null,
         "in_position": false,
         "in_position_papper": false,
         "is_finished": false,
         "pending_avg": false,
-        "pending_rolling_tp": false,
-        "next_avg_price": null,
-        "fallback_price": null
+        "pending_rolling_tp": false
     },
     "super_grid": {
         "enabled": false

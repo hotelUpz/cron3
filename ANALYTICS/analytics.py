@@ -249,10 +249,19 @@ class AnalyticsManager:
                 except Exception:
                     active_symbols = []
                 
-                async with self._lock:
-                    legacy_symbols = list(data.get("per_coin", {}).keys())
+                ledger_symbols = []
+                try:
+                    if self.txt_file.exists():
+                        import csv
+                        with open(self.txt_file, 'r', encoding='utf-8') as f:
+                            reader = csv.reader(f, delimiter=';')
+                            for row in reader:
+                                if len(row) > 1 and row[1] != "Symbol":
+                                    ledger_symbols.append(row[1])
+                except Exception:
+                    pass
                 
-                tracked_symbols = set(active_symbols + legacy_symbols)
+                tracked_symbols = set(active_symbols + ledger_symbols)
                 
                 # Fetch income
                 income_records = []
@@ -285,11 +294,17 @@ class AnalyticsManager:
                 # Sort records chronologically
                 income_records.sort(key=lambda x: x.get("time", 0))
                 
+                # Get current BNB price for commission conversion
+                bnb_price = 0.0
+                p_res = await client._request("GET", "https://fapi.binance.com/fapi/v1/ticker/price", params={"symbol": "BNBUSDT"})
+                if p_res.success:
+                    bnb_price = float(p_res.data.get("price", 0.0))
+
                 # Group by exact time and symbol to merge PnL, Comm, Funding
                 grouped = {}
                 for r in income_records:
                     sym = r.get("symbol")
-                    if not sym:
+                    if not sym or sym not in tracked_symbols:
                         continue
                         
                     if sym not in by_symbol:
@@ -302,12 +317,16 @@ class AnalyticsManager:
                         
                     inc_type = r.get("incomeType")
                     val = float(r.get("income", 0.0))
+                    asset = r.get("asset", "")
                     
                     if inc_type == "REALIZED_PNL":
                         grouped[key]["pnl"] += val
                         grouped[key]["has_trade"] = True
                     elif inc_type == "COMMISSION":
-                        grouped[key]["comm"] += val
+                        if asset == "BNB" and bnb_price > 0:
+                            grouped[key]["comm"] += val * bnb_price
+                        else:
+                            grouped[key]["comm"] += val
                     elif inc_type == "FUNDING_FEE":
                         grouped[key]["fund"] += val
 

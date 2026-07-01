@@ -29,8 +29,10 @@
   "symbols": [
     "STABLEUSDT",
     "DASHUSDT",
-    "XPLUSDT",
-    "SOLUSDT"
+    "SOLUSDT",
+    "BNBUSDT",
+    "XAGUSDT",
+    "JUPUSDT"
   ],
   "telegram": {
     "enabled": true,
