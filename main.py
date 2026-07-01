@@ -107,3 +107,17 @@ if __name__ == "__main__":
 
 # Id;Symbol;Side;Open Time;Close Time;PnL (USDT);Balance
 # 1;XPLUSDT;SYNC;2026-06-30 03:26:05;2026-06-30 03:26:05;0.0231;84.9831
+
+
+# Slavik
+# Id;Symbol;Side;Open Time;Close Time;PnL (USDT);Balance
+# 1;SOLUSDT;SHORT;2026-06-26 20:25:01;2026-06-26 20:33:45;1.5663;8999.9317
+
+#   "symbols": [
+#     "STABLEUSDT",
+#     "DASHUSDT",
+#     "SOLUSDT",
+#     "BNBUSDT",
+#     "XAGUSDT",
+#     "JUPUSDT"
+#   ],
