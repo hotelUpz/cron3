@@ -748,3 +748,94 @@
 2026-07-01 19:35:33 | INFO | App | Ctrl+C detected. Shutting down...
 2026-07-01 19:35:33 | INFO | BotCore | Executing graceful BotCore shutdown...
 2026-07-01 19:35:33 | INFO | BotCore | Final FSM snapshot saved to runtime cache.
+2026-07-01 20:07:05 | INFO | App | Starting BotCore...
+2026-07-01 20:07:14 | INFO | App | TGReceiver will be started alongside BotCore.
+2026-07-01 20:07:14 | INFO | BotCore | BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.
+2026-07-01 20:07:14 | INFO | BotCore | Running initial deep sync analytics on startup...
+2026-07-01 20:07:14 | INFO | TGReceiver | Starting Telegram Receiver...
+2026-07-01 20:07:15 | INFO | BotCore | Main _game_loop started. Specifications and price streams are running.
+2026-07-01 20:07:15 | INFO | BotCore | Prefetching initial prices via REST...
+2026-07-01 20:07:15 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-07-01 20:07:15 | INFO | VolatilityManager | [VolatilityManager] Processing 4 symbols. TF=1w, window=12, min_vol=15.0%, max_vol=None%
+2026-07-01 20:07:16 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Super Grid настройки. Волатильность=26.55%. Коэффициент=0.7808. Сетка обновлена (super_indent).
+2026-07-01 20:07:16 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:07:16 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:07:16 | INFO | BotCore | Waiting for price streams to connect...
+2026-07-01 20:07:16 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] Переход на Super Grid настройки. Волатильность=24.02%. Коэффициент=0.7063. Сетка обновлена (super_indent).
+2026-07-01 20:07:16 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:07:16 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:07:16 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ImeYc... (length: 64)
+2026-07-01 20:07:16 | INFO | VolatilityManager | [VolatilityManager] [XPLUSDT] Переход на Super Grid настройки. Волатильность=34.93%. Коэффициент=1.0273. Сетка обновлена (super_indent).
+2026-07-01 20:07:16 | INFO | VolatilityManager | [VolatilityManager] [XPLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:07:16 | INFO | VolatilityManager | [VolatilityManager] [XPLUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:07:16 | INFO | BotCore | Price streams connected successfully.
+2026-07-01 20:07:17 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Игнор: Расчитанная волатильность 14.28% ниже или равна минимуму 15.0%. Возвращаемся к использованию стандартных настроек индента.
+2026-07-01 20:07:17 | DEBUG | VolatilityManager | [VolatilityManager] [SOLUSDT] Сетка сброшена на стандартные настройки (super_indent удален).
+2026-07-01 20:07:17 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:07:17 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:07:17 | INFO | BotCore | Streams and REST synced! Running initial RuntimeFSM Sync...
+2026-07-01 20:07:18 | INFO | BotCore | [XPLUSDT] SHORT is_finished. Running analytics and resetting runtime cache...
+2026-07-01 20:07:18 | INFO | BotCore | [XPLUSDT] SHORT Canceling all limit orders for this side
+2026-07-01 20:07:18 | DEBUG | RuntimeManager | [XPLUSDT] SHORT FSM state reset to default (kept custom config).
+2026-07-01 20:09:33 | INFO | BotCore | _game_loop cancelled.
+2026-07-01 20:09:33 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-07-01 20:09:33 | INFO | App | Ctrl+C detected. Shutting down...
+2026-07-01 20:09:33 | INFO | BotCore | Executing graceful BotCore shutdown...
+2026-07-01 20:09:33 | INFO | BotCore | Final FSM snapshot saved to runtime cache.
+2026-07-01 20:10:27 | INFO | App | Starting BotCore...
+2026-07-01 20:10:32 | INFO | App | TGReceiver will be started alongside BotCore.
+2026-07-01 20:10:32 | INFO | BotCore | BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.
+2026-07-01 20:10:32 | INFO | BotCore | Running initial deep sync analytics on startup...
+2026-07-01 20:10:32 | INFO | TGReceiver | Starting Telegram Receiver...
+2026-07-01 20:10:33 | INFO | BotCore | Main _game_loop started. Specifications and price streams are running.
+2026-07-01 20:10:33 | INFO | BotCore | Prefetching initial prices via REST...
+2026-07-01 20:10:33 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-07-01 20:10:33 | INFO | VolatilityManager | [VolatilityManager] Processing 5 symbols. TF=1w, window=12, min_vol=15.0%, max_vol=None%
+2026-07-01 20:10:33 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Super Grid настройки. Волатильность=26.55%. Коэффициент=0.7808. Сетка обновлена (super_indent).
+2026-07-01 20:10:33 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:10:33 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:10:33 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] Переход на Super Grid настройки. Волатильность=24.02%. Коэффициент=0.7063. Сетка обновлена (super_indent).
+2026-07-01 20:10:33 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:10:33 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:10:33 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ImeYc... (length: 64)
+2026-07-01 20:10:33 | INFO | BotCore | Waiting for price streams to connect...
+2026-07-01 20:10:34 | INFO | VolatilityManager | [VolatilityManager] [XPLUSDT] Переход на Super Grid настройки. Волатильность=34.93%. Коэффициент=1.0273. Сетка обновлена (super_indent).
+2026-07-01 20:10:34 | INFO | VolatilityManager | [VolatilityManager] [XPLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:10:34 | INFO | BotCore | Price streams connected successfully.
+2026-07-01 20:10:34 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Игнор: Расчитанная волатильность 14.28% ниже или равна минимуму 15.0%. Возвращаемся к использованию стандартных настроек индента.
+2026-07-01 20:10:34 | DEBUG | VolatilityManager | [VolatilityManager] [SOLUSDT] Сетка сброшена на стандартные настройки (super_indent удален).
+2026-07-01 20:10:34 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:10:34 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:10:34 | INFO | BotCore | Streams and REST synced! Running initial RuntimeFSM Sync...
+2026-07-01 20:10:34 | INFO | VolatilityManager | [VolatilityManager] [VVVUSDT] Переход на Super Grid настройки. Волатильность=39.10%. Коэффициент=1.1499. Сетка обновлена (super_indent).
+2026-07-01 20:37:21 | INFO | BotCore | _game_loop cancelled.
+2026-07-01 20:37:21 | INFO | FSM_Stream | PositionStream: WS disconnected
+2026-07-01 20:37:21 | INFO | App | Ctrl+C detected. Shutting down...
+2026-07-01 20:37:21 | INFO | BotCore | Executing graceful BotCore shutdown...
+2026-07-01 20:37:21 | INFO | BotCore | Final FSM snapshot saved to runtime cache.
+2026-07-01 20:37:36 | INFO | App | Starting BotCore...
+2026-07-01 20:37:41 | INFO | App | TGReceiver will be started alongside BotCore.
+2026-07-01 20:37:41 | INFO | BotCore | BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.
+2026-07-01 20:37:41 | INFO | BotCore | Running initial deep sync analytics on startup...
+2026-07-01 20:37:41 | INFO | TGReceiver | Starting Telegram Receiver...
+2026-07-01 20:37:42 | INFO | BotCore | Main _game_loop started. Specifications and price streams are running.
+2026-07-01 20:37:42 | INFO | BotCore | Prefetching initial prices via REST...
+2026-07-01 20:37:42 | INFO | VolatilityManager | [VolatilityManager] Started background loop.
+2026-07-01 20:37:42 | INFO | VolatilityManager | [VolatilityManager] Processing 5 symbols. TF=1w, window=12, min_vol=15.0%, max_vol=None%
+2026-07-01 20:37:43 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] Переход на Super Grid настройки. Волатильность=26.55%. Коэффициент=0.7808. Сетка обновлена (super_indent).
+2026-07-01 20:37:43 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:37:43 | INFO | VolatilityManager | [VolatilityManager] [STABLEUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:37:43 | INFO | BotCore | Waiting for price streams to connect...
+2026-07-01 20:37:43 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] Переход на Super Grid настройки. Волатильность=24.02%. Коэффициент=0.7063. Сетка обновлена (super_indent).
+2026-07-01 20:37:43 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:37:43 | INFO | VolatilityManager | [VolatilityManager] [DASHUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:37:43 | INFO | FSM_Stream | [BINANCE] listenKey created & activated: ImeYc... (length: 64)
+2026-07-01 20:37:43 | INFO | BotCore | Price streams connected successfully.
+2026-07-01 20:37:43 | INFO | VolatilityManager | [VolatilityManager] [XPLUSDT] Переход на Super Grid настройки. Волатильность=34.93%. Коэффициент=1.0273. Сетка обновлена (super_indent).
+2026-07-01 20:37:43 | INFO | VolatilityManager | [VolatilityManager] [XPLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:37:43 | INFO | BotCore | Streams and REST synced! Running initial RuntimeFSM Sync...
+2026-07-01 20:37:43 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] Игнор: Расчитанная волатильность 14.28% ниже или равна минимуму 15.0%. Возвращаемся к использованию стандартных настроек индента.
+2026-07-01 20:37:44 | DEBUG | VolatilityManager | [VolatilityManager] [SOLUSDT] Сетка сброшена на стандартные настройки (super_indent удален).
+2026-07-01 20:37:44 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] LONG Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:37:44 | INFO | VolatilityManager | [VolatilityManager] [SOLUSDT] SHORT Горячая подгрузка: неактивные прайсы сброшены на None. Ожидание перерасчета сетки.
+2026-07-01 20:37:44 | INFO | VolatilityManager | [VolatilityManager] [VVVUSDT] Переход на Super Grid настройки. Волатильность=39.10%. Коэффициент=1.1499. Сетка обновлена (super_indent).

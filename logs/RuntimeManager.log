@@ -92,3 +92,4 @@
 2026-07-01 19:01:43 | DEBUG | RuntimeManager | [STABLEUSDT] SHORT FSM state reset to default (kept custom config).
 2026-07-01 19:06:32 | DEBUG | RuntimeManager | [STABLEUSDT] SHORT FSM state reset to default (kept custom config).
 2026-07-01 19:27:35 | DEBUG | RuntimeManager | [SOLUSDT] LONG FSM state reset to default (kept custom config).
+2026-07-01 20:07:18 | DEBUG | RuntimeManager | [XPLUSDT] SHORT FSM state reset to default (kept custom config).

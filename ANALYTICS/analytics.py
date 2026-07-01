@@ -285,10 +285,8 @@ class AnalyticsManager:
                 # Sort records chronologically
                 income_records.sort(key=lambda x: x.get("time", 0))
                 
-                # Group by time window and symbol to merge PnL, Comm, Funding
-                grouped_list = []
-                last_group_per_sym = {}
-                
+                # Group by exact time and symbol to merge PnL, Comm, Funding
+                grouped = {}
                 for r in income_records:
                     sym = r.get("symbol")
                     if not sym:
@@ -298,25 +296,20 @@ class AnalyticsManager:
                         by_symbol[sym] = {"pnl": 0.0, "comm": 0.0, "fund": 0.0, "trades": 0, "wins": 0}
                         
                     ts = int(r.get("time", 0))
-                    
-                    if sym in last_group_per_sym and (ts - last_group_per_sym[sym]["ts"] <= 15000):
-                        # Merge into existing group within 15 seconds window
-                        g = last_group_per_sym[sym]
-                    else:
-                        g = {"ts": ts, "sym": sym, "pnl": 0.0, "comm": 0.0, "fund": 0.0, "has_trade": False}
-                        grouped_list.append(g)
-                        last_group_per_sym[sym] = g
+                    key = (ts, sym)
+                    if key not in grouped:
+                        grouped[key] = {"pnl": 0.0, "comm": 0.0, "fund": 0.0, "has_trade": False}
                         
                     inc_type = r.get("incomeType")
                     val = float(r.get("income", 0.0))
                     
                     if inc_type == "REALIZED_PNL":
-                        g["pnl"] += val
-                        g["has_trade"] = True
+                        grouped[key]["pnl"] += val
+                        grouped[key]["has_trade"] = True
                     elif inc_type == "COMMISSION":
-                        g["comm"] += val
+                        grouped[key]["comm"] += val
                     elif inc_type == "FUNDING_FEE":
-                        g["fund"] += val
+                        grouped[key]["fund"] += val
 
                 ledger_rows = []
                 current_balance = start_balance
@@ -324,9 +317,7 @@ class AnalyticsManager:
                 trade_id_counter = 1
                 
                 # Reconstruct Ledger sequentially
-                for g in grouped_list:
-                    ts = g["ts"]
-                    sym = g["sym"]
+                for (ts, sym), g in sorted(grouped.items(), key=lambda x: x[0][0]):
                     dt_str = datetime.fromtimestamp(ts / 1000).strftime("%Y-%m-%d %H:%M:%S")
                     
                     # Add to global stats
