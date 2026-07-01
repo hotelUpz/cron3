@@ -103,3 +103,7 @@ if __name__ == "__main__":
 # taskkill /F /IM python.exe
 
 # # claude
+
+
+# Id;Symbol;Side;Open Time;Close Time;PnL (USDT);Balance
+# 1;XPLUSDT;SYNC;2026-06-30 03:26:05;2026-06-30 03:26:05;0.0231;84.9831

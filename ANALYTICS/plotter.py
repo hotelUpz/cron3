@@ -13,7 +13,7 @@ ANALYTICS_DIR = Path(__file__).parent
 IMAGES_DIR = ANALYTICS_DIR / "images"
 IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
-CSV_FILE = ANALYTICS_DIR / "trades_ledger.csv"
+CSV_FILE = ANALYTICS_DIR / "trades_ledger.txt"
 JSON_FILE = ANALYTICS_DIR / "analytics.json"
 PLOT_FILE = IMAGES_DIR / "equity_curve.png"
 
@@ -141,7 +141,8 @@ def generate_coin_analytics(symbol: str) -> str:
     cur_dd = cdata.get("current_drawdown", 0.0)
     
     net_profit = cdata.get("net_profit_usdt", 0.0)
-    gross_profit = cdata.get("gross_profit_usdt", 0.0)
+    realized_pnl = cdata.get("realized_pnl_usdt", 0.0)
+    realized_pnl_net = cdata.get("realized_pnl_net_usdt", realized_pnl)
     max_np = cdata.get("max_net_profit", net_profit)
     min_np = cdata.get("min_net_profit", net_profit)
     
@@ -155,7 +156,8 @@ def generate_coin_analytics(symbol: str) -> str:
         "Avg Daily Profit (Net)": avg_daily,
         "Net Profit": net_profit,
         "Max Net Profit": max_np,
-        "Gross Profit": gross_profit
+        "Realized PnL (Net)": realized_pnl_net,
+        "Realized PnL (Gross)": realized_pnl
     }
     
     labels = list(metrics.keys())

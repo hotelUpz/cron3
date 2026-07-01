@@ -451,9 +451,9 @@ class BinanceClient:
             "limit": 1000,
         }
         if start_time:
-            trade_params["startTime"] = start_time - 5000
+            trade_params["startTime"] = start_time
         if end_time:
-            trade_params["endTime"] = end_time + 5000
+            trade_params["endTime"] = end_time
 
         trade_res = await self._request(
             "GET",
@@ -472,7 +472,7 @@ class BinanceClient:
                     continue
                 
                 ts = int(t.get("time", 0))
-                if start_time and ts < (start_time - 5000):
+                if start_time and ts < start_time:
                     continue
                 
                 gross_pnl += float(t.get("realizedPnl", 0.0))
@@ -497,9 +497,9 @@ class BinanceClient:
             "limit": 1000,
         }
         if start_time:
-            inc_params["startTime"] = start_time - 5000
+            inc_params["startTime"] = start_time
         if end_time:
-            inc_params["endTime"] = end_time + 5000
+            inc_params["endTime"] = end_time
 
         inc_res = await self._request(
             "GET",
@@ -512,7 +512,7 @@ class BinanceClient:
         if inc_res.success and isinstance(inc_res.data, list):
             for r in inc_res.data:
                 ts = int(r.get("time", 0))
-                if start_time and ts < (start_time - 5000):
+                if start_time and ts < start_time:
                     continue
                 
                 funding_fee += float(r.get("income", 0.0))

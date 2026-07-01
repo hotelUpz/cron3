@@ -7,3 +7,6 @@
 2026-06-30 03:00:41 | INFO | VolatilityScanner | [Scanner] Starting scan. TF=1w, window=12, min_vol=25.0%, max_vol=40.0%, strict=True
 2026-06-30 03:00:41 | INFO | VolatilityScanner | [Scanner] Found 529 USDT-M Perpetual symbols.
 2026-06-30 03:01:39 | INFO | VolatilityScanner | [Scanner] Saved 147 matching symbols to C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\CFG\volatile_symbols.json
+2026-06-30 03:36:25 | INFO | VolatilityScanner | [Scanner] Starting scan. TF=1w, window=12, min_vol=25.0%, max_vol=40.0%, strict=True
+2026-06-30 03:36:26 | INFO | VolatilityScanner | [Scanner] Found 529 USDT-M Perpetual symbols.
+2026-06-30 03:37:24 | INFO | VolatilityScanner | [Scanner] Saved 147 matching symbols to C:\Users\User\Desktop\HP_EliteBook_735\PROGECTS\MY\hron\cron3\CFG\volatile_symbols.json

@@ -293,7 +293,7 @@ class TelegramReceiver:
                 if analytics_path.exists():
                     try:
                         os.remove(analytics_path)
-                        csv_path = ANALYTICS_DIR / "trades_ledger.csv"
+                        csv_path = ANALYTICS_DIR / "trades_ledger.txt"
                         if csv_path.exists():
                             os.remove(csv_path)
                         await message.answer("✅ Файл аналитики успешно удален. Он будет создан заново при следующем обновлении.", reply_markup=self._get_main_keyboard())
@@ -359,10 +359,17 @@ class TelegramReceiver:
         async def on_analytics(message: Message, state: FSMContext):
             await state.clear()
             
+            # Level 2 Protection: Deep Sync Analytics before showing dashboard
+            msg = await message.answer("⏳ Синхронизация с Binance...")
+            try:
+                await self.bot_core.analytics.deep_sync_analytics(self.bot_core.client)
+                await msg.delete()
+            except Exception as e:
+                logger.error(f"Failed to deep sync: {e}")
+            
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
                 [InlineKeyboardButton(text="🌍 Global Analytics", callback_data="analytics_global")],
                 [InlineKeyboardButton(text="🪙 Аналитика по монетам", callback_data="analytics_coin_menu")],
-                [InlineKeyboardButton(text="📉 График баланса", callback_data="analytics_balance_chart")],
                 [InlineKeyboardButton(text="📝 Лента сделок (CSV)", callback_data="analytics_csv")],
                 [InlineKeyboardButton(text="📚 Шпаргалка (Cheat Sheet)", callback_data="analytics_cheat_sheet")]
             ])
@@ -374,10 +381,10 @@ class TelegramReceiver:
             help_str = (
                 "<b>📚 Analytics Cheat Sheet (Global)</b>\n"
                 "▪️ <b>roi_pct</b>: Return on Investment (%) → <i>(Cur_Balance - Start_Balance) / Start_Balance * 100</i>\n"
-                "▪️ <b>load_ratio</b>: Grid Load Ratio → <i>|Unrealized PnL| / Gross Profit</i>\n"
-                "▪️ <b>recovery_factor</b>: Recovery Factor → <i>Gross Profit / |Max Drawdown|</i>\n"
-                "▪️ <b>gross_profit_usdt</b>: Total realized profit from all closed trades\n"
-                "▪️ <b>net_profit_usdt</b>: True mathematical growth → <i>Gross Profit + Unrealized PnL</i>\n"
+                "▪️ <b>load_ratio</b>: Grid Load Ratio → <i>|Unrealized PnL| / Realized PnL</i>\n"
+                "▪️ <b>recovery_factor</b>: Recovery Factor → <i>Realized PnL / |Max Drawdown|</i>\n"
+                "▪️ <b>realized_pnl_usdt</b>: Total realized profit from all closed trades\n"
+                "▪️ <b>net_profit_usdt</b>: True mathematical growth → <i>Realized PnL + Unrealized PnL</i>\n"
                 "▪️ <b>cur_balance_usdt</b>: Current margin balance → <i>Start Balance + Net Profit</i>\n\n"
                 "<b>🪙 Per-Coin Metrics</b>\n"
                 "▪️ <b>avg_daily_profit</b>: Average profit per active day of trading\n"
@@ -392,7 +399,7 @@ class TelegramReceiver:
         @self.dp.callback_query(F.data == "analytics_csv")
         async def process_analytics_csv(callback: CallbackQuery, state: FSMContext):
             await callback.answer()
-            csv_path = ANALYTICS_DIR / "trades_ledger.csv"
+            csv_path = ANALYTICS_DIR / "trades_ledger.txt"
             if csv_path.exists():
                 await callback.message.answer_document(FSInputFile(str(csv_path)))
             else:
@@ -424,7 +431,7 @@ class TelegramReceiver:
                         time_str = dt.strftime('%Y-%m-%d %H:%M:%S %Z')
                         
                         last_trade_time = "Нет сделок"
-                        csv_path = ANALYTICS_DIR / "trades_ledger.csv"
+                        csv_path = ANALYTICS_DIR / "trades_ledger.txt"
                         if csv_path.exists():
                             import csv
                             try:
@@ -451,11 +458,17 @@ class TelegramReceiver:
                     msg += f"▪️ Peak: <b>{data.get('peak_balance_usdt', 0)}</b> USDT\n"
                     msg += f"▪️ Min (Bottom): <b>{data.get('min_balance_usdt', 0)}</b> USDT\n\n"
                     
+                    realized = float(data.get('realized_pnl_usdt', 0))
+                    realized_net = float(data.get('realized_pnl_net_usdt', 0))
+                    comm = float(data.get('total_commission_usdt', 0))
+                    fund = float(data.get('total_funding_usdt', 0))
+                    
                     msg += "<b>📈 Performance:</b>\n"
                     msg += f"▪️ Net Profit: <b>{data.get('net_profit_usdt', 0)}</b> USDT\n"
-                    msg += f"▪️ Gross Profit: <b>{data.get('gross_profit_usdt', 0)}</b> USDT\n"
-                    msg += f"▪️ Total Commission: <b>{data.get('total_commission_usdt', 0)}</b> USDT\n"
-                    msg += f"▪️ Total Funding: <b>{data.get('total_funding_usdt', 0)}</b> USDT\n"
+                    msg += f"▪️ Realized PnL (Gross): <b>{realized}</b> USDT\n"
+                    msg += f"▪️ Realized PnL (Net): <b>{realized_net}</b> USDT\n"
+                    msg += f"▪️ Total Commission: <b>{comm}</b> USDT\n"
+                    msg += f"▪️ Total Funding: <b>{fund}</b> USDT\n"
                     msg += f"▪️ Unrealized PnL: <b>{data.get('unrealized_pnl_usdt', 0)}</b> USDT\n"
                     msg += f"▪️ Max Drawdown: <b>{data.get('max_drawdown_usdt', 0)}</b> USDT\n"
                     msg += f"▪️ Performance (Peak-Start): <b>{data.get('performance_usdt', 0)}</b> USDT\n"
@@ -470,21 +483,6 @@ class TelegramReceiver:
                     await message.answer("Error formatting analytics data.")
             else:
                 await message.answer("Analytics JSON not found in ANALYTICS_DIR.")
-
-        @self.dp.callback_query(F.data == "analytics_balance_chart")
-        async def process_analytics_balance_chart(callback: CallbackQuery, state: FSMContext):
-            await callback.answer()
-            message = callback.message
-            try:
-                from ANALYTICS.plotter import generate_equity_curve
-                plot_path = generate_equity_curve()
-                if plot_path and os.path.exists(plot_path):
-                    await message.answer_photo(FSInputFile(plot_path), caption="📈 График движения баланса (Equity Curve)")
-                else:
-                    await message.answer("❌ Не удалось сгенерировать график баланса.")
-            except Exception as e:
-                logger.error(f"Error generating balance chart: {e}")
-                await message.answer(f"❌ Ошибка генерации графика: {e}")
 
         @self.dp.callback_query(F.data == "analytics_coin_menu")
         async def process_analytics_coin_menu(callback: CallbackQuery, state: FSMContext):
@@ -533,10 +531,16 @@ class TelegramReceiver:
                         msg_coins = "<b>🪙 PER-COIN METRICS</b>\n\n"
                         msg_coins += f"🔹 <b>{symbol}</b> ({status_text})\n"
                         msg_coins += f"  • Trades: <b>{cdata.get('total_trades', 0)}</b> (Wins: <b>{cdata.get('winning_trades', 0)}</b> | <b>{cdata.get('winrate_pct', 0)}%</b>)\n"
+                        crealized = float(cdata.get('realized_pnl_usdt', 0))
+                        crealized_net = float(cdata.get('realized_pnl_net_usdt', 0))
+                        ccomm = float(cdata.get('commission_usdt', 0))
+                        cfund = float(cdata.get('funding_usdt', 0))
+                        
                         msg_coins += f"  • Net Profit: <b>{cdata.get('net_profit_usdt', 0)}</b> USDT\n"
-                        msg_coins += f"  • Gross Profit: <b>{cdata.get('gross_profit_usdt', 0)}</b> USDT\n"
+                        msg_coins += f"  • Realized (Gross): <b>{crealized}</b> USDT\n"
+                        msg_coins += f"  • Realized (Net): <b>{crealized_net}</b> USDT\n"
                         msg_coins += f"  • Profit Range: Max <b>{cdata.get('max_net_profit', 0)}</b> / Min <b>{cdata.get('min_net_profit', 0)}</b>\n"
-                        msg_coins += f"  • Fees: Comm <b>{cdata.get('commission_usdt', 0)}</b> / Fund <b>{cdata.get('funding_usdt', 0)}</b>\n"
+                        msg_coins += f"  • Fees: Comm <b>{ccomm}</b> / Fund <b>{cfund}</b>\n"
                         msg_coins += f"  • Unrealized PnL: <b>{cdata.get('current_drawdown', 0)}</b> USDT\n"
                         msg_coins += f"  • Hist. Drawdown: Max <b>{cdata.get('max_drawdown', 0)}</b> / Min <b>{cdata.get('min_drawdown', 0)}</b>\n"
                         msg_coins += f"  • Avg Daily Profit (Net): <b>{cdata.get('avg_daily_profit', 0)}</b> USDT\n"

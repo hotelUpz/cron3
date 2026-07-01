@@ -63,10 +63,11 @@ class VolatilityManager:
         timeframe = app_cfg.get("timeframe", "1d")
         window = app_cfg.get("window", 14)
         multiplier = app_cfg.get("multiplier", 1.0)
-        min_volatility_pct = app_cfg.get("min_volatility_pct", 5.0)
+        min_volatility_pct = app_cfg.get("min_volatility_pct", 15.0)
+        max_volatility_pct = app_cfg.get("max_volatility_pct", None)
 
         if is_enabled:
-            logger.info(f"[VolatilityManager] Processing {len(symbols)} symbols. TF={timeframe}, window={window}, min_vol={min_volatility_pct}%")
+            logger.info(f"[VolatilityManager] Processing {len(symbols)} symbols. TF={timeframe}, window={window}, min_vol={min_volatility_pct}%, max_vol={max_volatility_pct}%")
         else:
             logger.info(f"[VolatilityManager] Super Grid is disabled. Resetting any active super_indents for {len(symbols)} symbols.")
 
@@ -107,8 +108,11 @@ class VolatilityManager:
                 avg_vol = total_vol / count
                 adjusted_vol = avg_vol * multiplier
                 
-                if adjusted_vol <= min_volatility_pct:
-                    logger.info(f"[VolatilityManager] [{symbol}] Игнор: Расчитанная волатильность {adjusted_vol:.2f}% ниже минимума {min_volatility_pct}%. Возвращаемся к использованию стандартных (старых) настроек индента.")
+                if min_volatility_pct is not None and adjusted_vol <= min_volatility_pct:
+                    logger.info(f"[VolatilityManager] [{symbol}] Игнор: Расчитанная волатильность {adjusted_vol:.2f}% ниже или равна минимуму {min_volatility_pct}%. Возвращаемся к использованию стандартных настроек индента.")
+                    is_advanced = False
+                elif max_volatility_pct is not None and adjusted_vol >= max_volatility_pct:
+                    logger.info(f"[VolatilityManager] [{symbol}] Игнор: Расчитанная волатильность {adjusted_vol:.2f}% выше или равна максимуму {max_volatility_pct}%. Возвращаемся к использованию стандартных настроек индента.")
                     is_advanced = False
                 # We will still process the file to erase super_indent
                 

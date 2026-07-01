@@ -1,0 +1,8 @@
+2026-06-30 03:20:23 | DEBUG | LeverageManager | [VVVUSDT] Margin type CROSSED is already set on exchange.
+2026-06-30 03:20:23 | DEBUG | LeverageManager | [VVVUSDT] Margin type CROSSED is already set on exchange.
+2026-06-30 03:20:23 | DEBUG | LeverageManager | [XPLUSDT] Margin type CROSSED is already set on exchange.
+2026-06-30 03:20:23 | DEBUG | LeverageManager | [XPLUSDT] Margin type CROSSED is already set on exchange.
+2026-06-30 03:20:23 | INFO | LeverageManager | [VVVUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-30 03:20:23 | INFO | LeverageManager | [VVVUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-30 03:20:23 | INFO | LeverageManager | [XPLUSDT] Successfully set leverage to 10 and margin type to CROSSED
+2026-06-30 03:20:24 | INFO | LeverageManager | [XPLUSDT] Successfully set leverage to 10 and margin type to CROSSED

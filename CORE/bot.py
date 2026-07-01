@@ -333,6 +333,8 @@ class BotCore:
                     # Ставим временный флаг идемпотентности
                     state.in_position_papper = True
                     signal_tasks.append(self._process_signal(symbol, side, side_cfg, current_price, concurrent_mode=is_concurrent))
+                # pass            
+            
             else:
                 # Позиция уже открыта (или в процессе in_position_papper)
                 await self.avg_manager.process(self.client, self.runtime_manager, symbol, side, state, current_price, self.spec_data, self.tp_manager)
@@ -470,6 +472,9 @@ class BotCore:
         else:
             logger.info("BotCore started in ACTIVE state (auto_start enabled). Trading loops are running.")
         self.analytics.start_realtime_tracker(self.client)
+        
+        logger.info("Running initial deep sync analytics on startup...")
+        await self.analytics.deep_sync_analytics(self.client)
         
         from CORE.ADVANCED.volatility_manager import VolatilityManager
         self.volatility_manager = VolatilityManager(self)

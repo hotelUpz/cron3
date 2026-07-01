@@ -10,13 +10,13 @@
         "candles": 12
     },
     {
-        "symbol": "FOLKSUSDT",
-        "volatility": 39.75,
+        "symbol": "GRASSUSDT",
+        "volatility": 39.79,
         "candles": 12
     },
     {
-        "symbol": "GRASSUSDT",
-        "volatility": 39.73,
+        "symbol": "FOLKSUSDT",
+        "volatility": 39.75,
         "candles": 12
     },
     {
@@ -65,6 +65,11 @@
         "candles": 12
     },
     {
+        "symbol": "JTOUSDT",
+        "volatility": 37.97,
+        "candles": 12
+    },
+    {
         "symbol": "USELESSUSDT",
         "volatility": 37.97,
         "candles": 12
@@ -72,11 +77,6 @@
     {
         "symbol": "VVVUSDT",
         "volatility": 37.9,
-        "candles": 12
-    },
-    {
-        "symbol": "JTOUSDT",
-        "volatility": 37.88,
         "candles": 12
     },
     {
@@ -136,12 +136,12 @@
     },
     {
         "symbol": "AGLDUSDT",
-        "volatility": 35.35,
+        "volatility": 35.44,
         "candles": 12
     },
     {
         "symbol": "XANUSDT",
-        "volatility": 35.34,
+        "volatility": 35.44,
         "candles": 12
     },
     {
@@ -170,6 +170,11 @@
         "candles": 12
     },
     {
+        "symbol": "WLDUSDT",
+        "volatility": 34.1,
+        "candles": 12
+    },
+    {
         "symbol": "BANANAS31USDT",
         "volatility": 34.08,
         "candles": 12
@@ -180,18 +185,13 @@
         "candles": 12
     },
     {
-        "symbol": "WLDUSDT",
-        "volatility": 33.98,
-        "candles": 12
-    },
-    {
         "symbol": "XPLUSDT",
         "volatility": 33.95,
         "candles": 12
     },
     {
         "symbol": "AVAAIUSDT",
-        "volatility": 33.73,
+        "volatility": 33.81,
         "candles": 12
     },
     {
@@ -216,7 +216,7 @@
     },
     {
         "symbol": "EIGENUSDT",
-        "volatility": 32.36,
+        "volatility": 32.46,
         "candles": 12
     },
     {
@@ -236,7 +236,7 @@
     },
     {
         "symbol": "1000LUNCUSDT",
-        "volatility": 31.98,
+        "volatility": 32.02,
         "candles": 12
     },
     {
@@ -301,7 +301,7 @@
     },
     {
         "symbol": "AKTUSDT",
-        "volatility": 30.69,
+        "volatility": 30.75,
         "candles": 12
     },
     {
@@ -595,6 +595,11 @@
         "candles": 12
     },
     {
+        "symbol": "AEROUSDT",
+        "volatility": 26.52,
+        "candles": 12
+    },
+    {
         "symbol": "SIGNUSDT",
         "volatility": 26.49,
         "candles": 12
@@ -612,11 +617,6 @@
     {
         "symbol": "HAEDALUSDT",
         "volatility": 26.44,
-        "candles": 12
-    },
-    {
-        "symbol": "AEROUSDT",
-        "volatility": 26.38,
         "candles": 12
     },
     {
@@ -656,7 +656,12 @@
     },
     {
         "symbol": "ZAMAUSDT",
-        "volatility": 25.75,
+        "volatility": 25.76,
+        "candles": 12
+    },
+    {
+        "symbol": "STABLEUSDT",
+        "volatility": 25.73,
         "candles": 12
     },
     {
@@ -670,18 +675,13 @@
         "candles": 12
     },
     {
-        "symbol": "STABLEUSDT",
-        "volatility": 25.68,
+        "symbol": "2ZUSDT",
+        "volatility": 25.67,
         "candles": 12
     },
     {
         "symbol": "ALTUSDT",
         "volatility": 25.66,
-        "candles": 12
-    },
-    {
-        "symbol": "2ZUSDT",
-        "volatility": 25.61,
         "candles": 12
     },
     {
