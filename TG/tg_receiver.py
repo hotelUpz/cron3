@@ -398,10 +398,15 @@ class TelegramReceiver:
             )
             await callback.message.answer(help_str, parse_mode="HTML")
 
-        @self.dp.callback_query(F.data == "analytics_ranking")
+        @self.dp.callback_query(F.data.startswith("analytics_ranking"))
         async def process_analytics_ranking(callback: CallbackQuery, state: FSMContext):
             await callback.answer()
             import json
+            
+            # Parse criterion
+            parts = callback.data.split(":")
+            criterion = parts[1] if len(parts) > 1 else "net"
+            
             analytics_path = ANALYTICS_DIR / "analytics.json"
             if not analytics_path.exists():
                 await callback.message.answer("Analytics JSON not found.")
@@ -413,13 +418,34 @@ class TelegramReceiver:
                 if not per_coin:
                     await callback.message.answer("Нет данных по монетам.")
                     return
-                    
-                sorted_coins = sorted(per_coin.items(), key=lambda x: float(x[1].get("net_profit_usdt", 0)), reverse=True)
                 
-                lines = ["<b>🏆 Рейтинг монет (по Net Profit)</b>\n"]
+                # Determine sorting logic and title
+                if criterion == "rr":
+                    sorted_coins = sorted(per_coin.items(), key=lambda x: float(x[1].get("risk_reward_ratio", float('inf'))))
+                    title = "по Risk/Reward (меньше = лучше)"
+                elif criterion == "drme":
+                    sorted_coins = sorted(per_coin.items(), key=lambda x: float(x[1].get("DRME", -float('inf'))), reverse=True)
+                    title = "по DRME (больше = лучше)"
+                elif criterion == "mdme":
+                    sorted_coins = sorted(per_coin.items(), key=lambda x: float(x[1].get("MDME", float('inf'))))
+                    title = "по MDME (меньше = лучше)"
+                else: # Default net
+                    sorted_coins = sorted(per_coin.items(), key=lambda x: float(x[1].get("net_profit_usdt", -float('inf'))), reverse=True)
+                    title = "по Net Profit"
+                    
+                lines = [f"<b>🏆 Рейтинг монет ({title})</b>\n"]
                 for i, (sym, cdata) in enumerate(sorted_coins, 1):
-                    net_profit = float(cdata.get("net_profit_usdt", 0))
-                    realized_net = float(cdata.get("realized_pnl_net_usdt", 0))
+                    val_str = ""
+                    if criterion == "rr":
+                        val_str = f"R/R: {cdata.get('risk_reward_ratio', 0)}"
+                    elif criterion == "drme":
+                        val_str = f"DRME: {cdata.get('DRME', 0)}"
+                    elif criterion == "mdme":
+                        val_str = f"MDME: {cdata.get('MDME', 0)}"
+                    else:
+                        net_profit = cdata.get("net_profit_usdt", 0)
+                        realized_net = cdata.get("realized_pnl_net_usdt", 0)
+                        val_str = f"{net_profit} USDT <i>(Realized: {realized_net})</i>"
                     
                     if i == 1:
                         medal = "🥇"
@@ -430,9 +456,30 @@ class TelegramReceiver:
                     else:
                         medal = "▪️"
                         
-                    lines.append(f"{medal} <b>{sym}</b>: {net_profit} USDT <i>(Realized Net: {realized_net} USDT)</i>")
+                    lines.append(f"{medal} <b>{sym}</b>: {val_str}")
+                
+                # Add inline keyboard to switch criterion
+                switch_kb = InlineKeyboardMarkup(inline_keyboard=[
+                    [
+                        InlineKeyboardButton(text="Net Profit", callback_data="analytics_ranking:net"),
+                        InlineKeyboardButton(text="Risk/Reward", callback_data="analytics_ranking:rr")
+                    ],
+                    [
+                        InlineKeyboardButton(text="DRME", callback_data="analytics_ranking:drme"),
+                        InlineKeyboardButton(text="MDME", callback_data="analytics_ranking:mdme")
+                    ]
+                ])
                     
-                await callback.message.answer("\n".join(lines), parse_mode="HTML")
+                # If callback was a direct button press from the main menu, we send a new message.
+                # If it was a switch from the ranking menu itself, we can edit the message.
+                if len(parts) > 1:
+                    try:
+                        await callback.message.edit_text("\n".join(lines), parse_mode="HTML", reply_markup=switch_kb)
+                    except Exception as e:
+                        if "message is not modified" not in str(e).lower():
+                            raise
+                else:
+                    await callback.message.answer("\n".join(lines), parse_mode="HTML", reply_markup=switch_kb)
             except Exception as e:
                 logger.error(f"Error generating ranking: {e}")
                 await callback.message.answer("Ошибка генерации рейтинга.")
